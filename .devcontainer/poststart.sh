@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-set -euo pipefail
+# Ensure strict mode without breaking in shells that lack pipefail
+set -euo pipefail 2>/dev/null || set -eu
+
 
 echo "Post-start: bringing up local infra (db, redis) if docker-compose exists"
 

@@ -1,99 +1,74 @@
 {
-    "name": "EagleGuide Dev",
-    "dockerFile": "Dockerfile",
-  
-    // Give the container access to your host's Docker (so you can run `docker compose up`)
-    "features": {
-      "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
-      "ghcr.io/devcontainers/features/node:1": {
-        "version": "20"
-      },
-      "ghcr.io/devcontainers/features/python:1": {
-        "version": "3.11"
-      },
-      "ghcr.io/devcontainers/features/git:1": {}
+  "name": "EagleGuide Dev",
+  "dockerFile": "Dockerfile",
+
+  "features": {
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
+    "ghcr.io/devcontainers/features/node:1": { "version": "20" },
+    "ghcr.io/devcontainers/features/python:1": { "version": "3.11" },
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+
+  "forwardPorts": [
+    3000,   // NestJS API
+    8000,   // FastAPI
+    5432,   // Postgres (optional)
+    6379,   // Redis (optional)
+    19000, 19001, 19002, // Expo
+    8081    // Metro
+  ],
+
+  "portsAttributes": {
+    "19000": { "label": "Expo (bundler)" },
+    "19001": { "label": "Expo (LAN)" },
+    "19002": { "label": "Expo (web)" },
+    "8081":  { "label": "Metro" },
+    "3000":  { "label": "API" },
+    "8000":  { "label": "ML" }
+  },
+
+  "settings": {
+    "editor.formatOnSave": true,
+    "files.eol": "\n",
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "always",
+      "source.organizeImports": "always"
     },
-  
-    "remoteUser": "vscode",
-  
-    "containerEnv": {
-      "FORCE_COLOR": "1",
-      "PYTHONDONTWRITEBYTECODE": "1",
-      "PIP_DISABLE_PIP_VERSION_CHECK": "1"
-    },
-  
-    "runArgs": [
-      // Needed for docker-from-docker
-      "-v", "/var/run/docker.sock:/var/run/docker.sock"
-    ],
-  
-    // Mount repo root; keep node_modules inside container for consistency
-    "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/eagleguide,type=bind",
-    "workspaceFolder": "/workspaces/eagleguide",
-  
-    "forwardPorts": [
-      3000,   // API (NestJS)
-      8000,   // ML (FastAPI)
-      5432,   // Postgres (if you expose it)
-      6379,   // Redis
-      19000, 19001, 19002, // Expo
-      8081    // Metro bundler
-    ],
-  
-    "portsAttributes": {
-      "19000": { "label": "Expo (bundler)" },
-      "19001": { "label": "Expo (LAN)" },
-      "19002": { "label": "Expo (web)" },
-      "8081":  { "label": "Metro" },
-      "3000":  { "label": "API" },
-      "8000":  { "label": "ML" }
-    },
-  
-    "settings": {
-      "editor.formatOnSave": true,
-      "files.eol": "\n",
-      "editor.codeActionsOnSave": {
-        "source.fixAll": "always",
-        "source.organizeImports": "always"
-      },
-      // TypeScript / JS
-      "javascript.preferences.importModuleSpecifier": "non-relative",
-      "typescript.tsserver.experimental.enableProjectDiagnostics": true,
-      "typescript.tsdk": "app/node_modules/typescript/lib",
-      // ESLint / Prettier
-      "eslint.alwaysShowStatus": true,
-      "eslint.useFlatConfig": false,
-      "prettier.requireConfig": true,
-      // Python
-      "python.defaultInterpreterPath": "/usr/local/bin/python",
-      "python.analysis.typeCheckingMode": "basic",
-      "python.testing.pytestEnabled": true
-    },
-  
-    "extensions": [
-      "esbenp.prettier-vscode",
-      "dbaeumer.vscode-eslint",
-      "usernamehw.errorlens",
-      "editorconfig.editorconfig",
-      "ms-python.python",
-      "ms-python.vscode-pylance",
-      "ms-azuretools.vscode-docker",
-      "Prisma.prisma",
-      "ms-vscode.vscode-typescript-next",
-      "rangav.vscode-thunder-client",
-      "mtxr.sqltools",
-      "mtxr.sqltools-driver-pg",
-      "ms-vsliveshare.vsliveshare"
-    ],
-  
-    // Runs once after the container is built
-    "postCreateCommand": "bash .devcontainer/postcreate.sh",
-  
-    // Optional: start your infra automatically when the container starts
-    "postStartCommand": "bash .devcontainer/poststart.sh",
-  
-    "remoteEnv": {
-      "PATH": "/home/vscode/.local/bin:/usr/local/bin:${containerEnv:PATH}"
-    }
-  }
-  
+    "eslint.alwaysShowStatus": true,
+    "prettier.requireConfig": true,
+    "python.defaultInterpreterPath": "/usr/local/bin/python"
+  },
+
+  "extensions": [
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "usernamehw.errorlens",
+    "editorconfig.editorconfig",
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-azuretools.vscode-docker",
+    "Prisma.prisma",
+    "rangav.vscode-thunder-client",
+    "mtxr.sqltools",
+    "mtxr.sqltools-driver-pg"
+  ],
+
+  "remoteUser": "vscode",
+
+  "containerEnv": {
+    "FORCE_COLOR": "1",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PIP_DISABLE_PIP_VERSION_CHECK": "1"
+  },
+
+  "remoteEnv": {
+    // Make Metro/webpack file watching reliable over Docker bind mounts
+    "CHOKIDAR_USEPOLLING": "1",
+    "WATCHPACK_POLLING": "true",
+    // Use new dev server (better with tunnels)
+    "EXPO_USE_DEV_SERVER": "1"
+  },
+
+ "postCreateCommand": "/bin/bash -lc '.devcontainer/postcreate.sh'",
+"postStartCommand": "/bin/bash -lc '.devcontainer/poststart.sh'"
+}

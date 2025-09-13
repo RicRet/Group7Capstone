@@ -1,8 +1,11 @@
 # .devcontainer/postcreate.sh
 #!/usr/bin/env bash
-set -euo pipefail
+#!/usr/bin/env bash
+# Ensure strict mode without breaking in shells that lack pipefail
+set -euo pipefail 2>/dev/null || set -eu
 
-echo "▶ Post-create: installing workspace tooling"
+
+echo " Post-create: installing workspace tooling"
 
 # Ensure corepack/pnpm/yarn after Node feature is available
 if command -v corepack >/dev/null 2>&1; then
@@ -32,4 +35,4 @@ cd /workspaces/eagleguide
 [ -d app ] && (cd app && (command -v pnpm >/dev/null && pnpm install) || yarn install || npm install || true)
 [ -d ml ]  && (cd ml  && python -m venv .venv && source .venv/bin/activate && pip install --upgrade pip && [ -f requirements.txt ] && pip install -r requirements.txt || true)
 
-echo "✅ Post-create done"
+echo " Post-create done"
