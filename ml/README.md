@@ -1,0 +1,1 @@
+THIS Folder will contain all of our files for the chatbot integration to be carried out later

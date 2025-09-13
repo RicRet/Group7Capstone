@@ -1,24 +1,22 @@
 # .devcontainer/postcreate.sh
-#!/usr/bin/env bash
-#!/usr/bin/env bash
 # Ensure strict mode without breaking in shells that lack pipefail
 set -euo pipefail 2>/dev/null || set -eu
 
 
 echo " Post-create: installing workspace tooling"
 
-# Ensure corepack/pnpm/yarn after Node feature is available
+# Ensures corepack/pnpm/yarn after Node feature is available
 if command -v corepack >/dev/null 2>&1; then
   corepack enable || true
   corepack prepare pnpm@latest --activate || true
 fi
 
-# Yarn (optional global)
+# Yarn 
 if command -v npm >/dev/null 2>&1; then
   npm i -g yarn@latest || true
 fi
 
-# Optional: fast Python installer (uv)
+#fast Python installer (uv)
 if command -v curl >/dev/null 2>&1; then
   curl -LsSf https://astral.sh/uv/install.sh | sh || true
 fi
