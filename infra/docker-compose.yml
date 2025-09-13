@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: eg-db
+    environment:
+      POSTGRES_USER: eagle
+      POSTGRES_PASSWORD: eaglepass
+      POSTGRES_DB: eagleguide
+    ports:
+      - "5432:5432"
+    volumes:
+      - eg-pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    container_name: eg-redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  eg-pgdata:

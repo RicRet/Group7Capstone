@@ -1,0 +1,17 @@
+{
+    "recommendations": [
+      "esbenp.prettier-vscode",
+      "dbaeumer.vscode-eslint",
+      "usernamehw.errorlens",
+      "editorconfig.editorconfig",
+      "ms-python.python",
+      "ms-python.vscode-pylance",
+      "ms-azuretools.vscode-docker",
+      "Prisma.prisma",
+      "rangav.vscode-thunder-client",
+      "mtxr.sqltools",
+      "mtxr.sqltools-driver-pg",
+      "ms-vsliveshare.vsliveshare"
+    ]
+  }
+  
