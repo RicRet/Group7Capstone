@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"; // need to download
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 const Login = () => { // needs to figure out stack 
     const [username, setUsername] = useState('');
@@ -48,6 +48,7 @@ const Login = () => { // needs to figure out stack
     );
 };
 
+// will be ugly for now
 const styles = StyleSheet.create({
     container: {
         flex: 1,
