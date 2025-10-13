@@ -1,6 +1,8 @@
 # This is Eagle Guide
 ## For our dev:
 
+MAKE SURE TO CD TO EagleGuide before running commands
+
 1. Install dependencies
 
    ```bash
@@ -20,3 +22,4 @@ Must run with --tunnel in order to be able to load application in other device
 
 PLEASE KEEP TRACK OF ALL NPM INSTALLS/PACKAGES/MODULES HERE:
 
+AXIOS

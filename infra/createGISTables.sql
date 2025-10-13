@@ -1,0 +1,15 @@
+SET SEARCH_PATH TO GISTables;
+CREATE TABLE buildings { PRIMARY KEY building_id SERIAL,
+name VARCHAR(60),
+desc VARCHAR(60) type VARCHAR(30),
+location GEOGRAPHY(POINT, 4236) };
+CREATE TABLE paths { PRIMARY KEY path_id SERIAL,
+desc VARCHAR(60),
+type VARCHAR(30),
+AccessabilityPathType INT,
+path GEOGRAPHY(LINESTRING, 4236) };
+CREATE TABLE bus_stops { PRIMARY KEY path_id SERIAL,
+desc VARCHAR(60),
+location GEOGRAPHY(POINT, 4236) } CREATE TABLE parking_lots { PRIMARY KEY lot_id SERIAL,
+desc VARCHAR(60),
+loaction GEOGRAPHY(POLYGON, 4236) }
