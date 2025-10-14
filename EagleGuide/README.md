@@ -5,6 +5,7 @@
 
    ```bash
    npm install
+   npm install react-native-dropdown-picker
    ```
 
 2. Start the app
@@ -19,4 +20,5 @@ Must run with --tunnel in order to be able to load application in other device
 
 
 PLEASE KEEP TRACK OF ALL NPM INSTALLS/PACKAGES/MODULES HERE:
+
 
