@@ -1,5 +1,5 @@
-import Login from './Login';
+import TestScreen from './test';
 
 export default function Index() {
-  return <Login />;
+  return <TestScreen />;
 }
