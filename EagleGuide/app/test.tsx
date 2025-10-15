@@ -13,8 +13,8 @@ const Test = () => {
         <Text style={styles.buttonText}>Home</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={() => router.push("/addroute")}>
-        <Text style={styles.buttonText}>addRoute</Text>
+      <TouchableOpacity style={styles.button} onPress={() => router.push("/map")}>
+        <Text style={styles.buttonText}>Map</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.button} onPress={() => router.push("/Login")}>
