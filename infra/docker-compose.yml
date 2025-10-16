@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   db:
     image: postgis/postgis:16-3.4
@@ -11,23 +10,48 @@ services:
       - "5432:5432"
     volumes:
       - eg-pgdata:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U eagle -d eagleguide"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   pgadmin:
     image: dpage/pgadmin4:9.8
+    container_name: eg-pgadmin
     ports:
-    - 5050:80
+      - "5050:80"
     environment:
-      PGADMIN_DEFAULT_EMAIL: eagle@test.com 
+      PGADMIN_DEFAULT_EMAIL: eagle@test.com
       PGADMIN_DEFAULT_PASSWORD: notsosecret
       PGADMIN_CONFIG_SERVER_MODE: 'False'
       PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
-
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - db
 
   redis:
     image: redis:7
     container_name: eg-redis
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: eg-redisinsight
+    ports:
+      - "5540:5540"
+    depends_on:
+      - redis
 
 volumes:
   eg-pgdata:
+  pgadmin-data:
