@@ -10,7 +10,14 @@ import {
 } from 'react-native';
 
 const MapScreen = () => {
+    const [showSearch, setShowSearch] = useState(true);
     const [showBookmarks, setShowBookmarks] = useState(true);
+    const [routeText, setRouteText] = useState('');
+
+    // Split "Start to End"
+    const parts = routeText.split(/\s+to\s+/i);
+    const startLocation = parts[0]?.trim() || '';
+    const endLocation = parts[1]?.trim() || '';
 
     return (
         <View style={styles.container}>
@@ -19,22 +26,36 @@ const MapScreen = () => {
                 <Text style={styles.title}>UNT Eagle Guide</Text>
             </View>
 
-            {/* Search Box */}
-            <View style={styles.searchContainer}>
-                <TextInput
-                    style={styles.searchInput}
-                    placeholder="Search for buildings, parking, etc."
-                    placeholderTextColor="#999"
-                />
+            {/* Collapsible Search Section */}
+            <View style={styles.sectionContainer}>
+                <TouchableOpacity
+                    onPress={() => setShowSearch(!showSearch)}
+                    style={styles.sectionHeader}
+                >
+                    <Text style={styles.sectionTitle}>Search Directions</Text>
+                    <Text style={styles.toggleArrow}>{showSearch ? '▲' : '▼'}</Text>
+                </TouchableOpacity>
+
+                {showSearch && (
+                    <View style={styles.searchContainer}>
+                        <TextInput
+                            style={styles.searchInput}
+                            placeholder='Type route, e.g. "Willis Library to Union"'
+                            placeholderTextColor="#999"
+                            value={routeText}
+                            onChangeText={setRouteText}
+                        />
+                    </View>
+                )}
             </View>
 
-            {/*Bookmarks Section */}
-            <View style={styles.bookmarksContainer}>
+            {/* Collapsible Bookmarks Section */}
+            <View style={styles.sectionContainer}>
                 <TouchableOpacity
                     onPress={() => setShowBookmarks(!showBookmarks)}
-                    style={styles.bookmarksHeader}
+                    style={styles.sectionHeader}
                 >
-                    <Text style={styles.bookmarksTitle}>My Bookmarks</Text>
+                    <Text style={styles.sectionTitle}>My Bookmarks</Text>
                     <Text style={styles.toggleArrow}>{showBookmarks ? '▲' : '▼'}</Text>
                 </TouchableOpacity>
 
@@ -51,7 +72,7 @@ const MapScreen = () => {
                 )}
             </View>
 
-            {/* Example Map Currently has UNT Map image */}
+            {/* Zoomable Map */}
             <View style={styles.mapContainer}>
                 <ScrollView
                     style={styles.scrollView}
@@ -71,6 +92,13 @@ const MapScreen = () => {
                 </ScrollView>
                 <Text style={styles.placeholderText}>(Pinch or scroll to zoom)</Text>
             </View>
+
+            {/* Start Navigation Button */}
+            {startLocation ? (
+                <TouchableOpacity style={styles.navButton}>
+                    <Text style={styles.navButtonText}>Start Navigation</Text>
+                </TouchableOpacity>
+            ) : null}
         </View>
     );
 };
@@ -92,33 +120,16 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         color: '#006A31',
     },
-    searchContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#fff',
-        marginHorizontal: 20,
-        borderRadius: 8,
-        paddingHorizontal: 10,
-        paddingVertical: 8,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        marginBottom: 10,
-    },
-    searchInput: {
-        flex: 1,
-        fontSize: 16,
-        color: '#333',
-    },
-    bookmarksContainer: {
+    sectionContainer: {
         marginHorizontal: 20,
         marginBottom: 10,
     },
-    bookmarksHeader: {
+    sectionHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
     },
-    bookmarksTitle: {
+    sectionTitle: {
         fontSize: 16,
         fontWeight: '600',
         color: '#006A31',
@@ -126,6 +137,19 @@ const styles = StyleSheet.create({
     toggleArrow: {
         fontSize: 16,
         color: '#006A31',
+    },
+    searchContainer: {
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        marginTop: 8,
+    },
+    searchInput: {
+        fontSize: 16,
+        color: '#333',
     },
     bookmarkItem: {
         backgroundColor: '#fff',
@@ -164,5 +188,18 @@ const styles = StyleSheet.create({
         color: '#555',
         textAlign: 'center',
         marginVertical: 6,
+    },
+    navButton: {
+        backgroundColor: '#006A31',
+        marginHorizontal: 20,
+        marginVertical: 10,
+        paddingVertical: 12,
+        borderRadius: 8,
+        alignItems: 'center',
+    },
+    navButtonText: {
+        color: '#fff',
+        fontSize: 18,
+        fontWeight: '600',
     },
 });
