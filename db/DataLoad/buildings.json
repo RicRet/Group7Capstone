@@ -1,0 +1,6 @@
+[
+  {"name":"Willis Library","description":"Central library","type":"Student Resources"},
+  {"name":"Discovery Park","description":"Engineering complex","type":"Academic"},
+  {"name":"Student Union","description":"Events & admin","type":"Student Resources"},
+  {"name":"Business Leadership Building", "description":"Business Building", "type":"Academic"}
+]
