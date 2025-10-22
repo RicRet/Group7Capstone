@@ -1,0 +1,27 @@
+{
+  "name": "eagleguide-api",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js",
+    "lint": "eslint . || true"
+  },
+  "dependencies": {
+    "cors": "^2",
+    "express": "^4",
+    "express-rate-limit": "^7",
+    "helmet": "^7",
+    "morgan": "^1",
+    "pg": "^8",
+    "pino": "^9",
+    "redis": "^4",
+    "uuid": "^9",
+    "zod": "^3",
+    "dotenv": "^16"
+  },
+  "devDependencies": {
+    "eslint": "^9",
+    "pino-pretty": "^11"
+  }
+}
