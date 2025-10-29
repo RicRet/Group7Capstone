@@ -1,0 +1,21 @@
+{
+  "name": "dataload",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "GIS data loaders for PostGIS",
+  "main": "index.js",
+  "scripts": {
+    "seed:buildings": "node buildingsImport.js",
+    "seed:bus": "node busStopsImport.js",
+    "seed:paths": "node pathsImport.js",
+    "seed:parking": "node parkingLotsImport.js"
+  },
+  "dependencies": {
+    "@googlemaps/google-maps-services-js": "^3.4.2",
+    "dotenv": "^17.2.3",
+    "p-limit": "^7.1.1",
+    "pg": "^8.16.3",
+    "polyline": "^0.2.0"
+  }
+}
