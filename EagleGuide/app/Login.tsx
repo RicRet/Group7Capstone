@@ -7,10 +7,12 @@ const Login = () => {
     const router = useRouter();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [message, setMessage] = useState('');
 
     const handleLogin = async () => {
             if (username && password) {
         try {
+            setMessage('');
             const response = await axios.post('http://needsIP/api/users/login', { username, password });
             if (response.data.user) {
                 // successful login
@@ -18,9 +20,11 @@ const Login = () => {
         }
         catch (error) {
             // if user and pass do not successfully login
+            setMessage('Login failed. Please try again.');
         }
         } else {
             // if there is no user or pass
+            setMessage('Login failed. Please try again.');
         }
     }
 
@@ -45,7 +49,12 @@ const Login = () => {
                 onChangeText={setPassword}
             />
 
-            
+            {message ? (
+                <Text style={styles.message}>
+                    {message}
+                </Text>
+            ) : null}
+
             <Text style={styles.link} onPress={() => router.replace('/Signup')}>
                 Sign Up
             </Text>
@@ -99,6 +108,13 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 10,
         fontWeight: 'bold',
+    },
+    message: {
+        textAlign: 'center',
+        fontSize: 16,
+        fontWeight: '500',
+        padding: 10,
+        borderRadius: 5,
     },
 });
 

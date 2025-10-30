@@ -8,6 +8,7 @@ const Signup = () => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [message, setMessage] = useState('');
 
     const handleLogin = async () => {
             if (username && email && password) {
@@ -19,9 +20,11 @@ const Signup = () => {
         }
         catch (error) {
             // if for some reason sign up fails
+            setMessage('Sign up failed. Please try again.');
         }
         } else {
             // if there is no user or pass or email
+            setMessage('Sign up failed. Please try again.');
         }
     }
 
@@ -54,12 +57,18 @@ const Signup = () => {
                 onChangeText={setPassword}
             />
 
+            {message ? (
+                <Text style={styles.message}>
+                    {message}
+                </Text>
+            ) : null}
+
             <Text style={styles.link} onPress={() => router.replace('/Login')}>
                 Login
             </Text>
             
             <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                <Text style={styles.buttonText}>Login</Text>
+                <Text style={styles.buttonText}>Sign Up</Text>
             </TouchableOpacity>
         </View>
     );
@@ -107,6 +116,13 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 10,
         fontWeight: 'bold',
+    },
+    message: {
+        textAlign: 'center',
+        fontSize: 16,
+        fontWeight: '500',
+        padding: 10,
+        borderRadius: 5,
     },
 });
 
