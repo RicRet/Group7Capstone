@@ -1,0 +1,5 @@
+[
+  {"from":"Willis Library","to":"Student Union","description":"Willis-Union","type":"walking","accessibility_path_type":1},
+  {"from":"Willis Library","to":"Business Leadership Building","description":"Willis-BLB","type":"walking","accessibility_path_type":1},
+  {"from":"Student Union","to":"Business Leadership Building","description":"Union-BLB","type":"walking","accessibility_path_type":1}
+]

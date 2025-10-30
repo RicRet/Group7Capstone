@@ -1,6 +1,8 @@
 # This is Eagle Guide
 ## For our dev:
 
+MAKE SURE TO CD TO EagleGuide before running commands
+
 1. Install dependencies
 
    ```bash
@@ -24,3 +26,4 @@ PLEASE KEEP TRACK OF ALL NPM INSTALLS/PACKAGES/MODULES HERE:
       npm install react-native
    ```
 
+AXIOS
