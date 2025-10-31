@@ -1,32 +1,33 @@
 import axios from 'axios';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
-const Login = () => {
+const Signup = () => {
     const router = useRouter();
     const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const handleLogin = async () => {
-            if (username && password) {
+            if (username && email && password) {
         try {
-            const response = await axios.post('http://needsIP/api/users/login', { username, password });
+            const response = await axios.post('http://needsIP/api/users/signup', { username, email, password });
             if (response.data.user) {
-                // successful login
+                // successful sign up
             }
         }
         catch (error) {
-            // if user and pass do not successfully login
+            // if for some reason sign up fails
         }
         } else {
-            // if there is no user or pass
+            // if there is no user or pass or email
         }
     }
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Login</Text>
+            <Text style={styles.title}>Sign Up</Text>
             
             <TextInput
                 style={styles.input}
@@ -34,6 +35,14 @@ const Login = () => {
                 placeholderTextColor="#3c3c3cff"
                 value={username}
                 onChangeText={setUsername}
+            />
+
+            <TextInput
+                style={styles.input}
+                placeholder="Email"
+                placeholderTextColor="#3c3c3cff"
+                value={email}
+                onChangeText={setEmail}
             />
             
             <TextInput
@@ -45,11 +54,10 @@ const Login = () => {
                 onChangeText={setPassword}
             />
 
-            
-            <Text style={styles.link} onPress={() => router.replace('/Signup')}>
-                Sign Up
+            <Text style={styles.link} onPress={() => router.replace('/Login')}>
+                Login
             </Text>
-
+            
             <TouchableOpacity style={styles.button} onPress={handleLogin}>
                 <Text style={styles.buttonText}>Login</Text>
             </TouchableOpacity>
@@ -102,4 +110,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Login;
+export default Signup;
