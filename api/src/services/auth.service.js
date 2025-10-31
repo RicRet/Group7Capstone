@@ -5,6 +5,21 @@ import { createSession } from './session.service.js';
 // replace with bcrypt/argon2 in real usage
 function hash(p) { return crypto.createHash('sha256').update(p).digest('hex'); }
 
+export async function createUser(username, email, password) {
+  const existingUser = await query(
+    'SELECT id FROM users WHERE username = $1 OR email = $2',
+    [username, email]
+  );
+  if (existingUser.rows.length > 0) return null;
+  const password_hash = hash(password);
+  const result = await query(
+    `INSERT INTO users (username, email, password_hash) 
+      VALUES ($1, $2, $3) RETURNING *`,
+    [username, email, password_hash]
+  );
+  return result.rows[0]
+}
+
 export async function verifyUser(username, password) {
   // Example: adjust to your users table
   const rows = await query(
