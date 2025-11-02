@@ -15,7 +15,8 @@ const Login = () => {
             setMessage('');
             const response = await axios.post('http://needsIP/api/users/login', { username, password });
             if (response.data.user) {
-                // successful login
+                // routes to homescreen
+                router.replace('/homepage');
             }
         }
         catch (error) {
@@ -84,11 +85,11 @@ const styles = StyleSheet.create({
     input: {
         borderWidth: 1,
         borderColor: '#050000ff',
-        borderRadius: 10,
+        borderRadius: 5,
         paddingHorizontal: 10,
         marginBottom: 10,
         backgroundColor: 'white',
-        fontSize: 10,
+        fontSize: 14,
     },
     link: {
         color: '#050000ff',

@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { requireSession } from '../../middleware/requireSession.js';
 import { validate } from '../../middleware/validate.js';
-import { login } from '../../services/auth.service.js';
+import { createUser, login } from '../../services/auth.service.js';
 import { deleteSession } from '../../services/session.service.js';
-import { loginSchema } from '../../validations/auth.schema.js';
+import { loginSchema, signupSchema } from '../../validations/auth.schema.js';
 
 const r = Router();
 

@@ -40,7 +40,7 @@ const Signup = () => {
         try {
             const response = await axios.post('http://needsIP/api/users/signup', { username, email, password });
             if (response.data.user) {
-                // successful sign up
+                setMessage('You are signed up! Login to continue.');
             }
         }
         catch (error) {
