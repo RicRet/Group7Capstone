@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import {
+    Alert,
+    Keyboard,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
     StyleSheet,
     Text,
     TextInput,
     TouchableOpacity,
-    View,
-    ScrollView,
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
     TouchableWithoutFeedback,
-    Keyboard,
+    View,
 } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 const MapScreen = () => {
     const [showMenu, setShowMenu] = useState(false);
@@ -59,21 +59,22 @@ const MapScreen = () => {
                 <View style={styles.container}>
                     {/* Map */}
                     <MapView
+                        provider={PROVIDER_GOOGLE}
                         style={StyleSheet.absoluteFillObject}
                         initialRegion={{
-                            latitude: 33.2106,
-                            longitude: -97.1470,
-                            latitudeDelta: 0.01,
-                            longitudeDelta: 0.01,
-                        }}
-                        showsUserLocation={true}
-                        showsCompass={true}
-                    >
-                        <Marker
-                            coordinate={{ latitude: 33.2106, longitude: -97.1470 }}
-                            title="University Union"
-                            description="University of North Texas"
-                        />
+                        latitude: 33.2106,
+                        longitude: -97.1470,
+                        latitudeDelta: 0.01,
+                        longitudeDelta: 0.01,
+                    }}
+                    showsUserLocation
+                    showsCompass
+>
+                    <Marker
+                        coordinate={{ latitude: 33.2106, longitude: -97.1470 }}
+                        title="University Union"
+                        description="University of North Texas"
+                    />
                     </MapView>
 
                     {/* Floating menu button */}
