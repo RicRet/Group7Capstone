@@ -24,6 +24,7 @@ PLEASE KEEP TRACK OF ALL NPM INSTALLS/PACKAGES/MODULES HERE:
    ```bash
       npm install axios
       npm install react-native
+      npm install react-native-maps
    ```
 
 AXIOS

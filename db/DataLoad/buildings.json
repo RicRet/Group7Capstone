@@ -12,5 +12,6 @@
   {"name":"General Academic Building", "description":"Classroom Building", "type":"Academic"},
   {"name":"Auditorium Building", "description":"Auditorium  Building", "type":"Student Resources"},
   {"name":"Language Building", "description":"Language Building", "type":"Academic"},
-  {"name":"Curry Hall", "description":"Classroom Building", "type":"Academic"}
+  {"name":"Curry Hall", "description":"Classroom Building", "type":"Academic"},
+  {"name":"Chilton Hall", "description":"Student Dormitory", "type":"Academic"}
 ]

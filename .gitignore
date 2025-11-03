@@ -5,3 +5,5 @@ __pycache__/
 .venv/
 dist/
 build/
+redisclient.js
+pgClient.js
