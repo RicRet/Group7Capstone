@@ -16,6 +16,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    networks: [eg-net]
 
   pgadmin:
     image: dpage/pgadmin4:9.8
@@ -31,6 +32,7 @@ services:
       - pgadmin-data:/var/lib/pgadmin
     depends_on:
       - db
+    networks: [eg-net]
 
   redis:
     image: redis:7
@@ -42,7 +44,7 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
-
+    networks: [eg-net]
 
   redisinsight:
     image: redis/redisinsight:latest
@@ -51,7 +53,12 @@ services:
       - "5540:5540"
     depends_on:
       - redis
+    networks: [eg-net]
 
 volumes:
   eg-pgdata:
   pgadmin-data:
+
+networks:
+  eg-net:
+    name: eg-net
