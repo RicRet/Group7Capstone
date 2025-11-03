@@ -1,12 +1,13 @@
+import axios from 'axios';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Alert, Button, StyleSheet, Text, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
-export default function addroute() {
+export default function Addroute() {
   const router = useRouter();
 
- {/*For dropdown 1*/}
+ //For dropdown 1
   const [open1, setOpen1] = useState(false);
   const [value1, setValue1] = useState(null);
   const [items1, setItems1] = useState([
@@ -15,7 +16,7 @@ export default function addroute() {
     { label: 'Parking Garage', value: 'option3' },
   ]);
 
-  {/*For dropdown 2*/}
+  //For dropdown 2
   const [open2, setOpen2] = useState(false);
   const [value2, setValue2] = useState(null);
   const [items2, setItems2] = useState([
@@ -23,6 +24,19 @@ export default function addroute() {
     { label: 'Willis', value: 'option2' },
     { label: 'Parking Garage', value: 'option3' },
   ]);
+
+  const addr = async (prevb: null, newb: null) => {
+  if (!prevb || !newb) return Alert.alert('Select both buildings');
+
+  try {
+    const res = await axios.post('http://localhost:3000/api/routes', { prevb, newb });
+    Alert.alert('Success', res.data.message);
+  } catch {
+    Alert.alert('Error', 'Could not reach server');
+  }
+};
+
+
 
   return (
     <View style={styles.container}>
@@ -60,7 +74,8 @@ export default function addroute() {
         </View>
       </View>
 
-     
+     <Button title="Submit Route" onPress={() => addr(value1, value2)} />
+
         {/*Button for homepage*/}
       <Button title="Go to Home" onPress={() => router.push('/homepage')} />
     </View>
