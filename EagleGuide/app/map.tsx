@@ -1,168 +1,237 @@
 import React, { useState } from 'react';
 import {
-    Image,
+    Alert,
+    Keyboard,
+    KeyboardAvoidingView,
+    Platform,
     ScrollView,
     StyleSheet,
     Text,
     TextInput,
     TouchableOpacity,
+    TouchableWithoutFeedback,
     View,
 } from 'react-native';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 const MapScreen = () => {
-    const [showBookmarks, setShowBookmarks] = useState(true);
+    const [showMenu, setShowMenu] = useState(false);
+    const [routeText, setRouteText] = useState('');
+    const [bookmarks, setBookmarks] = useState([
+        'Willis Library',
+        'Union',
+        'Lot 20',
+        'Language',
+        'Eagle Landing',
+    ]);
+
+    // Add bookmark via prompt
+    const addBookmark = () => {
+        Alert.prompt(
+            'Add Bookmark',
+            'Enter the name of your new bookmark:',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'Add',
+                    onPress: (bookmarkName?: string) => {
+                        if (bookmarkName && bookmarkName.trim() && !bookmarks.includes(bookmarkName.trim())) {
+                            setBookmarks([...bookmarks, bookmarkName.trim()]);
+                        }
+                    },
+                },
+            ],
+            'plain-text'
+        );
+    };
+
+    // Delete bookmark
+    const deleteBookmark = (item: string) => {
+        setBookmarks(bookmarks.filter((b) => b !== item));
+    };
 
     return (
-        <View style={styles.container}>
-            {/* Header */}
-            <View style={styles.header}>
-                <Text style={styles.title}>UNT Eagle Guide</Text>
-            </View>
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <View style={styles.container}>
+                    {/* Map */}
+                    <MapView
+                        provider={PROVIDER_GOOGLE}
+                        style={StyleSheet.absoluteFillObject}
+                        initialRegion={{
+                        latitude: 33.2106,
+                        longitude: -97.1470,
+                        latitudeDelta: 0.01,
+                        longitudeDelta: 0.01,
+                    }}
+                    showsUserLocation
+                    showsCompass
+>
+                    <Marker
+                        coordinate={{ latitude: 33.2106, longitude: -97.1470 }}
+                        title="University Union"
+                        description="University of North Texas"
+                    />
+                    </MapView>
 
-            {/* Search Box */}
-            <View style={styles.searchContainer}>
-                <TextInput
-                    style={styles.searchInput}
-                    placeholder="Search for buildings, parking, etc."
-                    placeholderTextColor="#999"
-                />
-            </View>
+                    {/* Floating menu button */}
+                    <View style={styles.topRightContainer}>
+                        <TouchableOpacity
+                            style={styles.menuButton}
+                            onPress={() => setShowMenu(!showMenu)}
+                        >
+                            <Text style={styles.menuIcon}>☰</Text>
+                        </TouchableOpacity>
 
-            {/*Bookmarks Section */}
-            <View style={styles.bookmarksContainer}>
-                <TouchableOpacity
-                    onPress={() => setShowBookmarks(!showBookmarks)}
-                    style={styles.bookmarksHeader}
-                >
-                    <Text style={styles.bookmarksTitle}>My Bookmarks</Text>
-                    <Text style={styles.toggleArrow}>{showBookmarks ? '▲' : '▼'}</Text>
-                </TouchableOpacity>
+                        {showMenu && (
+                            <View style={styles.menuContainer}>
+                                {['Home', 'Settings', 'Profile', 'Help'].map((tab, index) => (
+                                    <TouchableOpacity key={index} style={styles.menuItem}>
+                                        <Text style={styles.menuText}>{tab}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        )}
+                    </View>
 
-                {showBookmarks && (
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                        {['Willis Library', 'Union', 'Lot 20', 'Language', 'Eagle Landing'].map(
-                            (item, index) => (
+                    {/* Bottom Section */}
+                    <View style={styles.bottomContainer}>
+                        {/* Search Bar */}
+                        <View style={styles.searchBar}>
+                            <TextInput
+                                style={styles.searchInput}
+                                placeholder='Search route (e.g. "Willis Library to Union")'
+                                placeholderTextColor="#999"
+                                value={routeText}
+                                onChangeText={setRouteText}
+                                onFocus={() => setShowMenu(false)}
+                                returnKeyType="done"
+                            />
+                        </View>
+
+                        {/* Bookmarks */}
+                        <ScrollView
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            style={styles.bookmarksContainer}
+                        >
+                            {bookmarks.map((item, index) => (
                                 <View key={index} style={styles.bookmarkItem}>
                                     <Text style={styles.bookmarkText}>{item}</Text>
+                                    <TouchableOpacity onPress={() => deleteBookmark(item)}>
+                                        <Text style={styles.deleteText}>✕</Text>
+                                    </TouchableOpacity>
                                 </View>
-                            )
-                        )}
-                    </ScrollView>
-                )}
-            </View>
+                            ))}
 
-            {/* Example Map Currently has UNT Map image */}
-            <View style={styles.mapContainer}>
-                <ScrollView
-                    style={styles.scrollView}
-                    contentContainerStyle={styles.scrollContent}
-                    maximumZoomScale={3}
-                    minimumZoomScale={1}
-                    showsHorizontalScrollIndicator={false}
-                    showsVerticalScrollIndicator={false}
-                >
-                    <Image
-                        source={{
-                            uri: 'https://texashistory.unt.edu/ark:/67531/metadc673735/m1/1/high_res/',
-                        }}
-                        style={styles.mapImage}
-                        resizeMode="contain"
-                    />
-                </ScrollView>
-                <Text style={styles.placeholderText}>(Pinch or scroll to zoom)</Text>
-            </View>
-        </View>
+                            {/* Add Bookmark "+" Box */}
+                            <TouchableOpacity style={styles.addBox} onPress={addBookmark}>
+                                <Text style={styles.addBoxText}>＋</Text>
+                            </TouchableOpacity>
+                        </ScrollView>
+
+                        <TouchableOpacity style={styles.navButton}>
+                            <Text style={styles.navButtonText}>Start Navigation</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
     );
 };
 
 export default MapScreen;
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#eaf5e9',
-        paddingTop: 40,
+    container: { flex: 1 },
+    map: { ...StyleSheet.absoluteFillObject },
+
+    /** Menu **/
+    topRightContainer: {
+        position: 'absolute',
+        top: 50,
+        right: 20,
+        alignItems: 'flex-end',
     },
-    header: {
-        alignItems: 'center',
-        marginBottom: 10,
-    },
-    title: {
-        fontSize: 22,
-        fontWeight: '700',
-        color: '#006A31',
-    },
-    searchContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
+    menuButton: {
         backgroundColor: '#fff',
-        marginHorizontal: 20,
+        padding: 12,
+        borderRadius: 10,
+        elevation: 4,
+    },
+    menuIcon: { fontSize: 22, color: '#006A31', fontWeight: '700' },
+    menuContainer: {
+        backgroundColor: '#fff',
         borderRadius: 8,
-        paddingHorizontal: 10,
+        marginTop: 8,
+        paddingVertical: 6,
+        width: 120,
+        elevation: 4,
+    },
+    menuItem: { paddingVertical: 8, paddingHorizontal: 10 },
+    menuText: { fontSize: 16, color: '#006A31', fontWeight: '500' },
+
+    /** Bottom section **/
+    bottomContainer: {
+        position: 'absolute',
+        bottom: 20,
+        width: '100%',
+        paddingHorizontal: 15,
+    },
+    searchBar: {
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        paddingHorizontal: 12,
         paddingVertical: 8,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        marginBottom: 10,
+        elevation: 3,
+        marginBottom: 8,
     },
-    searchInput: {
-        flex: 1,
-        fontSize: 16,
-        color: '#333',
-    },
+    searchInput: { fontSize: 16, color: '#333' },
+
+    /** Bookmarks **/
     bookmarksContainer: {
-        marginHorizontal: 20,
-        marginBottom: 10,
-    },
-    bookmarksHeader: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    bookmarksTitle: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#006A31',
-    },
-    toggleArrow: {
-        fontSize: 16,
-        color: '#006A31',
+        marginBottom: 10,
     },
     bookmarkItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
         backgroundColor: '#fff',
-        borderRadius: 6,
-        paddingHorizontal: 10,
-        paddingVertical: 6,
+        borderRadius: 20,
+        paddingHorizontal: 14,
+        paddingVertical: 8,
         marginRight: 8,
-        borderWidth: 1,
-        borderColor: '#ccc',
+        elevation: 3,
     },
-    bookmarkText: {
-        fontSize: 14,
-        color: '#333',
-    },
-    mapContainer: {
-        flex: 1,
-        borderWidth: 2,
-        borderColor: '#006A31',
-        marginHorizontal: 20,
+    bookmarkText: { fontSize: 14, color: '#333', marginRight: 6 },
+    deleteText: { color: 'red', fontSize: 16, fontWeight: '700' },
+
+    /** Add Box **/
+    addBox: {
+        width: 40,
+        height: 40,
         backgroundColor: '#fff',
-    },
-    scrollView: {
-        flex: 1,
-        width: '100%',
-    },
-    scrollContent: {
+        borderRadius: 20,
         alignItems: 'center',
         justifyContent: 'center',
+        elevation: 3,
     },
-    mapImage: {
-        width: 800,
-        height: 600,
+    addBoxText: {
+        fontSize: 24,
+        color: '#006A31',
+        fontWeight: '700',
     },
-    placeholderText: {
-        fontSize: 14,
-        color: '#555',
-        textAlign: 'center',
-        marginVertical: 6,
+
+    /** Navigation Button **/
+    navButton: {
+        backgroundColor: '#006A31',
+        paddingVertical: 14,
+        borderRadius: 10,
+        alignItems: 'center',
+        elevation: 4,
     },
+    navButtonText: { color: '#fff', fontSize: 18, fontWeight: '600' },
 });
