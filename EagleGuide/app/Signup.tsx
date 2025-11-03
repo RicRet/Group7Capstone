@@ -38,7 +38,7 @@ const Signup = () => {
     const handleSignUp = async () => {
             if (username && email && password && allRequirementsMet) {
         try {
-            const response = await axios.post('http://needsIP/api/users/signup', { username, email, password });
+            const response = await axios.post('http://localhost:3000/api/auth/signup', { username, email, password });
             if (response.data.user) {
                 setMessage('You are signed up! Login to continue.');
             }
@@ -49,7 +49,7 @@ const Signup = () => {
         }
         } else {
             // if there is no user or pass or email or does not need password requirements
-            setMessage('Sign up failed. Please try again.');
+            setMessage('Sign up failed. Please try again. Else error');
         }
     }
 

@@ -14,7 +14,7 @@ export async function createUser(username, email, password) {
   const password_hash = hash(password);
   const result = await query(
     `INSERT INTO users (username, email, password_hash) 
-      VALUES ($1, $2, $3) RETURNING *`,
+      VALUES ($1, $2, $6) RETURNING *`,
     [username, email, password_hash]
   );
   return result.rows[0]
