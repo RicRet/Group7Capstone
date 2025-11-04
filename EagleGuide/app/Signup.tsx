@@ -38,7 +38,7 @@ const Signup = () => {
     const handleSignUp = async () => {
             if (username && email && password && allRequirementsMet) {
         try {
-            const response = await axios.post('http://localhost:3000/api/auth/signup', { username, email, password });
+            const response = await axios.post('http://18.117.146.190:8080/api/auth/signup', { username, email, password });
             if (response.data.user) {
                 setMessage('You are signed up! Login to continue.');
             }
