@@ -19,8 +19,7 @@
     "pino": "^9",
     "redis": "^4",
     "uuid": "^9",
-    "zod": "^3",
-    "dotenv": "^16"
+    "zod": "^3"
   },
   "devDependencies": {
     "eslint": "^9",

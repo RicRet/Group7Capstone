@@ -40,3 +40,8 @@ export async function query(text, params) {
   const res = await pg.query(text, params);
   return res.rows;
 }
+
+export async function queries(text, params) {
+  const res = await pg.query(text, params);
+  return res;
+}
