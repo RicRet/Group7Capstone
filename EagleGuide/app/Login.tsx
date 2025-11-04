@@ -11,16 +11,20 @@ const Login = () => {
     const handleLogin = async () => {
             if (username && password) {
         try {
-            const response = await axios.post('http://needsIP/api/users/login', { username, password });
+            const response = await axios.post('http://localhost:3000/api/auth/login', {identifier: username, password });
             if (response.data.user) {
                 // successful login
+                alert('Login successful!');
+                router.replace('/homepage');
             }
         }
         catch (error) {
             // if user and pass do not successfully login
+            alert('Invalid username or password');
         }
         } else {
             // if there is no user or pass
+            alert('Please enter both username and password');
         }
     }
 

@@ -8,7 +8,7 @@ function hash(p) { return crypto.createHash('sha256').update(p).digest('hex'); }
 export async function verifyUser(username, password) {
   // Example: adjust to your users table
   const rows = await query(
-    'SELECT id, password_hash, roles FROM users WHERE username = $1',
+    'SELECT user_id FROM users.app_user WHERE display_name = $1 OR email = $2',
     [username]
   );
   const user = rows[0];
