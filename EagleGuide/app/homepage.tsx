@@ -28,7 +28,7 @@ export default function Home() {
        <View style={{ height: 20 }} /> 
        <TouchableOpacity
         style={styles.button}
-        onPress={() => router.push("/Viewroute")}
+        onPress={() => router.push("/map")}
       >
         <Text style={styles.buttonText}>View Routes (Placeholder)</Text>
       </TouchableOpacity>

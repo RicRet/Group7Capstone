@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node --watch src/index.js",
-    "start": "node src/index.js",
-    "lint": "eslint . || true"
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "lint": "eslint . || true",
+    "smoke:test": "node scripts/smoke-test.js"
   },
   "dependencies": {
+    "@redis/time-series": "^5.8.3",
     "cors": "^2",
     "express": "^4",
     "express-rate-limit": "^7",
