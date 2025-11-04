@@ -1,9 +1,27 @@
 // app/test.tsx
 import { useRouter } from "expo-router";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useState } from "react";
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { getHealth } from "./lib/api/health";
+import { apiBase } from "./lib/config";
 
 const Test = () => {
   const router = useRouter();
+  const [status, setStatus] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const pingApi = async () => {
+    setLoading(true);
+    setStatus(null);
+    try {
+      const data = await getHealth();
+      setStatus(`Health ok: ${data.ok} (base: ${apiBase})`);
+    } catch (e: any) {
+      setStatus(e?.message || "Request failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -24,6 +42,21 @@ const Test = () => {
       <TouchableOpacity style={styles.button} onPress={() => router.push("/Signup")}>
         <Text style={styles.buttonText}>Signup</Text>
       </TouchableOpacity>
+
+      <View style={{ height: 8 }} />
+      <TouchableOpacity style={[styles.button, styles.secondary]} onPress={pingApi} disabled={loading}>
+        {loading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.buttonText}>Ping API (/v1/health)</Text>
+        )}
+      </TouchableOpacity>
+
+      {status && (
+        <View style={styles.statusBox}>
+          <Text style={styles.statusText}>{status}</Text>
+        </View>
+      )}
     </View>
   );
 };
@@ -56,5 +89,19 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 18,
     fontWeight: "600",
+  },
+  secondary: {
+    backgroundColor: "#34C759",
+  },
+  statusBox: {
+    marginTop: 12,
+    padding: 12,
+    backgroundColor: "#F2F8FF",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#CCE4FF",
+  },
+  statusText: {
+    color: "#003A75",
   },
 });
