@@ -2,6 +2,11 @@
 import { v5 as uuidv5 } from 'uuid';
 import { query } from './pgClient.js';
 import { getClient as getRedis } from './redisClient.js';
+// Try to reuse the main API session store if available. If a session
+// exists in the main app (created via session.service), prefer that
+// session id for analytics. Falls back to deterministic uuidv5 when
+// no main-session is found.
+import { getSession } from '../../src/services/session.service.js';
 
 const STREAM = 'events:app';
 const GROUP = 'eg:cg';
@@ -19,9 +24,25 @@ async function handleBatch(r, messages) {
     try {
       const t = Number(e.occurred_at_ms);
       const sessionLabel = e.session_id ?? 'unknown';
-      const session_uuid = toUuid(sessionLabel);
 
-      // 0) ensure the session exists (best-effort)
+      // Prefer an existing session from the main API (if client used it).
+      // getSession returns stored object or null.
+      let session_uuid = null;
+      try {
+        const s = await getSession(sessionLabel);
+        if (s) {
+          // session.service uses UUIDs as sid values; use that directly
+          session_uuid = sessionLabel;
+        }
+      } catch (err) {
+        // ignore lookup errors and fall back to uuidv5
+      }
+
+      if (!session_uuid) {
+        session_uuid = toUuid(sessionLabel);
+      }
+
+      // 0) ensure the session exists (best-effort) in analytics table
       await query(
         `INSERT INTO analytics.user_sessions (session_id, user_id, device, app_version, started_at)
          VALUES ($1, $2, $3, $4, to_timestamp($5/1000.0))

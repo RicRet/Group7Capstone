@@ -104,3 +104,29 @@ Provides authentication (opaque Redis sessions), GIS endpoints (PostGIS + Redis 
 
 ```bash
 cd api
+```
+
+---
+
+## Analytics integration (unified server)
+
+Analytics HTTP endpoints are mounted at `/analytics` by `src/app.js`, reusing the main Express server. Background services can optionally run inside the same Node.js process:
+
+- `ANALYTICS_WORKER=true` — start Redis Stream consumer that writes events to Postgres and feeds RedisTimeSeries.
+- `ANALYTICS_AGGREGATOR=true` — start periodic SQL job to aggregate per-minute metrics.
+
+These are disabled by default. Configure via environment variables in `api/.env` (see `.env.example`).
+
+The RedisTimeSeries client is enabled via `@redis/time-series`. For basic smoke tests, you can use a built-in mock client by setting `ANALYTICS_MOCK=1`, which allows analytics routes to respond without a live Redis instance.
+
+### Smoke test (no external services required)
+
+```bash
+# from repository root
+node api/scripts/smoke-test.js
+```
+
+What it does:
+- Boots the app on a random port with `ANALYTICS_MOCK=1`
+- GETs `/v1/health`, `/analytics/api/ts/latest`, and `/analytics/api/keys`
+- Prints `SMOKE TEST PASS` on success
