@@ -1,7 +1,7 @@
-import axios from 'axios';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { signUp } from "./lib/api/signup";
 
 const Signup = () => {
     const router = useRouter();
@@ -38,10 +38,9 @@ const Signup = () => {
     const handleSignUp = async () => {
             if (username && email && password && allRequirementsMet) {
         try {
-            const response = await axios.post('http://18.117.146.190:8080/api/auth/signup', { username, email, password });
-            if (response.data.user) {
+            const response = await signUp({ username, email, password });
                 setMessage('You are signed up! Login to continue.');
-            }
+                console.log('Signup successful:', response);
         }
         catch (error) {
             // if for some reason sign up fails
