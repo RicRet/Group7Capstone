@@ -1,23 +1,15 @@
-//loads import from dotenv before the rest
-import dotenv from 'dotenv';
-dotenv.config({ path: './api/src/.env' });
-console.log('✅ Loaded .env');
+import express from 'express';
+import { query } from './db/pg.js';
 
-// awaits import from .env
-const { default: express } = await import('express');
-const { default: cors } = await import('cors');
-const { query } = await import('./db/pg.js');
+const router = express.Router();
 
-// sets up server
-const server = express();
-server.use(cors());
-server.use(express.json());
-
-//adds new route
-server.post('/api/routes', async (req, res) => {
+//Function to inserst routes into db
+router.post('/routes', async (req, res) => {
   const { prevb, newb } = req.body;
-  if (!prevb || !newb)
-    return res.json({ message: 'Needs both buildings ' });
+    
+  if (!prevb || !newb) {
+    return res.json({ message: 'Needs both buildings' });
+  }
 
   try {
     const result = await query(
@@ -29,14 +21,17 @@ server.post('/api/routes', async (req, res) => {
 
     res.json({
       message: `Route saved from ${prevb} to ${newb}`,
+      path_id: result[0].path_id,
     });
   } catch (err) {
     console.error('Insert error');
+  
   }
 });
 
+export default router;
 
 
-// Start server
-server.listen(3000, () => console.log('✅ Server running on port 3000'));
+
+
 
