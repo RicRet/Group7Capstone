@@ -1,9 +1,24 @@
 import crypto from 'node:crypto';
-import { query } from '../db/pg.js';
+import { queries, query } from '../db/pg.js';
 import { createSession } from './session.service.js';
 
 // replace with bcrypt/argon2 in real usage
 function hash(p) { return crypto.createHash('sha256').update(p).digest('hex'); }
+
+export async function createUser(username, email, password) {
+ const existingUser = await queries(
+    'SELECT user_id FROM users.app_user WHERE display_name = $1 OR email = $2',
+    [username, email]
+  );
+  if (existingUser.rows.length > 0) return null;
+  const password_hash = hash(password);
+  const result = await queries(
+    `INSERT INTO users.app_user (display_name, email, password_hash) 
+   VALUES ($1, $2, $3) RETURNING user_id, display_name, email, created_at`,
+    [username, email, password_hash]
+  );
+  return result.rows[0]
+}
 
 export async function verifyUser(username, password) {
   // Example: adjust to your users table

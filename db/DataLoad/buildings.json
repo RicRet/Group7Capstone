@@ -3,5 +3,15 @@
   {"name":"Discovery Park","description":"Engineering complex","type":"Academic"},
   {"name":"Student Union","description":"Events & admin","type":"Student Resources"},
   {"name":"Business Leadership Building", "description":"Business Building", "type":"Academic"},
+  {"name":"Environmental Education, Science & Technology", "description":"Science Building", "type":"Academic"},
+  {"name":"Chemistry Building", "description":"Science Building", "type":"Academic"},
+  {"name":"Science Research Building, Science & Technology", "description":"Science Building", "type":"Academic"},
+  {"name":"Terrill Hall, Science & Technology", "description":"Psychology Building", "type":"Academic"},
+  {"name":"Marquis Hall", "description":"Student services", "type":"Student Resources"},
+  {"name":"Hickory Hall", "description":"Classroom Building", "type":"Academic"},
+  {"name":"General Academic Building", "description":"Classroom Building", "type":"Academic"},
+  {"name":"Auditorium Building", "description":"Auditorium  Building", "type":"Student Resources"},
+  {"name":"Language Building", "description":"Language Building", "type":"Academic"},
+  {"name":"Curry Hall", "description":"Classroom Building", "type":"Academic"},
   {"name":"Chilton Hall", "description":"Student Dormitory", "type":"Academic"}
 ]
