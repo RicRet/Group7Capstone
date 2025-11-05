@@ -109,6 +109,7 @@ const MapScreen = () => {
         ref={sheetRef}
         index={1}
         snapPoints={snapPoints}
+        backgroundStyle={styles.bottomSheetBackground} 
       >
         <BottomSheetScrollView contentContainerStyle={styles.contentContainer}>
           <View style={styles.bottomContainer}>
@@ -166,8 +167,8 @@ const styles = StyleSheet.create({
     topRightContainer: {
         position: 'absolute',
         top: 50,
-        right: 20,
-        alignItems: 'flex-end',
+        left: 20,
+        width: 40,
     },
     menuButton: {
         backgroundColor: '#fff',
@@ -189,8 +190,6 @@ const styles = StyleSheet.create({
 
     /** Bottom section **/
     bottomContainer: {
-        position: 'absolute',
-        bottom: 20,
         width: '100%',
         paddingHorizontal: 15,
     },
@@ -249,6 +248,9 @@ const styles = StyleSheet.create({
     navButtonText: { color: '#fff', fontSize: 18, fontWeight: '600' },
     contentContainer: {
     padding: 20,
-    backgroundColor: "white",
+    backgroundColor: '#c4c4c4ff',
+  },
+  bottomSheetBackground: {
+    backgroundColor: '#c4c4c4ff',
   },
 });

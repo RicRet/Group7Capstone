@@ -16,7 +16,7 @@ const Login = () => {
             const response = await axios.post('http://needsIP/api/users/login', { username, password });
             if (response.data.user) {
                 // routes to homescreen
-                router.replace('/homepage');
+                router.replace('/map');
             }
         }
         catch (error) {
