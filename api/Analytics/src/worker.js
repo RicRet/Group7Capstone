@@ -22,7 +22,7 @@ async function handleBatch(r, messages) {
     const e = message; // strings
 
     try {
-      const t = Number(e.occurred_at_ms);
+  const t = Number(e.occurred_at_ms);
       const sessionLabel = e.session_id ?? 'unknown';
 
       // Prefer an existing session from the main API (if client used it).
@@ -77,9 +77,9 @@ async function handleBatch(r, messages) {
 
       // 2) feed RedisTimeSeries for live charts
       await Promise.all([
-        r.ts.add('ts:req:count', t, 1),
-        r.ts.add('ts:latency:ms', t, e.latency_ms ? Number(e.latency_ms) : 0),
-        r.ts.add('ts:errors:count', t, (e.event_type === 'error' || e.success === 'false') ? 1 : 0)
+        r.ts.add('ts:req:count', '*', 1, { ON_DUPLICATE: 'SUM' }),
+        r.ts.add('ts:latency:ms', '*', e.latency_ms ? Number(e.latency_ms) : 0, { ON_DUPLICATE: 'LAST' }),
+        r.ts.add('ts:errors:count', '*', (e.event_type === 'error' || e.success === 'false') ? 1 : 0, { ON_DUPLICATE: 'SUM' })
       ]);
 
       // 3) ACK
@@ -125,7 +125,15 @@ async function main() {
   }
 }
 
-main().catch((e) => {
-  console.error('Worker fatal', e);
-  process.exit(1);
-});
+// Only start the worker when not in mock mode. In mock mode, Redis commands
+// like xGroupCreate/xReadGroup are not available and should be skipped.
+const MOCK = String(process.env.ANALYTICS_MOCK).toLowerCase() === 'true' || process.env.ANALYTICS_MOCK === '1';
+
+if (MOCK) {
+  console.log('Analytics worker skipped (ANALYTICS_MOCK enabled)');
+} else {
+  main().catch((e) => {
+    console.error('Worker fatal', e);
+    process.exit(1);
+  });
+}
