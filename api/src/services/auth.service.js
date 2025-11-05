@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { queries, query } from '../db/pg.js';
+import { query } from '../db/pg.js';
 import { createSession } from './session.service.js';
 
 // replace with bcrypt/argon2 in real usage

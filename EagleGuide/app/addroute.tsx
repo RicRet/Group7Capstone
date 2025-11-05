@@ -1,44 +1,49 @@
-import axios from 'axios';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Alert, Button, StyleSheet, Text, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { apiBase } from "./lib/config";
+import { addRoute } from './lib/api/addroute';
+
 
 
 export default function Addroute() {
   const router = useRouter();
 
+ 
+
  //For dropdown 1
   const [open1, setOpen1] = useState(false);
   const [value1, setValue1] = useState(null);
   const [items1, setItems1] = useState([
-    { label: 'Student Union', value: 'option1' },
-    { label: 'Willis', value: 'option2' },
-    { label: 'Parking Garage', value: 'option3' },
+    { label: 'Student Union', value: 'Student Union' },
+    { label: 'Willis', value: 'Willis' },
+    { label: 'Parking Garage', value: 'Parking Garage' },
   ]);
 
   //For dropdown 2
   const [open2, setOpen2] = useState(false);
   const [value2, setValue2] = useState(null);
   const [items2, setItems2] = useState([
-    { label: 'Student Union', value: 'option1' },
-    { label: 'Willis', value: 'option2' },
-    { label: 'Parking Garage', value: 'option3' },
+    { label: 'Student Union', value: 'Student Union' },
+    { label: 'Willis', value: 'Willis' },
+    { label: 'Parking Garage', value: 'Parking Garage' },
   ]);
 
 
+  
+
   //Function To take front end data to backend
   const addr = async (prevb: string | null, newb: string | null) => {
-    if (!prevb || !newb) return Alert.alert('Select both buildings');
+  if (!prevb || !newb) return Alert.alert('Select both buildings');
+  try {
+    const res = await addRoute(prevb, newb);
+    Alert.alert('Success', res.message);
+  } catch {
+    Alert.alert('Error', 'Could not reach the server');
+  }
+};
 
-    try {
-      const res = await axios.post(`${apiBase}/routes`, { prevb, newb });
-      Alert.alert('Success', res.data.message);
-    } catch{
-       Alert.alert('Error', 'Could not reach the server');
-    }
-  };
+
 
 
   return (
