@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import React, { useMemo, useRef, useState } from 'react';
 import {
     Alert,
     Keyboard,
@@ -12,6 +13,7 @@ import {
     TouchableWithoutFeedback,
     View,
 } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 
 const MapScreen = () => {
@@ -50,7 +52,11 @@ const MapScreen = () => {
         setBookmarks(bookmarks.filter((b) => b !== item));
     };
 
+    const sheetRef = useRef<BottomSheet>(null);
+    const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
+
     return (
+        <GestureHandlerRootView style={styles.container}>
         <KeyboardAvoidingView
             style={{ flex: 1 }}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -96,50 +102,57 @@ const MapScreen = () => {
                             </View>
                         )}
                     </View>
-
-                    {/* Bottom Section */}
-                    <View style={styles.bottomContainer}>
-                        {/* Search Bar */}
-                        <View style={styles.searchBar}>
-                            <TextInput
-                                style={styles.searchInput}
-                                placeholder='Search route (e.g. "Willis Library to Union")'
-                                placeholderTextColor="#999"
-                                value={routeText}
-                                onChangeText={setRouteText}
-                                onFocus={() => setShowMenu(false)}
-                                returnKeyType="done"
-                            />
-                        </View>
-
-                        {/* Bookmarks */}
-                        <ScrollView
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            style={styles.bookmarksContainer}
-                        >
-                            {bookmarks.map((item, index) => (
-                                <View key={index} style={styles.bookmarkItem}>
-                                    <Text style={styles.bookmarkText}>{item}</Text>
-                                    <TouchableOpacity onPress={() => deleteBookmark(item)}>
-                                        <Text style={styles.deleteText}>✕</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            ))}
-
-                            {/* Add Bookmark "+" Box */}
-                            <TouchableOpacity style={styles.addBox} onPress={addBookmark}>
-                                <Text style={styles.addBoxText}>＋</Text>
-                            </TouchableOpacity>
-                        </ScrollView>
-
-                        <TouchableOpacity style={styles.navButton}>
-                            <Text style={styles.navButtonText}>Start Navigation</Text>
-                        </TouchableOpacity>
-                    </View>
                 </View>
             </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
+        <BottomSheet
+        ref={sheetRef}
+        index={1}
+        snapPoints={snapPoints}
+      >
+        <BottomSheetScrollView contentContainerStyle={styles.contentContainer}>
+          <View style={styles.bottomContainer}>
+            {/* Search Bar */}
+            <View style={styles.searchBar}>
+                <TextInput
+                    style={styles.searchInput}
+                    placeholder='Search route (e.g. "Willis Library to Union")'
+                    placeholderTextColor="#999"
+                    value={routeText}
+                    onChangeText={setRouteText}
+                    onFocus={() => setShowMenu(false)}
+                    returnKeyType="done"
+                />
+            </View>
+
+            {/* Bookmarks */}
+            <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={styles.bookmarksContainer}
+            >
+                {bookmarks.map((item, index) => (
+                    <View key={index} style={styles.bookmarkItem}>
+                        <Text style={styles.bookmarkText}>{item}</Text>
+                        <TouchableOpacity onPress={() => deleteBookmark(item)}>
+                            <Text style={styles.deleteText}>✕</Text>
+                        </TouchableOpacity>
+                    </View>
+                ))}
+
+                {/* Add Bookmark "+" Box */}
+                <TouchableOpacity style={styles.addBox} onPress={addBookmark}>
+                    <Text style={styles.addBoxText}>＋</Text>
+                </TouchableOpacity>
+            </ScrollView>
+
+            <TouchableOpacity style={styles.navButton}>
+                <Text style={styles.navButtonText}>Start Navigation</Text>
+            </TouchableOpacity>
+        </View>
+        </BottomSheetScrollView>
+      </BottomSheet>
+    </GestureHandlerRootView>
     );
 };
 
@@ -234,4 +247,8 @@ const styles = StyleSheet.create({
         elevation: 4,
     },
     navButtonText: { color: '#fff', fontSize: 18, fontWeight: '600' },
+    contentContainer: {
+    padding: 20,
+    backgroundColor: "white",
+  },
 });
