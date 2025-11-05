@@ -43,6 +43,10 @@ const Test = () => {
         <Text style={styles.buttonText}>Signup</Text>
       </TouchableOpacity>
 
+      <TouchableOpacity style={styles.button} onPress={() => router.push("/scroller")}>
+        <Text style={styles.buttonText}>Scroll</Text>
+      </TouchableOpacity>
+
       <View style={{ height: 8 }} />
       <TouchableOpacity style={[styles.button, styles.secondary]} onPress={pingApi} disabled={loading}>
         {loading ? (
