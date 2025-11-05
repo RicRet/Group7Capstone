@@ -31,17 +31,20 @@ export const pg = new Pool({
   user: env.PGUSER,
   password: env.PGPASSWORD,
   database: env.PGDATABASE,
-  ssl: buildSsl(),
-  max: 10
+  max: 10,
+  ssl: {
+    require: true,
+    rejectUnauthorized: false,
+  },
 });
 
 //helper to run query
 export async function query(text, params) {
-  const res = await pg.query(text, params);
-  return res.rows;
-}
-
-export async function queries(text, params) {
-  const res = await pg.query(text, params);
-  return res;
+   try {
+    const res = await pg.query(text, params);
+    return res.rows;
+  } catch (err) {
+    console.error("❌  Query failed:", text, "\n📦 Params:", params, "\n🧠 Error:", err.message);
+    throw err; // <-- make sure we re-throw so Express can see it
+  }
 }

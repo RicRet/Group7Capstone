@@ -10,8 +10,9 @@
   },
   "dependencies": {
     "@redis/time-series": "^5.8.3",
-    "cors": "^2",
-    "express": "^4",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
     "express-rate-limit": "^7",
     "helmet": "^7",
     "morgan": "^1",

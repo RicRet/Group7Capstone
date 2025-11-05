@@ -1,35 +1,29 @@
-import dotenv from 'dotenv';
-import { createApp } from './app.js';
+//loads env before anything else
 
-dotenv.config();
+import dotenv from 'dotenv';
+dotenv.config({ path: './src/.env' });
+console.log('✅ Loaded .env');
+
+//loads other imports
+const { default: express } = await import('express');
+const { default: cors } = await import('cors');
+const { default: routes } = await import('./addrouteps.js');
+const { createApp } = await import('./app.js');
+
+
 
 const PORT = process.env.PORT || 8080;
 
 const app = createApp();
 
-app.listen(PORT, () => {
-  console.log(`API server listening on port ${PORT}`);
+//mounts the addroutefunction
+app.use('/v1', routes);
+
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(` API server listening on http://0.0.0.0:${PORT}`);
 });
 
-// Optionally start analytics background services in-process
-async function maybeStartAnalytics() {
-  try {
-    if (String(process.env.ANALYTICS_WORKER).toLowerCase() === 'true') {
-      // Starts an event consumer loop for Redis Streams -> Postgres
-      await import('../Analytics/src/worker.js');
-      console.log('Analytics worker started');
-    }
-    if (String(process.env.ANALYTICS_AGGREGATOR).toLowerCase() === 'true') {
-      // Starts periodic SQL aggregation job
-      await import('../Analytics/src/aggregator.js');
-      console.log('Analytics aggregator started');
-    }
-  } catch (e) {
-    console.error('Failed to start analytics background services:', e?.message || e);
-  }
-}
-
-maybeStartAnalytics();
 
 // Graceful shutdown
 process.on('SIGINT', () => {
