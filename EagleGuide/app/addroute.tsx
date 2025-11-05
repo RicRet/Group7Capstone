@@ -3,6 +3,8 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Alert, Button, StyleSheet, Text, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { apiBase } from "./lib/config";
+
 
 export default function Addroute() {
   const router = useRouter();
@@ -25,17 +27,18 @@ export default function Addroute() {
     { label: 'Parking Garage', value: 'option3' },
   ]);
 
-  const addr = async (prevb: null, newb: null) => {
-  if (!prevb || !newb) return Alert.alert('Select both buildings');
 
-  try {
-    const res = await axios.post('http://localhost:3000/api/routes', { prevb, newb });
-    Alert.alert('Success', res.data.message);
-  } catch {
-    Alert.alert('Error', 'Could not reach server');
-  }
-};
+  //Function To take front end data to backend
+  const addr = async (prevb: string | null, newb: string | null) => {
+    if (!prevb || !newb) return Alert.alert('Select both buildings');
 
+    try {
+      const res = await axios.post(`${apiBase}/routes`, { prevb, newb });
+      Alert.alert('Success', res.data.message);
+    } catch{
+       Alert.alert('Error', 'Could not reach the server');
+    }
+  };
 
 
   return (

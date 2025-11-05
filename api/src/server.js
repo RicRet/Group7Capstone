@@ -1,7 +1,7 @@
 //loads env before anything else
 
 import dotenv from 'dotenv';
-dotenv.config({ path: './api/src/.env' });
+dotenv.config({ path: './src/.env' });
 console.log('✅ Loaded .env');
 
 //loads other imports
@@ -12,16 +12,18 @@ const { createApp } = await import('./app.js');
 
 
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
 const app = createApp();
 
 //mounts the addroutefunction
-app.use('/api', routes);
+app.use('/v1', routes);
 
-app.listen(PORT, () => {
-  console.log(`API server listening on port ${PORT}`);
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(` API server listening on http://0.0.0.0:${PORT}`);
 });
+
 
 // Graceful shutdown
 process.on('SIGINT', () => {
