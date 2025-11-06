@@ -1,15 +1,13 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Button, Keyboard, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, Keyboard, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { addRoute, deleteRoute } from './lib/api/addroute';
 
 
 
-export default function Addroute() {
+export default function Addroute({ onNavigate }: { onNavigate: (screen: string) => void }) {
   const router = useRouter();
-
- 
 
  //For dropdown 1
   const [open1, setOpen1] = useState(false);
@@ -30,7 +28,6 @@ export default function Addroute() {
   ]);
 //to track input for route delete
  const [num, setNum] = useState('');
-  
 
   //Function To take front end data to backend
   const addr = async (prevb: string | null, newb: string | null) => {
@@ -56,9 +53,6 @@ export default function Addroute() {
     }
   };
 
-
-
-
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style={styles.container}>
@@ -78,7 +72,7 @@ export default function Addroute() {
             setOpen={setOpen1}
             setValue={setValue1}
             containerStyle={{ height: 50 }}
-            dropDownContainerStyle={{ backgroundColor: 'white' }}
+            dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
           />
         </View>
         
@@ -91,7 +85,7 @@ export default function Addroute() {
             setOpen={setOpen2}
             setValue={setValue2}
             containerStyle={{ height: 50 }}
-            dropDownContainerStyle={{ backgroundColor: 'white' }}
+            dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
           />
         </View>
       </View>
@@ -105,13 +99,20 @@ export default function Addroute() {
          returnKeyType="done"
           onSubmitEditing={Keyboard.dismiss}
       />
+
       {/*Button for delete route*/}
-     <Button title="Delete Route" onPress={() => del()} />
+      <Text style={styles.link} onPress={() => del()}>
+          Delete Route
+      </Text>
       {/*Button for submit route*/}
-     <Button title="Submit Route" onPress={() => addr(value1, value2)} />
+      <Text style={styles.link} onPress={() => addr(value1, value2)}>
+          Submit Route
+      </Text>
 
         {/*Button for homepage*/}
-      <Button title="Go to Home" onPress={() => router.push('/homepage')} />
+      <Text style={styles.link} onPress={() => onNavigate('home')}>
+          Go back
+      </Text>
     </View>
     </TouchableWithoutFeedback>
   );
@@ -122,15 +123,21 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'green',
+    backgroundColor: '#3f3f3f',
     padding: 20,
   },
   title: {
     marginBottom: 20,
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'white',
+    color: '#dcdcdcff',
     textAlign: 'center',
+  },
+  link: {
+      color: '#dcdcdcff',
+      fontSize: 16,
+      fontWeight: 'bold',
+      textAlign: 'center',
   },
   dropdownRow: {
     flexDirection: 'row',
@@ -143,7 +150,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   input: {
-  backgroundColor: 'white',
+  backgroundColor: '#6b6b6b',
+  color: '#dcdcdcff',
   borderRadius: 8,
   padding: 10,
   marginVertical: 10,
