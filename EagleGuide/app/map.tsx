@@ -1,56 +1,61 @@
-import React, { useState } from 'react';
+import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import React, { useMemo, useRef, useState } from 'react';
 import {
-    Alert,
     Keyboard,
     KeyboardAvoidingView,
     Platform,
-    ScrollView,
     StyleSheet,
     Text,
-    TextInput,
     TouchableOpacity,
     TouchableWithoutFeedback,
     View,
 } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import Addroute from './addroute';
+import Homepage from './homepage';
 
 const MapScreen = () => {
     const [showMenu, setShowMenu] = useState(false);
-    const [routeText, setRouteText] = useState('');
-    const [bookmarks, setBookmarks] = useState([
-        'Willis Library',
-        'Union',
-        'Lot 20',
-        'Language',
-        'Eagle Landing',
-    ]);
+    const [currentSheet, setCurrentSheet] = useState('home');
 
-    // Add bookmark via prompt
-    const addBookmark = () => {
-        Alert.prompt(
-            'Add Bookmark',
-            'Enter the name of your new bookmark:',
-            [
-                { text: 'Cancel', style: 'cancel' },
-                {
-                    text: 'Add',
-                    onPress: (bookmarkName?: string) => {
-                        if (bookmarkName && bookmarkName.trim() && !bookmarks.includes(bookmarkName.trim())) {
-                            setBookmarks([...bookmarks, bookmarkName.trim()]);
-                        }
-                    },
-                },
-            ],
-            'plain-text'
-        );
+        const renderSheetContent = () => {
+        switch (currentSheet) {
+            case 'home':
+                return <Homepage onNavigate={setCurrentSheet} />;
+            case 'addroute':
+                return <Addroute onNavigate={setCurrentSheet} />;
+            default:
+                return <Homepage onNavigate={setCurrentSheet} />;
+        }
     };
 
-    // Delete bookmark
-    const deleteBookmark = (item: string) => {
-        setBookmarks(bookmarks.filter((b) => b !== item));
-    };
+    const sheetRef = useRef<BottomSheet>(null);
+    const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
+
+    // dark map style
+    const darkStyle = [
+  {
+    "elementType": "geometry",
+    "stylers": [{ "color": "#6b6b6b" }]
+  },
+  {
+    "elementType": "labels.text.fill",
+    "stylers": [{ "color": "#dcdcdcff" }]
+  },
+  {
+    "elementType": "labels.text.stroke",
+    "stylers": [{ "color": "#6b6b6b" }]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry",
+    "stylers": [{ "color": "#999999" }]
+  },
+];
 
     return (
+        <GestureHandlerRootView style={styles.container}>
         <KeyboardAvoidingView
             style={{ flex: 1 }}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -60,6 +65,7 @@ const MapScreen = () => {
                     {/* Map */}
                     <MapView
                         provider={PROVIDER_GOOGLE}
+                        customMapStyle={darkStyle}
                         style={StyleSheet.absoluteFillObject}
                         initialRegion={{
                         latitude: 33.2106,
@@ -96,50 +102,20 @@ const MapScreen = () => {
                             </View>
                         )}
                     </View>
-
-                    {/* Bottom Section */}
-                    <View style={styles.bottomContainer}>
-                        {/* Search Bar */}
-                        <View style={styles.searchBar}>
-                            <TextInput
-                                style={styles.searchInput}
-                                placeholder='Search route (e.g. "Willis Library to Union")'
-                                placeholderTextColor="#999"
-                                value={routeText}
-                                onChangeText={setRouteText}
-                                onFocus={() => setShowMenu(false)}
-                                returnKeyType="done"
-                            />
-                        </View>
-
-                        {/* Bookmarks */}
-                        <ScrollView
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            style={styles.bookmarksContainer}
-                        >
-                            {bookmarks.map((item, index) => (
-                                <View key={index} style={styles.bookmarkItem}>
-                                    <Text style={styles.bookmarkText}>{item}</Text>
-                                    <TouchableOpacity onPress={() => deleteBookmark(item)}>
-                                        <Text style={styles.deleteText}>✕</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            ))}
-
-                            {/* Add Bookmark "+" Box */}
-                            <TouchableOpacity style={styles.addBox} onPress={addBookmark}>
-                                <Text style={styles.addBoxText}>＋</Text>
-                            </TouchableOpacity>
-                        </ScrollView>
-
-                        <TouchableOpacity style={styles.navButton}>
-                            <Text style={styles.navButtonText}>Start Navigation</Text>
-                        </TouchableOpacity>
-                    </View>
                 </View>
             </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
+        <BottomSheet
+        ref={sheetRef}
+        index={1}
+        snapPoints={snapPoints}
+        backgroundStyle={styles.bottomSheetBackground} 
+      >
+        <BottomSheetScrollView contentContainerStyle={styles.contentContainer}>
+            {renderSheetContent()}
+        </BottomSheetScrollView>
+      </BottomSheet>
+    </GestureHandlerRootView>
     );
 };
 
@@ -153,18 +129,18 @@ const styles = StyleSheet.create({
     topRightContainer: {
         position: 'absolute',
         top: 50,
-        right: 20,
-        alignItems: 'flex-end',
+        left: 20,
+        width: 45,
     },
     menuButton: {
-        backgroundColor: '#fff',
+        backgroundColor: '#3f3f3f',
         padding: 12,
         borderRadius: 10,
         elevation: 4,
     },
-    menuIcon: { fontSize: 22, color: '#006A31', fontWeight: '700' },
+    menuIcon: { fontSize: 22, color: '#65d159', fontWeight: '700' },
     menuContainer: {
-        backgroundColor: '#fff',
+        backgroundColor: '#3f3f3f',
         borderRadius: 8,
         marginTop: 8,
         paddingVertical: 6,
@@ -173,65 +149,10 @@ const styles = StyleSheet.create({
     },
     menuItem: { paddingVertical: 8, paddingHorizontal: 10 },
     menuText: { fontSize: 16, color: '#006A31', fontWeight: '500' },
-
-    /** Bottom section **/
-    bottomContainer: {
-        position: 'absolute',
-        bottom: 20,
-        width: '100%',
-        paddingHorizontal: 15,
-    },
-    searchBar: {
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-        elevation: 3,
-        marginBottom: 8,
-    },
-    searchInput: { fontSize: 16, color: '#333' },
-
-    /** Bookmarks **/
-    bookmarksContainer: {
-        flexDirection: 'row',
-        marginBottom: 10,
-    },
-    bookmarkItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#fff',
-        borderRadius: 20,
-        paddingHorizontal: 14,
-        paddingVertical: 8,
-        marginRight: 8,
-        elevation: 3,
-    },
-    bookmarkText: { fontSize: 14, color: '#333', marginRight: 6 },
-    deleteText: { color: 'red', fontSize: 16, fontWeight: '700' },
-
-    /** Add Box **/
-    addBox: {
-        width: 40,
-        height: 40,
-        backgroundColor: '#fff',
-        borderRadius: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-        elevation: 3,
-    },
-    addBoxText: {
-        fontSize: 24,
-        color: '#006A31',
-        fontWeight: '700',
-    },
-
-    /** Navigation Button **/
-    navButton: {
-        backgroundColor: '#006A31',
-        paddingVertical: 14,
-        borderRadius: 10,
-        alignItems: 'center',
-        elevation: 4,
-    },
-    navButtonText: { color: '#fff', fontSize: 18, fontWeight: '600' },
+    contentContainer: {
+    padding: 20,
+  },
+  bottomSheetBackground: {
+    backgroundColor: '#3f3f3f',
+  },
 });
