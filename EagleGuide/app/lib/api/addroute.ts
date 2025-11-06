@@ -17,8 +17,9 @@ export type DeleteRouteResponse = {
 };
 
 //calls function from backend
-export async function addRoute(prevb: string, newb: string) {
-  const res = await http.post<AddRouteResponse>('/routes', { prevb, newb });
+export async function addRoute(prevb: string,newb: string,type: string,accessibility_path_type: number
+) {
+  const res = await http.post<AddRouteResponse>('/routes', { prevb,newb,type,accessibility_path_type, });
   return res.data;
 }
 

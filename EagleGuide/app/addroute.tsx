@@ -26,14 +26,32 @@ export default function Addroute({ onNavigate }: { onNavigate: (screen: string) 
     { label: 'Willis', value: 'Willis' },
     { label: 'Parking Garage', value: 'Parking Garage' },
   ]);
+ //For dropdown 3
+ const [open3, setOpen3] = useState(false);
+const [value3, setValue3] = useState(null);
+const [items3, setItems3] = useState([
+  { label: 'Pedestrian', value: 'Pedestrian' },
+  { label: 'Bus', value: 'Bus' },
+]);
+//For dropdown 4
+const [open4, setOpen4] = useState(false);
+const [value4, setValue4] = useState(null);
+const [items4, setItems4] = useState([
+  { label: '1', value: 1 },
+  { label: '2', value: 2 },
+]);
+
+
+  
 //to track input for route delete
  const [num, setNum] = useState('');
 
   //Function To take front end data to backend
-  const addr = async (prevb: string | null, newb: string | null) => {
-  if (!prevb || !newb) return Alert.alert('Select both buildings');
+  const addr = async ( prevb: string | null,newb: string | null,type: string | null,accessibility: number | null) => {
+  if (!prevb || !newb || !type || accessibility == null) {return Alert.alert('Enter all options');
+  }
   try {
-    const res = await addRoute(prevb, newb);
+    const res = await addRoute(prevb!, newb!, type!, accessibility!);
     Alert.alert('Success', res.message);
   } catch {
     Alert.alert('Error', 'Could not reach the server');
@@ -54,41 +72,71 @@ export default function Addroute({ onNavigate }: { onNavigate: (screen: string) 
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+  <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style={styles.container}>
-       {/*For Text*/}
+      {/*For Text*/}
       <Text style={styles.title}>
         Choose current building and then destination:
       </Text>
 
-     
+      {/* All dropdowns */}
       <View style={styles.dropdownRow}>
-         {/*settings for drop down1*/}
-        <View style={styles.dropdownBox}>
-          <DropDownPicker
-            open={open1}
-            value={value1}
-            items={items1}
-            setOpen={setOpen1}
-            setValue={setValue1}
-            containerStyle={{ height: 50 }}
-            dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
-          />
-        </View>
-        
-         {/*settings for drop down2*/}
-        <View style={styles.dropdownBox}>
-          <DropDownPicker
-            open={open2}
-            value={value2}
-            items={items2}
-            setOpen={setOpen2}
-            setValue={setValue2}
-            containerStyle={{ height: 50 }}
-            dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
-          />
-        </View>
-      </View>
+        {/* DropDown 1 */}
+        <View style={[styles.dropdownBox, { zIndex: 4000 }]}>
+  <DropDownPicker
+    open={open1}
+    value={value1}
+    items={items1}
+    setOpen={setOpen1}
+    setValue={setValue1}
+    containerStyle={{ height: 50 }}
+    dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
+    style={{ backgroundColor: '#6b6b6b' }}
+  />
+</View>
+
+        {/* DropDown 2 */}
+       <View style={[styles.dropdownBox, { zIndex: 3000 }]}>
+  <DropDownPicker
+    open={open2}
+    value={value2}
+    items={items2}
+    setOpen={setOpen2}
+    setValue={setValue2}
+    containerStyle={{ height: 50 }}
+    dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
+    style={{ backgroundColor: '#6b6b6b' }}
+  />
+</View>
+
+        {/* DropDown 3 */}
+        <View style={[styles.dropdownBox, { zIndex: 2000 }]}>
+  <DropDownPicker
+    open={open3}
+    value={value3}
+    items={items3}
+    setOpen={setOpen3}
+    setValue={setValue3}
+    containerStyle={{ height: 50 }}
+    dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
+    style={{ backgroundColor: '#6b6b6b' }}
+  />
+</View>
+
+        {/* 4 */}
+       <View style={[styles.dropdownBox, { zIndex: 1000 }]}>
+  <DropDownPicker
+    open={open4}
+    value={value4}
+    items={items4}
+    setOpen={setOpen4}
+    setValue={setValue4}
+    containerStyle={{ height: 50 }}
+    dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
+    style={{ backgroundColor: '#6b6b6b' }}
+  />
+</View>
+      </View> 
 
       <TextInput
         style={styles.input}
@@ -96,26 +144,25 @@ export default function Addroute({ onNavigate }: { onNavigate: (screen: string) 
         keyboardType="numeric"
         value={num}
         onChangeText={setNum}
-         returnKeyType="done"
-          onSubmitEditing={Keyboard.dismiss}
+        returnKeyType="done"
+        onSubmitEditing={Keyboard.dismiss}
       />
 
-      {/*Button for delete route*/}
+      {/* Buttons */}
       <Text style={styles.link} onPress={() => del()}>
-          Delete Route
-      </Text>
-      {/*Button for submit route*/}
-      <Text style={styles.link} onPress={() => addr(value1, value2)}>
-          Submit Route
+        Delete Route
       </Text>
 
-        {/*Button for homepage*/}
+      <Text style={styles.link} onPress={() => addr(value1, value2, value3, value4)}>
+        Submit Route
+      </Text>
+
       <Text style={styles.link} onPress={() => onNavigate('home')}>
-          Go back
+        Go back
       </Text>
     </View>
-    </TouchableWithoutFeedback>
-  );
+  </TouchableWithoutFeedback>
+);
 }
 
 const styles = StyleSheet.create({
