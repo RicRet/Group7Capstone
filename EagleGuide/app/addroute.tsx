@@ -1,30 +1,66 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Alert, Button, Keyboard, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { addRoute, deleteRoute } from './lib/api/addroute';
 
-export default function addroute({ onNavigate }: { onNavigate: (screen: string) => void }) {
+
+
+export default function Addroute() {
   const router = useRouter();
 
- {/*For dropdown 1*/}
+ 
+
+ //For dropdown 1
   const [open1, setOpen1] = useState(false);
   const [value1, setValue1] = useState(null);
   const [items1, setItems1] = useState([
-    { label: 'Student Union', value: 'option1' },
-    { label: 'Willis', value: 'option2' },
-    { label: 'Parking Garage', value: 'option3' },
+    { label: 'Student Union', value: 'Student Union' },
+    { label: 'Willis', value: 'Willis' },
+    { label: 'Parking Garage', value: 'Parking Garage' },
   ]);
 
-  {/*For dropdown 2*/}
+  //For dropdown 2
   const [open2, setOpen2] = useState(false);
   const [value2, setValue2] = useState(null);
   const [items2, setItems2] = useState([
-    { label: 'Student Union', value: 'option1' },
-    { label: 'Willis', value: 'option2' },
-    { label: 'Parking Garage', value: 'option3' },
+    { label: 'Student Union', value: 'Student Union' },
+    { label: 'Willis', value: 'Willis' },
+    { label: 'Parking Garage', value: 'Parking Garage' },
   ]);
+//to track input for route delete
+ const [num, setNum] = useState('');
+  
+
+  //Function To take front end data to backend
+  const addr = async (prevb: string | null, newb: string | null) => {
+  if (!prevb || !newb) return Alert.alert('Select both buildings');
+  try {
+    const res = await addRoute(prevb, newb);
+    Alert.alert('Success', res.message);
+  } catch {
+    Alert.alert('Error', 'Could not reach the server');
+  }
+};
+
+//Function to delete route
+ const del = async () => {
+    if (!num) return Alert.alert('Enter a route ID to delete');
+    try {
+      const id = Number(num);
+      const res = await deleteRoute(id);
+      Alert.alert('Deleted', res.message);
+      Keyboard.dismiss();
+    } catch {
+      Alert.alert('Error', 'Could not delete route');
+    }
+  };
+
+
+
 
   return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style={styles.container}>
        {/*For Text*/}
       <Text style={styles.title}>
@@ -42,7 +78,7 @@ export default function addroute({ onNavigate }: { onNavigate: (screen: string) 
             setOpen={setOpen1}
             setValue={setValue1}
             containerStyle={{ height: 50 }}
-            dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
+            dropDownContainerStyle={{ backgroundColor: 'white' }}
           />
         </View>
         
@@ -55,16 +91,29 @@ export default function addroute({ onNavigate }: { onNavigate: (screen: string) 
             setOpen={setOpen2}
             setValue={setValue2}
             containerStyle={{ height: 50 }}
-            dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
+            dropDownContainerStyle={{ backgroundColor: 'white' }}
           />
         </View>
       </View>
 
+      <TextInput
+        style={styles.input}
+        placeholder="Enter Route ID for deletion"
+        keyboardType="numeric"
+        value={num}
+        onChangeText={setNum}
+         returnKeyType="done"
+          onSubmitEditing={Keyboard.dismiss}
+      />
+      {/*Button for delete route*/}
+     <Button title="Delete Route" onPress={() => del()} />
+      {/*Button for submit route*/}
+     <Button title="Submit Route" onPress={() => addr(value1, value2)} />
+
         {/*Button for homepage*/}
-        <Text style={styles.link} onPress={() => onNavigate('home')}>
-          Go back
-        </Text>
+      <Button title="Go to Home" onPress={() => router.push('/homepage')} />
     </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -73,21 +122,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#3f3f3f',
+    backgroundColor: 'green',
     padding: 20,
   },
   title: {
     marginBottom: 20,
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#dcdcdcff',
+    color: 'white',
     textAlign: 'center',
-  },
-   link: {
-      color: '#dcdcdcff',
-      fontSize: 16,
-      fontWeight: 'bold',
-      textAlign: 'center',
   },
   dropdownRow: {
     flexDirection: 'row',
@@ -99,5 +142,13 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 5,
   },
+  input: {
+  backgroundColor: 'white',
+  borderRadius: 8,
+  padding: 10,
+  marginVertical: 10,
+  width: '60%',
+  textAlign: 'center',
+},
   
 });

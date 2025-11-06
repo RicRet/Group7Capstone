@@ -29,6 +29,44 @@ router.post('/routes', async (req, res) => {
   }
 });
 
+//Gets route for front end to list
+router.get('/routes', async (req, res) => {
+  try {
+     const result = await query(`SELECT * FROM gis.paths ORDER BY path_id DESC;`);
+    res.json(result);
+  } catch (err) {
+    console.error('get error');
+  
+  }
+});
+
+
+
+//Delete Route function
+router.delete('/routes/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await query(
+      `DELETE FROM gis.paths WHERE path_id = $1 RETURNING path_id, description`,
+      [id]
+    );
+
+    if (result.length === 0) {
+      return res.json({ message: 'No Route with that id exists' });
+    }
+
+    res.json({
+      message: `Route ${id} has been deleted `,
+    });
+  } catch (err) {
+    console.error('Deletion error');
+  }
+});
+
+
+
+
 export default router;
 
 

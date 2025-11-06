@@ -5,8 +5,30 @@ export type AddRouteResponse = {
   path_id?: number;
 };
 
+export type SavedRoute = {
+  path_id: number;
+  description: string;
+  type: string;
+  accessibility_path_type: number;
+};
+
+export type DeleteRouteResponse = {
+  message: string;
+};
+
 //calls function from backend
 export async function addRoute(prevb: string, newb: string) {
   const res = await http.post<AddRouteResponse>('/routes', { prevb, newb });
   return res.data;
+}
+
+
+export async function getRoutes() {
+  const res = await http.get<SavedRoute[]>('/routes');
+  return res.data;
+}
+
+  export async function deleteRoute(id: number) {
+   const res = await http.delete<DeleteRouteResponse>(`/routes/${id}`);
+   return res.data;
 }
