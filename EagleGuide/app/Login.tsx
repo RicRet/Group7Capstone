@@ -13,7 +13,7 @@ const Login = () => {
             if (username && password) {
         try {
             setMessage('');
-            const response = await axios.post('http://localhost:3000/v1/auth/login', { username, password });
+            const response = await axios.post('http://localhost:8080/v1/auth/login', { username, password });
             if (response.data.user) {
                 // routes to homescreen
                 setMessage('Login Suscessful!, redirecting to homepage.');
