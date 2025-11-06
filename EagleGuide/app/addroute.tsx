@@ -1,15 +1,12 @@
-import axios from 'axios';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Button, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { apiBase } from "./lib/config";
 
-
-export default function Addroute() {
+export default function addroute({ onNavigate }: { onNavigate: (screen: string) => void }) {
   const router = useRouter();
 
- //For dropdown 1
+ {/*For dropdown 1*/}
   const [open1, setOpen1] = useState(false);
   const [value1, setValue1] = useState(null);
   const [items1, setItems1] = useState([
@@ -18,7 +15,7 @@ export default function Addroute() {
     { label: 'Parking Garage', value: 'option3' },
   ]);
 
-  //For dropdown 2
+  {/*For dropdown 2*/}
   const [open2, setOpen2] = useState(false);
   const [value2, setValue2] = useState(null);
   const [items2, setItems2] = useState([
@@ -26,20 +23,6 @@ export default function Addroute() {
     { label: 'Willis', value: 'option2' },
     { label: 'Parking Garage', value: 'option3' },
   ]);
-
-
-  //Function To take front end data to backend
-  const addr = async (prevb: string | null, newb: string | null) => {
-    if (!prevb || !newb) return Alert.alert('Select both buildings');
-
-    try {
-      const res = await axios.post(`${apiBase}/routes`, { prevb, newb });
-      Alert.alert('Success', res.data.message);
-    } catch{
-       Alert.alert('Error', 'Could not reach the server');
-    }
-  };
-
 
   return (
     <View style={styles.container}>
@@ -59,7 +42,7 @@ export default function Addroute() {
             setOpen={setOpen1}
             setValue={setValue1}
             containerStyle={{ height: 50 }}
-            dropDownContainerStyle={{ backgroundColor: 'white' }}
+            dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
           />
         </View>
         
@@ -72,15 +55,15 @@ export default function Addroute() {
             setOpen={setOpen2}
             setValue={setValue2}
             containerStyle={{ height: 50 }}
-            dropDownContainerStyle={{ backgroundColor: 'white' }}
+            dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
           />
         </View>
       </View>
 
-     <Button title="Submit Route" onPress={() => addr(value1, value2)} />
-
         {/*Button for homepage*/}
-      <Button title="Go to Home" onPress={() => router.push('/homepage')} />
+        <Text style={styles.link} onPress={() => onNavigate('home')}>
+          Go back
+        </Text>
     </View>
   );
 }
@@ -90,15 +73,21 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'green',
+    backgroundColor: '#3f3f3f',
     padding: 20,
   },
   title: {
     marginBottom: 20,
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'white',
+    color: '#dcdcdcff',
     textAlign: 'center',
+  },
+   link: {
+      color: '#dcdcdcff',
+      fontSize: 16,
+      fontWeight: 'bold',
+      textAlign: 'center',
   },
   dropdownRow: {
     flexDirection: 'row',

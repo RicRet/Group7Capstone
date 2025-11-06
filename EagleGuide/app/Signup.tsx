@@ -59,7 +59,7 @@ const Signup = () => {
             <TextInput
                 style={styles.input}
                 placeholder="Username"
-                placeholderTextColor="#3c3c3cff"
+                placeholderTextColor="#dcdcdcff"
                 value={username}
                 onChangeText={setUsername}
             />
@@ -67,7 +67,7 @@ const Signup = () => {
             <TextInput
                 style={styles.input}
                 placeholder="Email"
-                placeholderTextColor="#3c3c3cff"
+                placeholderTextColor="#dcdcdcff"
                 value={email}
                 onChangeText={setEmail}
             />
@@ -75,7 +75,7 @@ const Signup = () => {
             <TextInput
                 style={styles.input}
                 placeholder="Password"
-                placeholderTextColor="#3c3c3cff"
+                placeholderTextColor="#dcdcdcff"
                 secureTextEntry={true}
                 value={password}
                 onChangeText={setPassword}
@@ -84,7 +84,7 @@ const Signup = () => {
             <TextInput
                 style={styles.input}
                 placeholder="Confirm Password"
-                placeholderTextColor="#3c3c3cff"
+                placeholderTextColor="#dcdcdcff"
                 secureTextEntry={true}
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
@@ -104,10 +104,6 @@ const Signup = () => {
                     {message}
                 </Text>
             ) : null}
-
-            <Text style={styles.link} onPress={() => router.replace('/Login')}>
-                Login
-            </Text>
             
             <TouchableOpacity 
                 style={[styles.button, !allRequirementsMet && styles.buttonDisabled]} 
@@ -118,6 +114,10 @@ const Signup = () => {
                     Sign Up
                 </Text>
             </TouchableOpacity>
+
+            <Text style={styles.link} onPress={() => router.replace('/Login')}>
+                Have an account? Login
+            </Text>
         </View>
     );
 };
@@ -138,65 +138,65 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         padding: 10,
-        backgroundColor: '#ffffffff',
+        backgroundColor: '#3f3f3f',
     },
     title: {
-        fontSize: 16,
+        fontSize: 40,
         fontWeight: 'bold',
         textAlign: 'center',
-        marginBottom: 10,
-        color: '#333',
+        marginBottom: 40,
+        color: '#dcdcdcff',
     },
     input: {
         borderWidth: 1,
-        borderColor: '#050000ff',
-        borderRadius: 5,
+        borderColor: '#6b6b6b',
+        borderRadius: 16,
         paddingHorizontal: 10,
-        marginBottom: 10,
-        backgroundColor: 'white',
-        fontSize: 14,
+        marginTop: 20,
+        backgroundColor: '#6b6b6b',
+        fontSize: 28,
     },
     link: {
-        color: '#050000ff',
-        fontSize: 10,
+        color: '#dcdcdcff',
+        fontSize: 18,
         fontWeight: 'bold',
         textAlign: 'center',
     },
     button: {
-        backgroundColor: '#04492cff',
+        backgroundColor: '#45ca3e',
         padding: 10,
         borderRadius: 10,
         alignItems: 'center',
-        marginTop: 10,
+        marginTop: 30,
         marginBottom: 10,
     },
     buttonText: {
-        color: 'white',
-        fontSize: 10,
+        color: '#dcdcdcff',
+        fontSize: 25,
         fontWeight: 'bold',
     },
     buttonDisabled: {
-        backgroundColor: '#cccccc',
+        backgroundColor: '#828282',
         opacity: 0.6,
     },
     message: {
         textAlign: 'center',
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: '500',
         padding: 10,
         borderRadius: 5,
     },
     requirementsContainer: {
-        marginBottom: 15,
+        marginTop: 20,
         padding: 10,
-        backgroundColor: '#f8f9fa',
+        backgroundColor: '#545454',
         borderRadius: 8,
     },
     requirementsTitle: {
         fontSize: 14,
         fontWeight: 'bold',
         marginBottom: 8,
-        color: '#333',
+        color: '#65d159',
     },
     requirementItem: {
         flexDirection: 'row',
@@ -207,21 +207,21 @@ const styles = StyleSheet.create({
         width: 16,
         height: 16,
         borderWidth: 1,
-        borderColor: '#ccc',
+        borderColor: '#dcdcdcff',
         borderRadius: 3,
         marginRight: 8,
         backgroundColor: 'white',
     },
     checkboxMet: {
-        backgroundColor: '#04492cff',
-        borderColor: '#04492cff',
+        backgroundColor: '#7fd871',
+        borderColor: '#7fd871',
     },
     requirementText: {
         fontSize: 12,
-        color: '#666',
+        color: '#dcdcdcff',
     },
     requirementMet: {
-        color: '#04492cff',
+        color: '#7fd871',
         fontWeight: '500',
     },
 });

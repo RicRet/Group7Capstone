@@ -25,6 +25,7 @@ PLEASE KEEP TRACK OF ALL NPM INSTALLS/PACKAGES/MODULES HERE:
       npm install axios
       npm install react-native
       npm install react-native-maps
+      npx expo install @gorhom/bottom-sheet react-native-reanimated react-native-gesture-handler
    ```
 
 AXIOS
