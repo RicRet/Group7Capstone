@@ -13,9 +13,10 @@ const Login = () => {
             if (username && password) {
         try {
             setMessage('');
-            const response = await axios.post('http://needsIP/api/users/login', { username, password });
+            const response = await axios.post('http://localhost:8080/v1/auth/login', { username, password });
             if (response.data.user) {
                 // routes to homescreen
+                setMessage('Login Suscessful!, redirecting to homepage.');
                 router.replace('/map');
             }
         }
@@ -25,7 +26,7 @@ const Login = () => {
         }
         } else {
             // if there is no user or pass
-            setMessage('Login failed. Please try again.');
+            setMessage('Please enter username and password. Please try again.');
         }
     }
 
