@@ -12,7 +12,7 @@ const { createApp } = await import('./app.js');
 
 
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
 const app = createApp();
 
