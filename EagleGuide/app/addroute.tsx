@@ -1,8 +1,8 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Button, StyleSheet, Text, View } from 'react-native';
+import { Alert, Button, Keyboard, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { addRoute } from './lib/api/addroute';
+import { addRoute, deleteRoute } from './lib/api/addroute';
 
 
 
@@ -28,8 +28,8 @@ export default function Addroute() {
     { label: 'Willis', value: 'Willis' },
     { label: 'Parking Garage', value: 'Parking Garage' },
   ]);
-
-
+//to track input for route delete
+ const [num, setNum] = useState('');
   
 
   //Function To take front end data to backend
@@ -43,10 +43,24 @@ export default function Addroute() {
   }
 };
 
+//Function to delete route
+ const del = async () => {
+    if (!num) return Alert.alert('Enter a route ID to delete');
+    try {
+      const id = Number(num);
+      const res = await deleteRoute(id);
+      Alert.alert('Deleted', res.message);
+      Keyboard.dismiss();
+    } catch {
+      Alert.alert('Error', 'Could not delete route');
+    }
+  };
+
 
 
 
   return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style={styles.container}>
        {/*For Text*/}
       <Text style={styles.title}>
@@ -82,11 +96,24 @@ export default function Addroute() {
         </View>
       </View>
 
+      <TextInput
+        style={styles.input}
+        placeholder="Enter Route ID for deletion"
+        keyboardType="numeric"
+        value={num}
+        onChangeText={setNum}
+         returnKeyType="done"
+          onSubmitEditing={Keyboard.dismiss}
+      />
+      {/*Button for delete route*/}
+     <Button title="Delete Route" onPress={() => del()} />
+      {/*Button for submit route*/}
      <Button title="Submit Route" onPress={() => addr(value1, value2)} />
 
         {/*Button for homepage*/}
       <Button title="Go to Home" onPress={() => router.push('/homepage')} />
     </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -115,5 +142,13 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 5,
   },
+  input: {
+  backgroundColor: 'white',
+  borderRadius: 8,
+  padding: 10,
+  marginVertical: 10,
+  width: '60%',
+  textAlign: 'center',
+},
   
 });
