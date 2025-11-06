@@ -25,10 +25,12 @@ export async function createUser(username, email, password) {
 
 export async function verifyUser(username, password) {
   // Example: adjust to your users table
-  const rows = await query(
-    'SELECT user_id as id, password_hash, roles FROM users.app_user WHERE display_name = $1',
-    [username]
-  );
+const rows = await query(`
+  SELECT user_id as id, password_hash
+  FROM users.app_user
+  WHERE display_name = $1 OR email = $1`,
+  [username]
+);
   const user = rows[0];
   if (!user) return null;
   const ok = user.password_hash === hash(password);
