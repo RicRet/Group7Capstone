@@ -41,17 +41,14 @@ export default function Home({ onNavigate }: { onNavigate: (screen: string) => v
   
 
   return (
-    //Backround Image
-    
-    <View style={styles.overlay}>
-
+  <View>
       <View style={styles.bottomContainer}>
                   {/* Search Bar */}
                   <View style={styles.searchBar}>
                       <TextInput
                           style={styles.searchInput}
                           placeholder='Search route (e.g. "Willis Library to Union")'
-                          placeholderTextColor="#999"
+                          placeholderTextColor="#dcdcdcff"
                           value={routeText}
                           onChangeText={setRouteText}
                           returnKeyType="done"
@@ -111,18 +108,16 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  
   button: {
-    backgroundColor: "green", 
+    backgroundColor: "#45ca3e", 
     paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 10,
+    marginTop: 20,
     alignItems: "center",
-    width: "80%",
   },
   text: {
-    marginTop: 50,
-    marginBottom: 20,         
+    marginTop: 50,        
     fontSize: 30,
     fontWeight: "bold",
     textAlign: "center",
@@ -133,28 +128,20 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
-   overlay: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center", 
-    padding: 20,
-    backgroundColor: "rgba(255,255,255,0.4)", 
-  },
-
   // bottom
   bottomContainer: {
         width: '100%',
         paddingHorizontal: 15,
     },
     searchBar: {
-        backgroundColor: '#fff',
+        backgroundColor: '#6b6b6b',
         borderRadius: 10,
         paddingHorizontal: 12,
         paddingVertical: 8,
         elevation: 3,
         marginBottom: 8,
     },
-    searchInput: { fontSize: 16, color: '#333' },
+    searchInput: { fontSize: 16, color: '#dcdcdcff' },
 
     /** Bookmarks **/
     bookmarksContainer: {
@@ -164,21 +151,21 @@ const styles = StyleSheet.create({
     bookmarkItem: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#fff',
+        backgroundColor: '#6b6b6b',
         borderRadius: 20,
         paddingHorizontal: 14,
         paddingVertical: 8,
         marginRight: 8,
         elevation: 3,
     },
-    bookmarkText: { fontSize: 14, color: '#333', marginRight: 6 },
+    bookmarkText: { fontSize: 14, color: '#dcdcdcff', marginRight: 6 },
     deleteText: { color: 'red', fontSize: 16, fontWeight: '700' },
 
     /** Add Box **/
     addBox: {
         width: 40,
         height: 40,
-        backgroundColor: '#fff',
+        backgroundColor: '#45ca3e',
         borderRadius: 20,
         alignItems: 'center',
         justifyContent: 'center',
@@ -186,21 +173,21 @@ const styles = StyleSheet.create({
     },
     addBoxText: {
         fontSize: 24,
-        color: '#006A31',
+        color: '#dcdcdcff',
         fontWeight: '700',
     },
 
     /** Navigation Button **/
     navButton: {
-        backgroundColor: '#006A31',
+        backgroundColor: '#45ca3e',
         paddingVertical: 14,
         borderRadius: 10,
         alignItems: 'center',
         elevation: 4,
     },
-    navButtonText: { color: '#fff', fontSize: 18, fontWeight: '600' },
+    navButtonText: { color: '#dcdcdcff', fontSize: 18, fontWeight: '600' },
     contentContainer: {
     padding: 20,
-    backgroundColor: '#c4c4c4ff',
+    backgroundColor: '#3f3f3f',
   },
 });

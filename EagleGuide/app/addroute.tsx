@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 export default function addroute({ onNavigate }: { onNavigate: (screen: string) => void }) {
@@ -42,7 +42,7 @@ export default function addroute({ onNavigate }: { onNavigate: (screen: string) 
             setOpen={setOpen1}
             setValue={setValue1}
             containerStyle={{ height: 50 }}
-            dropDownContainerStyle={{ backgroundColor: 'white' }}
+            dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
           />
         </View>
         
@@ -55,14 +55,15 @@ export default function addroute({ onNavigate }: { onNavigate: (screen: string) 
             setOpen={setOpen2}
             setValue={setValue2}
             containerStyle={{ height: 50 }}
-            dropDownContainerStyle={{ backgroundColor: 'white' }}
+            dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
           />
         </View>
       </View>
 
-     
         {/*Button for homepage*/}
-      <Button title="Go to Home" onPress={() => onNavigate('home')} />
+        <Text style={styles.link} onPress={() => onNavigate('home')}>
+          Go back
+        </Text>
     </View>
   );
 }
@@ -72,15 +73,21 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'green',
+    backgroundColor: '#3f3f3f',
     padding: 20,
   },
   title: {
     marginBottom: 20,
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'white',
+    color: '#dcdcdcff',
     textAlign: 'center',
+  },
+   link: {
+      color: '#dcdcdcff',
+      fontSize: 16,
+      fontWeight: 'bold',
+      textAlign: 'center',
   },
   dropdownRow: {
     flexDirection: 'row',

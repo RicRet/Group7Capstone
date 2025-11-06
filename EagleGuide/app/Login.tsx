@@ -36,7 +36,7 @@ const Login = () => {
             <TextInput
                 style={styles.input}
                 placeholder="Username"
-                placeholderTextColor="#3c3c3cff"
+                placeholderTextColor="#dcdcdcff"
                 value={username}
                 onChangeText={setUsername}
             />
@@ -44,7 +44,7 @@ const Login = () => {
             <TextInput
                 style={styles.input}
                 placeholder="Password"
-                placeholderTextColor="#3c3c3cff"
+                placeholderTextColor="#dcdcdcff"
                 secureTextEntry={true}
                 value={password}
                 onChangeText={setPassword}
@@ -56,13 +56,13 @@ const Login = () => {
                 </Text>
             ) : null}
 
-            <Text style={styles.link} onPress={() => router.replace('/Signup')}>
-                Sign Up
-            </Text>
-
             <TouchableOpacity style={styles.button} onPress={handleLogin}>
                 <Text style={styles.buttonText}>Login</Text>
             </TouchableOpacity>
+
+            <Text style={styles.link} onPress={() => router.replace('/Signup')}>
+                No account? Sign Up
+            </Text>
         </View>
     );
 };
@@ -73,46 +73,46 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         padding: 10,
-        backgroundColor: '#ffffffff',
+        backgroundColor: '#3f3f3f'
     },
     title: {
-        fontSize: 16,
+        fontSize: 40,
         fontWeight: 'bold',
         textAlign: 'center',
-        marginBottom: 10,
-        color: '#333',
+        marginBottom: 40,
+        color: '#dcdcdcff',
     },
     input: {
         borderWidth: 1,
-        borderColor: '#050000ff',
-        borderRadius: 5,
+        borderColor: '#6b6b6b',
+        borderRadius: 16,
         paddingHorizontal: 10,
-        marginBottom: 10,
-        backgroundColor: 'white',
-        fontSize: 14,
+        marginTop: 20,
+        backgroundColor: '#6b6b6b',
+        fontSize: 28,
     },
     link: {
-        color: '#050000ff',
-        fontSize: 10,
+        color: '#dcdcdcff',
+        fontSize: 18,
         fontWeight: 'bold',
         textAlign: 'center',
     },
     button: {
-        backgroundColor: '#04492cff',
+        backgroundColor: '#45ca3e',
         padding: 10,
         borderRadius: 10,
         alignItems: 'center',
-        marginTop: 10,
-        marginBottom: 10, // Add space above the message
+        marginTop: 30,
+        marginBottom: 10,
     },
     buttonText: {
-        color: 'white',
-        fontSize: 10,
+        color: '#dcdcdcff',
+        fontSize: 25,
         fontWeight: 'bold',
     },
     message: {
         textAlign: 'center',
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: '500',
         padding: 10,
         borderRadius: 5,
