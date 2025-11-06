@@ -1,55 +1,33 @@
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React, { useMemo, useRef, useState } from 'react';
 import {
-    Alert,
     Keyboard,
     KeyboardAvoidingView,
     Platform,
-    ScrollView,
     StyleSheet,
     Text,
-    TextInput,
     TouchableOpacity,
     TouchableWithoutFeedback,
     View,
 } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import Addroute from './addroute';
+import Homepage from './homepage';
 
 const MapScreen = () => {
     const [showMenu, setShowMenu] = useState(false);
-    const [routeText, setRouteText] = useState('');
-    const [bookmarks, setBookmarks] = useState([
-        'Willis Library',
-        'Union',
-        'Lot 20',
-        'Language',
-        'Eagle Landing',
-    ]);
+    const [currentSheet, setCurrentSheet] = useState('home');
 
-    // Add bookmark via prompt
-    const addBookmark = () => {
-        Alert.prompt(
-            'Add Bookmark',
-            'Enter the name of your new bookmark:',
-            [
-                { text: 'Cancel', style: 'cancel' },
-                {
-                    text: 'Add',
-                    onPress: (bookmarkName?: string) => {
-                        if (bookmarkName && bookmarkName.trim() && !bookmarks.includes(bookmarkName.trim())) {
-                            setBookmarks([...bookmarks, bookmarkName.trim()]);
-                        }
-                    },
-                },
-            ],
-            'plain-text'
-        );
-    };
-
-    // Delete bookmark
-    const deleteBookmark = (item: string) => {
-        setBookmarks(bookmarks.filter((b) => b !== item));
+        const renderSheetContent = () => {
+        switch (currentSheet) {
+            case 'home':
+                return <Homepage onNavigate={setCurrentSheet} />;
+            case 'addroute':
+                return <Addroute onNavigate={setCurrentSheet} />;
+            default:
+                return <Homepage onNavigate={setCurrentSheet} />;
+        }
     };
 
     const sheetRef = useRef<BottomSheet>(null);
@@ -112,45 +90,7 @@ const MapScreen = () => {
         backgroundStyle={styles.bottomSheetBackground} 
       >
         <BottomSheetScrollView contentContainerStyle={styles.contentContainer}>
-          <View style={styles.bottomContainer}>
-            {/* Search Bar */}
-            <View style={styles.searchBar}>
-                <TextInput
-                    style={styles.searchInput}
-                    placeholder='Search route (e.g. "Willis Library to Union")'
-                    placeholderTextColor="#999"
-                    value={routeText}
-                    onChangeText={setRouteText}
-                    onFocus={() => setShowMenu(false)}
-                    returnKeyType="done"
-                />
-            </View>
-
-            {/* Bookmarks */}
-            <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                style={styles.bookmarksContainer}
-            >
-                {bookmarks.map((item, index) => (
-                    <View key={index} style={styles.bookmarkItem}>
-                        <Text style={styles.bookmarkText}>{item}</Text>
-                        <TouchableOpacity onPress={() => deleteBookmark(item)}>
-                            <Text style={styles.deleteText}>✕</Text>
-                        </TouchableOpacity>
-                    </View>
-                ))}
-
-                {/* Add Bookmark "+" Box */}
-                <TouchableOpacity style={styles.addBox} onPress={addBookmark}>
-                    <Text style={styles.addBoxText}>＋</Text>
-                </TouchableOpacity>
-            </ScrollView>
-
-            <TouchableOpacity style={styles.navButton}>
-                <Text style={styles.navButtonText}>Start Navigation</Text>
-            </TouchableOpacity>
-        </View>
+            {renderSheetContent()}
         </BottomSheetScrollView>
       </BottomSheet>
     </GestureHandlerRootView>

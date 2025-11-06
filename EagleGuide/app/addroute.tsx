@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
-export default function addroute() {
+export default function addroute({ onNavigate }: { onNavigate: (screen: string) => void }) {
   const router = useRouter();
 
  {/*For dropdown 1*/}
@@ -62,7 +62,7 @@ export default function addroute() {
 
      
         {/*Button for homepage*/}
-      <Button title="Go to Home" onPress={() => router.push('/homepage')} />
+      <Button title="Go to Home" onPress={() => onNavigate('home')} />
     </View>
   );
 }
