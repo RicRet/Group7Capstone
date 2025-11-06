@@ -5,19 +5,18 @@ const router = express.Router();
 
 //Function to inserst routes into db
 router.post('/routes', async (req, res) => {
-  const {  prevb, newb, routeType, accessibilityType } = req.body;
+  const { prevb, newb, type, accessibility } = req.body;
     
-  if (!prevb || !newb || !routeType || !accessibilityType) {
+  if (!prevb || !newb || !type || accessibility == null) {
     return res.json({ message: 'Needs all options selected' });
   }
 
   try {
     const result = await query(
-       `INSERT INTO gis.paths (description, type, accessibility_path_type)
+      `INSERT INTO gis.paths (description, type, accessibility_path_type)
        VALUES ($1, $2, $3)
        RETURNING path_id;`,
-      [`Route from ${prevb} to ${newb}`, routeType, accessibilityType]
-
+      [`Route from ${prevb} to ${newb}`, type, accessibility]
     );
 
     res.json({
@@ -25,8 +24,8 @@ router.post('/routes', async (req, res) => {
       path_id: result[0].path_id,
     });
   } catch (err) {
-    console.error('Insert error');
-  
+    console.error('Insert error', err);
+    res.status(500).json({ message: 'Database error' });
   }
 });
 
