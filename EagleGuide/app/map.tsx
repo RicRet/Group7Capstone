@@ -11,9 +11,11 @@ import {
     View,
 } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+// import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { NavigationView } from '@googlemaps/react-native-navigation-sdk';
 import Addroute from './addroute';
 import Homepage from './homepage';
+// import { MAP_APIKEY } from 'EagleGuide/@env'; // tentative for the moment
 
 const MapScreen = () => {
     const [showMenu, setShowMenu] = useState(false);
@@ -63,25 +65,11 @@ const MapScreen = () => {
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={styles.container}>
                     {/* Map */}
-                    <MapView
-                        provider={PROVIDER_GOOGLE}
-                        customMapStyle={darkStyle}
-                        style={StyleSheet.absoluteFillObject}
-                        initialRegion={{
-                        latitude: 33.2106,
-                        longitude: -97.1470,
-                        latitudeDelta: 0.01,
-                        longitudeDelta: 0.01,
-                    }}
-                    showsUserLocation
-                    showsCompass
->
-                    <Marker
-                        coordinate={{ latitude: 33.2106, longitude: -97.1470 }}
-                        title="University Union"
-                        description="University of North Texas"
+                    <NavigationView
+                        apiKey={ MAP_APIKEY }
+                        showsTraffic={true}
+
                     />
-                    </MapView>
 
                     {/* Floating menu button */}
                     <View style={styles.topRightContainer}>
