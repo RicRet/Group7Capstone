@@ -80,63 +80,65 @@ const [items4, setItems4] = useState([
       </Text>
 
       {/* All dropdowns */}
-      <View style={styles.dropdownRow}>
-        {/* DropDown 1 */}
-        <View style={[styles.dropdownBox, { zIndex: 4000 }]}>
-  <DropDownPicker
-    open={open1}
-    value={value1}
-    items={items1}
-    setOpen={setOpen1}
-    setValue={setValue1}
-    containerStyle={{ height: 50 }}
-    dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
-    style={{ backgroundColor: '#6b6b6b' }}
-  />
-</View>
+<View style={styles.dropdownGrid}>
+  {/* Row 1 */}
+  <View style={[styles.dropdownRow, { zIndex: 4000 }]}>
+    <View style={[styles.dropdownBox, { zIndex: 4000 }]}>
+      <DropDownPicker
+        open={open1}
+        value={value1}
+        items={items1}
+        setOpen={setOpen1}
+        setValue={setValue1}
+        containerStyle={{ height: 50 }}
+        dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
+        style={{ backgroundColor: '#6b6b6b' }}
+      />
+    </View>
 
-        {/* DropDown 2 */}
-       <View style={[styles.dropdownBox, { zIndex: 3000 }]}>
-  <DropDownPicker
-    open={open2}
-    value={value2}
-    items={items2}
-    setOpen={setOpen2}
-    setValue={setValue2}
-    containerStyle={{ height: 50 }}
-    dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
-    style={{ backgroundColor: '#6b6b6b' }}
-  />
-</View>
+    <View style={[styles.dropdownBox, { zIndex: 3000 }]}>
+      <DropDownPicker
+        open={open2}
+        value={value2}
+        items={items2}
+        setOpen={setOpen2}
+        setValue={setValue2}
+        containerStyle={{ height: 50 }}
+        dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
+        style={{ backgroundColor: '#6b6b6b' }}
+      />
+    </View>
+  </View>
 
-        {/* DropDown 3 */}
-        <View style={[styles.dropdownBox, { zIndex: 2000 }]}>
-  <DropDownPicker
-    open={open3}
-    value={value3}
-    items={items3}
-    setOpen={setOpen3}
-    setValue={setValue3}
-    containerStyle={{ height: 50 }}
-    dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
-    style={{ backgroundColor: '#6b6b6b' }}
-  />
-</View>
+  {/* Row 2 */}
+  <View style={[styles.dropdownRow, { zIndex: 2000 }]}>
+    <View style={[styles.dropdownBox, { zIndex: 2000 }]}>
+      <DropDownPicker
+        open={open3}
+        value={value3}
+        items={items3}
+        setOpen={setOpen3}
+        setValue={setValue3}
+        containerStyle={{ height: 50 }}
+        dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
+        style={{ backgroundColor: '#6b6b6b' }}
+      />
+    </View>
 
-        {/* 4 */}
-       <View style={[styles.dropdownBox, { zIndex: 1000 }]}>
-  <DropDownPicker
-    open={open4}
-    value={value4}
-    items={items4}
-    setOpen={setOpen4}
-    setValue={setValue4}
-    containerStyle={{ height: 50 }}
-    dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
-    style={{ backgroundColor: '#6b6b6b' }}
-  />
-</View>
-      </View> 
+    <View style={[styles.dropdownBox, { zIndex: 1000 }]}>
+      <DropDownPicker
+        open={open4}
+        value={value4}
+        items={items4}
+        setOpen={setOpen4}
+        setValue={setValue4}
+        containerStyle={{ height: 50 }}
+        dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
+        style={{ backgroundColor: '#6b6b6b' }}
+      />
+    </View>
+  </View>
+</View>  
 
       <TextInput
         style={styles.input}
@@ -190,7 +192,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '90%',
     justifyContent: 'space-between',
-    marginBottom: 20,
+    marginBottom: 15,
   },
   dropdownBox: {
     flex: 1,
@@ -204,6 +206,11 @@ const styles = StyleSheet.create({
   marginVertical: 10,
   width: '60%',
   textAlign: 'center',
+},
+dropdownGrid: {
+  width: '90%',
+  marginBottom: 20,
+  zIndex: 5000, 
 },
   
 });

@@ -1,7 +1,7 @@
-import axios from 'axios';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { login } from "./lib/api/login";
 
 const Login = () => {
     const router = useRouter();
@@ -13,12 +13,11 @@ const Login = () => {
             if (username && password) {
         try {
             setMessage('');
-            const response = await axios.post('http://localhost:8080/v1/auth/login', { username, password });
-            if (response.data.user) {
-                // routes to homescreen
+            const response = await login({ username, password });
+                // routes to map and homescreen
                 setMessage('Login Suscessful!, redirecting to homepage.');
                 router.replace('/map');
-            }
+                console.log('Login successful:', response);
         }
         catch (error) {
             // if user and pass do not successfully login
