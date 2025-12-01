@@ -1,17 +1,32 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { Alert, Keyboard, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Alert, FlatList, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { addRoute, deleteRoute } from './lib/api/addroute';
+import { addRoute, deleteRoute, getRoutes, SavedRoute } from './lib/api/addroute';
 
 
 
 export default function Addroute({ onNavigate }: { onNavigate: (screen: string) => void }) {
   const router = useRouter();
+const [savedRoutes, setSavedRoutes] = useState<SavedRoute[]>([]);
+
+
+const loadSavedR = async () => {
+  try {
+    const res = await getRoutes();
+    setSavedRoutes(res);
+  } catch {
+    Alert.alert("Error", "Could not load saved routes");
+  }
+};
+
+useEffect(() => {
+  loadSavedR();
+}, []);
 
  //For dropdown 1
   const [open1, setOpen1] = useState(false);
-  const [value1, setValue1] = useState(null);
+  const [value1, setValue1] =useState<string | null>(null);
   const [items1, setItems1] = useState([
     { label: 'Student Union', value: 'Student Union' },
     { label: 'Willis', value: 'Willis' },
@@ -20,7 +35,7 @@ export default function Addroute({ onNavigate }: { onNavigate: (screen: string) 
 
   //For dropdown 2
   const [open2, setOpen2] = useState(false);
-  const [value2, setValue2] = useState(null);
+  const [value2, setValue2] = useState<string | null>(null);
   const [items2, setItems2] = useState([
     { label: 'Student Union', value: 'Student Union' },
     { label: 'Willis', value: 'Willis' },
@@ -28,14 +43,14 @@ export default function Addroute({ onNavigate }: { onNavigate: (screen: string) 
   ]);
  //For dropdown 3
  const [open3, setOpen3] = useState(false);
-const [value3, setValue3] = useState(null);
+const [value3, setValue3] = useState<string | null>(null);
 const [items3, setItems3] = useState([
   { label: 'Pedestrian', value: 'Pedestrian' },
   { label: 'Bus', value: 'Bus' },
 ]);
 //For dropdown 4
 const [open4, setOpen4] = useState(false);
-const [value4, setValue4] = useState(null);
+const [value4, setValue4] =useState<number | null>(null);
 const [items4, setItems4] = useState([
   { label: '1', value: 1 },
   { label: '2', value: 2 },
@@ -139,7 +154,37 @@ const [items4, setItems4] = useState([
     </View>
   </View>
 </View>  
+    <View style={styles.Savedroutes}>
+  <Text style={styles.SavedRoutesHeader}>Saved Routes</Text>
+  {/*Saved Route list */}
+  <FlatList
+    data={savedRoutes}
+    keyExtractor={(route) => route.path_id.toString()}
+    contentContainerStyle={{ paddingBottom: 20 }}
+    renderItem={({ item:route }) => (
+      <View style={styles.routeCard}>
+        <Text style={styles.routeid}>Route #{route.path_id}</Text>
+        <Text style={styles.routeinfo}>Description: {route.description}</Text>
+        <Text style={styles.routeinfo}>Type: {route.type}</Text>
+        <Text style={styles.routeinfo}>Accessibility: {route.accessibility}</Text>
 
+        {/*Delete Button (edit will be added later)*/}
+        <View style={styles.buttonr}>
+
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={async () => {
+              await deleteRoute(route.path_id);
+              loadSavedR();
+            }}
+          >
+            <Text style={styles.buttonText}>Delete</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    )}
+  />
+</View>
       <TextInput
         style={styles.input}
         placeholder="Enter Route ID for deletion"
@@ -211,6 +256,57 @@ dropdownGrid: {
   width: '90%',
   marginBottom: 20,
   zIndex: 5000, 
+},
+Savedroutes: {
+  width: '90%',
+  maxHeight: 250,
+  backgroundColor: '#2f2f2f',
+  borderRadius: 10,
+  padding: 10,
+  marginBottom: 20,
+},
+
+SavedRoutesHeader: {
+  color: '#dcdcdc',
+  fontSize: 18,
+  fontWeight: 'bold',
+  marginBottom: 10,
+  textAlign: 'center',
+},
+
+routeCard: {
+  backgroundColor: '#4a4a4a',
+  padding: 10,
+  borderRadius: 8,
+  marginBottom: 10,
+},
+
+routeid: {
+  color: '#fff',
+  fontWeight: 'bold',
+  marginBottom: 5,
+},
+
+routeinfo: {
+  color: '#dcdcdc',
+},
+
+buttonr: {
+  flexDirection: 'row',
+  justifyContent: 'flex-end',
+  marginTop: 10,
+},
+
+deleteButton: {
+  backgroundColor: '#e24a4a',
+  paddingVertical: 6,
+  paddingHorizontal: 12,
+  borderRadius: 6,
+},
+
+buttonText: {
+  color: '#fff',
+  fontWeight: 'bold',
 },
   
 });
