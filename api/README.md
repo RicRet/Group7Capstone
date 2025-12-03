@@ -67,9 +67,10 @@ The server uses `process.env.PORT` or falls back to `3000`.
 - Storage: Redis key `sess:<sid>` with TTL from `src/cache/policy.js`.
 - Middleware: `src/middleware/requireSession.js` reads `Authorization: Bearer <sid>`.
 - Service: `src/services/session.service.js` manages create/get/touch/delete.
+ - User cache: `src/services/users.service.js` caches user profile at `user:<userId>` for fast lookup.
 
 Protected example:
-- `GET /v1/users/me` requires `Authorization: Bearer <token>`.
+- `GET /v1/users/me` returns username, email, roles quickly via session + user cache.
 - `POST /v1/auth/logout` invalidates the current session.
 
 Run a quick session smoke test:

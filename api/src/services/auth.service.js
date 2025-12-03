@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import { query } from '../db/pg.js';
 import { createSession } from './session.service.js';
+import { getUserProfile } from './users.service.js';
 
 // replace with bcrypt/argon2 in real usage
 function hash(p) { return crypto.createHash('sha256').update(p).digest('hex'); }
@@ -23,23 +24,24 @@ export async function createUser(username, email, password) {
   return inserted[0];
 }
 
-export async function verifyUser(username, password) {
-  // Example: adjust to your users table
-const rows = await query(`
-  SELECT user_id as id, password_hash
-  FROM users.app_user
-  WHERE display_name = $1 OR email = $1`,
-  [username]
-);
+export async function verifyUser(usernameOrEmail, password) {
+  const rows = await query(
+    `SELECT user_id as id, display_name, password_hash
+     FROM users.app_user
+     WHERE display_name = $1 OR email = $1`,
+    [usernameOrEmail]
+  );
   const user = rows[0];
   if (!user) return null;
   const ok = user.password_hash === hash(password);
-  return ok ? { id: user.id, roles: user.roles || [] } : null;
+  return ok ? { id: user.id, username: user.display_name, roles: user.roles || [] } : null;
 }
 
 export async function login(username, password) {
   const user = await verifyUser(username, password);
   if (!user) return null;
-  const sid = await createSession(user.id, user.roles);
-  return { sid, user: { id: user.id, roles: user.roles } };
+  const sid = await createSession(user.id, user.roles, user.username);
+  // Pre-warm profile cache for fast subsequent requests
+  await getUserProfile(user.id).catch(() => {});
+  return { sid, user: { id: user.id, username: user.username, roles: user.roles } };
 }

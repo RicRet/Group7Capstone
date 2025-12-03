@@ -57,7 +57,7 @@ export default function Home({ onNavigate }: { onNavigate: (screen: string) => v
                     <Text style={styles.sessionText}>Loading session…</Text>
                 ) : user ? (
                     <View style={styles.sessionRow}>
-                        <Text style={styles.sessionText}>Logged in as: {user.id}</Text>
+                        <Text style={styles.sessionText}>Logged in as: {user.username ?? user.id}</Text>
                         <Text style={styles.sessionRoles}>Roles: {(user.roles || []).join(', ') || 'none'}</Text>
                         <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
                             <Text style={styles.logoutText}>Logout</Text>
