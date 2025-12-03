@@ -5,9 +5,13 @@ import { keys } from '../cache/keys.js';
 import { TTL } from '../cache/policy.js';
 import { jsonGet, jsonSet, redis } from '../cache/redis.js';
 
-export async function createSession(userId, roles = []) {
+export async function createSession(userId, roles = [], username) {
   const sid = uuid();
-  await jsonSet(keys.session(sid), { userId, roles, createdAt: Date.now() }, TTL.session);
+  await jsonSet(
+    keys.session(sid),
+    { userId, username, roles, createdAt: Date.now() },
+    TTL.session
+  );
   return sid;
 }
 export function getSession(sid) {
