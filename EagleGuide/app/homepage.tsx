@@ -1,10 +1,12 @@
 import { useRouter } from "expo-router";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useSession } from "./lib/session";
 
 
 export default function Home({ onNavigate }: { onNavigate: (screen: string) => void }){
   const router = useRouter();
+    const { user, loading, refreshMe, logout } = useSession();
   const [routeText, setRouteText] = useState('');
   const [bookmarks, setBookmarks] = useState([
           'Willis Library',
@@ -34,14 +36,37 @@ export default function Home({ onNavigate }: { onNavigate: (screen: string) => v
           );
       };
   
-      // Delete bookmark
+            // Delete bookmark
       const deleteBookmark = (item: string) => {
           setBookmarks(bookmarks.filter((b) => b !== item));
       };
+      
+            // Fetch current user once session is available
+            useEffect(() => {
+                if (!loading) {
+                    refreshMe().catch(() => {});
+                }
+            }, [loading, refreshMe]);
   
 
   return (
   <View>
+            {/* Session banner */}
+            <View style={styles.sessionBar}>
+                {loading ? (
+                    <Text style={styles.sessionText}>Loading session…</Text>
+                ) : user ? (
+                    <View style={styles.sessionRow}>
+                        <Text style={styles.sessionText}>Logged in as: {user.id}</Text>
+                        <Text style={styles.sessionRoles}>Roles: {(user.roles || []).join(', ') || 'none'}</Text>
+                        <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
+                            <Text style={styles.logoutText}>Logout</Text>
+                        </TouchableOpacity>
+                    </View>
+                ) : (
+                    <Text style={styles.sessionText}>Not logged in</Text>
+                )}
+            </View>
       <View style={styles.bottomContainer}>
                   {/* Search Bar */}
                   <View style={styles.searchBar}>
@@ -190,4 +215,25 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#3f3f3f',
   },
+    sessionBar: {
+        paddingHorizontal: 15,
+        paddingVertical: 10,
+        backgroundColor: '#3f3f3f',
+    },
+    sessionRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
+        flexWrap: 'wrap',
+    },
+    sessionText: { color: '#dcdcdcff', fontSize: 14 },
+    sessionRoles: { color: '#9ad5ff', fontSize: 14 },
+    logoutBtn: {
+        marginLeft: 'auto',
+        backgroundColor: '#6b6b6b',
+        borderRadius: 8,
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+    },
+    logoutText: { color: '#ffdada', fontWeight: '600' },
 });

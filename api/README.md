@@ -62,6 +62,22 @@ PORT=4000
 
 The server uses `process.env.PORT` or falls back to `3000`.
 
+## Sessions (Redis-backed)
+- Token: opaque session ID returned by `POST /v1/auth/login` as `token`.
+- Storage: Redis key `sess:<sid>` with TTL from `src/cache/policy.js`.
+- Middleware: `src/middleware/requireSession.js` reads `Authorization: Bearer <sid>`.
+- Service: `src/services/session.service.js` manages create/get/touch/delete.
+
+Protected example:
+- `GET /v1/users/me` requires `Authorization: Bearer <token>`.
+- `POST /v1/auth/logout` invalidates the current session.
+
+Run a quick session smoke test:
+
+```bash
+node api/tests/session-smoke.js
+```
+
 ## Notes & troubleshooting
 
 - If you see `ERR_MODULE_NOT_FOUND` for a package (for example `dotenv`) then run `npm install` in `api/`.

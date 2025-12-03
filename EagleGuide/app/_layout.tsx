@@ -1,7 +1,9 @@
 import { Stack } from "expo-router";
+import { SessionProvider } from "./lib/session";
 
 export default function RootLayout() {
    return (
+    <SessionProvider>
     <Stack>
       <Stack.Screen 
         name="index" 
@@ -16,6 +18,7 @@ export default function RootLayout() {
         options={{ headerShown: false }} 
       />
     </Stack>
+    </SessionProvider>
     
   );
 }
