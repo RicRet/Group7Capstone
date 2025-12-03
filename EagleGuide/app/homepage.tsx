@@ -94,7 +94,7 @@ export default function Home({ onNavigate }: { onNavigate: (screen: string) => v
        <View style={{ height: 20 }} /> 
        <TouchableOpacity
         style={styles.button}
-        onPress={() => router.push("/map")}
+        onPress={() => router.push("/test1")}
       >
         <Text style={styles.buttonText}>View Routes (Placeholder)</Text>
       </TouchableOpacity>

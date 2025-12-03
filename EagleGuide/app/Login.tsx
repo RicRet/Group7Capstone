@@ -16,7 +16,7 @@ const Login = () => {
             const response = await login({ username, password });
                 // routes to map and homescreen
                 setMessage('Login Suscessful!, redirecting to homepage.');
-                router.replace('/map');
+                router.replace('/test1');
                 console.log('Login successful:', response);
         }
         catch (error) {
