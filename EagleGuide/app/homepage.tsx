@@ -1,45 +1,20 @@
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import React, { useEffect } from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSession } from "./lib/session";
 
 
 export default function Home({ onNavigate }: { onNavigate: (screen: string) => void }){
   const router = useRouter();
     const { user, loading, refreshMe, logout } = useSession();
-  const [routeText, setRouteText] = useState('');
-  const [bookmarks, setBookmarks] = useState([
-          'Willis Library',
-          'Union',
-          'Lot 20',
-          'Language',
-          'Eagle Landing',
-      ]);
+    // Simple nav buttons list
+    const navItems = [
+        { label: 'Map', to: '/map' },
+        { label: 'Add Route', to: '/addroute' },
+        { label: 'Login', to: '/Login' },
+        { label: 'Signup', to: '/Signup' },
+    ];
 
-    // Add bookmark via prompt
-      const addBookmark = () => {
-          Alert.prompt(
-              'Add Bookmark',
-              'Enter the name of your new bookmark:',
-              [
-                  { text: 'Cancel', style: 'cancel' },
-                  {
-                      text: 'Add',
-                      onPress: (bookmarkName?: string) => {
-                          if (bookmarkName && bookmarkName.trim() && !bookmarks.includes(bookmarkName.trim())) {
-                              setBookmarks([...bookmarks, bookmarkName.trim()]);
-                          }
-                      },
-                  },
-              ],
-              'plain-text'
-          );
-      };
-  
-            // Delete bookmark
-      const deleteBookmark = (item: string) => {
-          setBookmarks(bookmarks.filter((b) => b !== item));
-      };
       
             // Fetch current user once session is available
             useEffect(() => {
@@ -50,7 +25,17 @@ export default function Home({ onNavigate }: { onNavigate: (screen: string) => v
   
 
   return (
-  <View>
+    <View style={styles.container}>
+            {/* Header with branding */}
+            <View style={styles.header}>
+                <Image
+                    source={require('../assets/images/UNT_logo.png')}
+                    resizeMode="contain"
+                    style={styles.logo}
+                />
+                <Text style={styles.title}>Eagle Guide</Text>
+            </View>
+
             {/* Session banner */}
             <View style={styles.sessionBar}>
                 {loading ? (
@@ -67,72 +52,39 @@ export default function Home({ onNavigate }: { onNavigate: (screen: string) => v
                     <Text style={styles.sessionText}>Not logged in</Text>
                 )}
             </View>
-      <View style={styles.bottomContainer}>
-                  {/* Search Bar */}
-                  <View style={styles.searchBar}>
-                      <TextInput
-                          style={styles.searchInput}
-                          placeholder='Search route (e.g. "Willis Library to Union")'
-                          placeholderTextColor="#dcdcdcff"
-                          value={routeText}
-                          onChangeText={setRouteText}
-                          returnKeyType="done"
-                      />
-                  </View>
-      
-                  {/* Bookmarks */}
-                  <ScrollView
-                      horizontal
-                      showsHorizontalScrollIndicator={false}
-                      style={styles.bookmarksContainer}
-                  >
-                      {bookmarks.map((item, index) => (
-                          <View key={index} style={styles.bookmarkItem}>
-                              <Text style={styles.bookmarkText}>{item}</Text>
-                              <TouchableOpacity onPress={() => deleteBookmark(item)}>
-                                  <Text style={styles.deleteText}>✕</Text>
-                              </TouchableOpacity>
-                          </View>
-                      ))}
-      
-                      {/* Add Bookmark "+" Box */}
-                      <TouchableOpacity style={styles.addBox} onPress={addBookmark}>
-                          <Text style={styles.addBoxText}>＋</Text>
-                      </TouchableOpacity>
-                  </ScrollView>
-      
-                  <TouchableOpacity style={styles.navButton}>
-                      <Text style={styles.navButtonText}>Start Navigation</Text>
-                  </TouchableOpacity>
-      
-      
-              </View>
-        {/*First Button */}
-     <TouchableOpacity
-  style={styles.button}
-  onPress={() => onNavigate('addroute')}
->
-  <Text style={styles.buttonText}>Add Route (Placeholder)</Text>
-</TouchableOpacity>
+            {/* Hero image */}
+            <Image
+                source={require('../assets/images/CampusImage.jpg')}
+                resizeMode="cover"
+                style={styles.hero}
+            />
 
-        {/* Second Button */}
-       <View style={{ height: 20 }} /> 
-       <TouchableOpacity
-        style={styles.button}
-        onPress={() => router.push("/map")}
-      >
-        <Text style={styles.buttonText}>View Routes (Placeholder)</Text>
-      </TouchableOpacity>
+            {/* Navigation grid */}
+            <View style={styles.grid}>
+                {navItems.map((item) => (
+                    <TouchableOpacity key={item.to} style={styles.card} onPress={() => router.push(item.to)}>
+                        <Text style={styles.cardLabel}>{item.label}</Text>
+                    </TouchableOpacity>
+                ))}
+            </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-   background: {
-    flex: 1,
-    width: "100%",
-    height: "100%",
-  },
+    container: {
+        flex: 1,
+        backgroundColor: '#1f1f1f',
+    },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 16,
+        paddingVertical: 14,
+        backgroundColor: '#2a2a2a',
+    },
+    logo: { width: 48, height: 48, marginRight: 12 },
+    title: { color: '#dcdcdcff', fontSize: 22, fontWeight: '700' },
   button: {
     backgroundColor: "#45ca3e", 
     paddingVertical: 15,
@@ -158,59 +110,25 @@ const styles = StyleSheet.create({
         width: '100%',
         paddingHorizontal: 15,
     },
-    searchBar: {
-        backgroundColor: '#6b6b6b',
-        borderRadius: 10,
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-        elevation: 3,
-        marginBottom: 8,
+    hero: {
+      width: '100%',
+      height: 200,
     },
-    searchInput: { fontSize: 16, color: '#dcdcdcff' },
-
-    /** Bookmarks **/
-    bookmarksContainer: {
-        flexDirection: 'row',
-        marginBottom: 10,
+    grid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      padding: 16,
+      gap: 12,
     },
-    bookmarkItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#6b6b6b',
-        borderRadius: 20,
-        paddingHorizontal: 14,
-        paddingVertical: 8,
-        marginRight: 8,
-        elevation: 3,
+    card: {
+      flexBasis: '48%',
+      backgroundColor: '#2f2f2f',
+      borderRadius: 12,
+      paddingVertical: 20,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
-    bookmarkText: { fontSize: 14, color: '#dcdcdcff', marginRight: 6 },
-    deleteText: { color: 'red', fontSize: 16, fontWeight: '700' },
-
-    /** Add Box **/
-    addBox: {
-        width: 40,
-        height: 40,
-        backgroundColor: '#45ca3e',
-        borderRadius: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-        elevation: 3,
-    },
-    addBoxText: {
-        fontSize: 24,
-        color: '#dcdcdcff',
-        fontWeight: '700',
-    },
-
-    /** Navigation Button **/
-    navButton: {
-        backgroundColor: '#45ca3e',
-        paddingVertical: 14,
-        borderRadius: 10,
-        alignItems: 'center',
-        elevation: 4,
-    },
-    navButtonText: { color: '#dcdcdcff', fontSize: 18, fontWeight: '600' },
+    cardLabel: { color: '#dcdcdcff', fontSize: 16, fontWeight: '600' },
     contentContainer: {
     padding: 20,
     backgroundColor: '#3f3f3f',
