@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Alert, FlatList, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, FlatList, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { addRoute, deleteRoute, getRoutes, SavedRoute } from './lib/api/addroutev2';
 
@@ -53,8 +53,8 @@ const [items3, setItems3] = useState([
 const [open4, setOpen4] = useState(false);
 const [value4, setValue4] =useState<number | null>(null);
 const [items4, setItems4] = useState([
-  { label: '1', value: 1 },
-  { label: '2', value: 2 },
+  { label: 'Yes', value: 1 },
+  { label: 'No', value: 0 },
 ]);
   
 
@@ -77,15 +77,27 @@ const addr = async (prevb: string | null,newb: string | null,type: string | null
   }
 
   try {
-    
+    //matches buildings to coordinates
     const startKey = prevb.replace(/\s/g, "") as MockCoordKey;
     const endKey = newb.replace(/\s/g, "") as MockCoordKey;
 
     const start = mockCoords[startKey];
     const end = mockCoords[endKey];
 
-   const res = await addRoute(userid,prevb,newb,start.lon,start.lat,end.lon,end.lat,accessibility,null,null);
+   const res = await addRoute({
+  userid,
+  prevb,
+  newb,
+  prevblon: start.lon,
+  prevblat: start.lat,
+  newblon: end.lon,
+  newblat: end.lat,
+  accessible: accessibility,
+  length: null,
+  duration: null,
+});
     Alert.alert("Success", res.message);
+    await loadSavedR();
   } catch (err) {
     console.error(err);
     Alert.alert("Error", "Could not reach the server");
@@ -106,6 +118,7 @@ const addr = async (prevb: string | null,newb: string | null,type: string | null
   };
 
   return (
+    <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps="handled">
   <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style={styles.container}>
       {/*For Text*/}
@@ -125,8 +138,13 @@ const addr = async (prevb: string | null,newb: string | null,type: string | null
         setOpen={setOpen1}
         setValue={setValue1}
         containerStyle={{ height: 50 }}
-        dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
-        style={{ backgroundColor: '#6b6b6b' }}
+       dropDownContainerStyle={{
+    backgroundColor: '#6b6b6b',
+    position: 'absolute', 
+    zIndex: 10000,        
+  }}
+  style={{ backgroundColor: '#6b6b6b' }}
+        
       />
     </View>
 
@@ -138,8 +156,12 @@ const addr = async (prevb: string | null,newb: string | null,type: string | null
         setOpen={setOpen2}
         setValue={setValue2}
         containerStyle={{ height: 50 }}
-        dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
-        style={{ backgroundColor: '#6b6b6b' }}
+        dropDownContainerStyle={{
+    backgroundColor: '#6b6b6b',
+    position: 'absolute', 
+    zIndex: 10000,        
+  }}
+  style={{ backgroundColor: '#6b6b6b' }}
       />
     </View>
   </View>
@@ -153,9 +175,14 @@ const addr = async (prevb: string | null,newb: string | null,type: string | null
         items={items3}
         setOpen={setOpen3}
         setValue={setValue3}
-        containerStyle={{ height: 50 }}
-        dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
-        style={{ backgroundColor: '#6b6b6b' }}
+         containerStyle={{ height: 50 }}
+        dropDownContainerStyle={{
+    backgroundColor: '#6b6b6b',
+    position: 'absolute', 
+    zIndex: 10000,        
+  }}
+  style={{ backgroundColor: '#6b6b6b' }}
+       
       />
     </View>
 
@@ -166,9 +193,14 @@ const addr = async (prevb: string | null,newb: string | null,type: string | null
         items={items4}
         setOpen={setOpen4}
         setValue={setValue4}
-        containerStyle={{ height: 50 }}
-        dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
-        style={{ backgroundColor: '#6b6b6b' }}
+         containerStyle={{ height: 50 }}
+         dropDownContainerStyle={{
+    backgroundColor: '#6b6b6b',
+    position: 'absolute', 
+    zIndex: 10000,        
+  }}
+  style={{ backgroundColor: '#6b6b6b' }}
+       
       />
     </View>
   </View>
@@ -179,12 +211,12 @@ const addr = async (prevb: string | null,newb: string | null,type: string | null
   <FlatList
   data={savedRoutes}
   keyExtractor={(route) => route.saved_route_id}
+  scrollEnabled={false}
   contentContainerStyle={{ paddingBottom: 20 }}
   renderItem={({ item: route }) => (
     <View style={styles.routeCard}>
-      <Text style={styles.routeid}>Route #{route.saved_route_id}</Text>
-      <Text style={styles.routeinfo}>Description: {route.name}</Text>
-      <Text style={styles.routeinfo}>Accessibility: {route.is_accessible}</Text>
+      <Text style={styles.routeid}>Route Name: {route.name}</Text>
+      <Text style={styles.routeinfo}>Accessibility: {route.is_accessible ? "Yes" : "No"}</Text>
 
       {/* Buttons */}
       <View style={styles.buttonr}>
@@ -195,13 +227,14 @@ const addr = async (prevb: string | null,newb: string | null,type: string | null
             router.push({
               pathname: '/editroute',
               params: {
-                saved_route_id: route.saved_route_id,
+                id: route.saved_route_id,
                 name: route.name,
                 start_lon: route.start_lon,
                 start_lat: route.start_lat,
                 end_lon: route.end_lon,
                 end_lat: route.end_lat,
                 accessible: route.is_accessible,
+                 returnScreen: 'addroute', 
               },
             });
           }}
@@ -252,6 +285,7 @@ const addr = async (prevb: string | null,newb: string | null,type: string | null
       </Text>
     </View>
   </TouchableWithoutFeedback>
+  </ScrollView>
 );
 }
 
@@ -302,7 +336,7 @@ dropdownGrid: {
 },
 Savedroutes: {
   width: '90%',
-  maxHeight: 250,
+  
   backgroundColor: '#2f2f2f',
   borderRadius: 10,
   padding: 10,
