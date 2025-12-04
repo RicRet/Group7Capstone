@@ -24,8 +24,10 @@ import {
     type NavigationInitErrorCode,
     type NavigationViewController,
 } from "@googlemaps/react-native-navigation-sdk";
+import { useRouter } from "expo-router";
 
 const MapScreen: React.FC = () => {
+  const router = useRouter();
   const [showMenu, setShowMenu] = useState(false);
   const [currentSheet, setCurrentSheet] = useState<string>("home");
 
@@ -40,14 +42,13 @@ const MapScreen: React.FC = () => {
   const sheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
 
-  // Render bottom sheet contents. Important: we pass wrapper functions so types match.
   const renderSheetContent = () => {
     switch (currentSheet) {
       case "home":
         return (
           <Homepage
             onNavigate={(screen: string) => setCurrentSheet(screen)}
-            startNavigation={() => setShowNavigation(true)} // exact () => void
+            startNavigation={() => setShowNavigation(true)}
           />
         );
       case "addroute":
@@ -90,6 +91,11 @@ const MapScreen: React.FC = () => {
     };
   }, [navigationCallbacks, addListeners, removeListeners]);
 
+  const handleMenuPress = (screen: string) => {
+    setShowMenu(false);
+    router.replace(`/${screen}`);
+  };
+
   return (
     <GestureHandlerRootView style={styles.container}>
       <KeyboardAvoidingView
@@ -120,9 +126,18 @@ const MapScreen: React.FC = () => {
 
               {showMenu && (
                 <View style={styles.menuContainer}>
-                  {["Home", "Settings", "Profile", "Help"].map((tab, index) => (
-                    <TouchableOpacity key={index} style={styles.menuItem}>
-                      <Text style={styles.menuText}>{tab}</Text>
+                  {[
+                    { label: "Home", screen: "home" },
+                    { label: "Settings", screen: "Settings" },
+                    { label: "Profile", screen: "profile" },
+                    { label: "Help", screen: "help" },
+                  ].map((item, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      style={styles.menuItem}
+                      onPress={() => handleMenuPress(item.screen)}
+                    >
+                      <Text style={styles.menuText}>{item.label}</Text>
                     </TouchableOpacity>
                   ))}
                 </View>
