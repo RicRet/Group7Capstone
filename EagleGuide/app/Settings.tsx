@@ -36,7 +36,7 @@ const Settings: React.FC = () => {
       { text: "Cancel", onPress: () => {}, style: "cancel" },
       {
         text: "Logout",
-        onPress: () => router.replace("/login"),
+        onPress: () => router.replace("/Login"),
         style: "destructive",
       },
     ]);
