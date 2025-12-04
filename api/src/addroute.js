@@ -31,37 +31,84 @@ const { userid, prevb, newb, prevblon, prevblat, newblon, newblat, accessible, l
 });
 
 //Gets route for front end to list
-router.get('/routes', async (req, res) => {
+router.get('/userroute/:userid', async (req, res) => {
+  const { userid } = req.params;
+
   try {
-     const result = await query(`SELECT * FROM gis.paths ORDER BY path_id DESC;`);
+    const result = await query(
+      `SELECT saved_route_id,user_id,name,ST_X(start_geom) AS start_lon,ST_Y(start_geom) AS start_lat,
+        ST_X(end_geom) AS end_lon,ST_Y(end_geom) AS end_lat,is_accessible,length_m,duration_s,
+        created_at
+      FROM users.user_saved_route
+      WHERE user_id = $1;`,
+      [userid]
+    );
+
     res.json(result);
   } catch (err) {
-    console.error('get error');
-  
+    console.error('Get error', err);
+    res.status(500).json({ message: 'Database error' });
   }
 });
 
 
 
+
 //Delete Route function
-router.delete('/routes/:id', async (req, res) => {
+router.delete('/userroute/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
     const result = await query(
-      `DELETE FROM gis.paths WHERE path_id = $1 RETURNING path_id, description`,
+      `DELETE FROM users.user_saved_route 
+       WHERE saved_route_id = $1 
+       RETURNING saved_route_id;`,
       [id]
     );
 
     if (result.length === 0) {
-      return res.json({ message: 'No Route with that id exists' });
+      return res.status(404).json({ message: 'No route with that ID exists' });
     }
 
     res.json({
-      message: `Route ${id} has been deleted `,
+      message: `Route ${id} has been deleted.`,
+      deleted_id: result[0].saved_route_id
     });
   } catch (err) {
-    console.error('Deletion error');
+    console.error('Deletion error', err);
+    res.status(500).json({ message: 'Database error' });
+  }
+});
+
+router.put('/userroute/:id', async (req, res) => {
+  const { id } = req.params;
+  const { name, start_lon, start_lat, end_lon, end_lat, accessible, length, duration } = req.body;
+
+  try {
+    const result = await query(
+      `
+      UPDATE users.user_saved_route
+      SET
+      name = COALESCE($1, name),start_geom = COALESCE(ST_SetSRID(ST_Point($2, $3), 4326), start_geom),end_geom = COALESCE(ST_SetSRID(ST_Point($4, $5), 4326), end_geom),
+      is_accessible = COALESCE($6, is_accessible),length_m = COALESCE($7, length_m),duration_s = COALESCE($8, duration_s)
+      WHERE saved_route_id = $9
+      RETURNING saved_route_id;
+      `,
+      [name || null,start_lon || null,start_lat || null,end_lon || null,end_lat || null,accessible,length || null,duration || null,id]
+    );
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: "Route not found" });
+    }
+
+    res.json({
+      message: `Route ${id} updated successfully`,
+      updated_id: result[0].saved_route_id
+    });
+
+  } catch (err) {
+    console.error('Update error', err);
+    res.status(500).json({ message: 'Database error' });
   }
 });
 

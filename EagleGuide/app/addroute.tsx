@@ -170,6 +170,20 @@ const [items4, setItems4] = useState([
 
         {/*Delete Button (edit will be added later)*/}
         <View style={styles.buttonr}>
+         <TouchableOpacity
+          style={styles.editButton}
+          onPress={() => {
+            router.push({
+              pathname: '/editroute', 
+              params: { 
+                path_id: route.path_id.toString(),
+                description: route.description,
+                type: route.type,
+                accessibility: route.accessibility
+              }
+            });
+          }}
+        ></TouchableOpacity>
 
           <TouchableOpacity
             style={styles.deleteButton}
@@ -308,5 +322,13 @@ buttonText: {
   color: '#fff',
   fontWeight: 'bold',
 },
+
+editButton: {
+    backgroundColor: '#4caf50', 
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 6,
+    marginRight: 10, 
+  },
   
 });

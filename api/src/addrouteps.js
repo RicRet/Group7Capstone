@@ -64,6 +64,38 @@ router.delete('/routes/:id', async (req, res) => {
   }
 });
 
+router.put('/routes/:id', async (req, res) => {
+  const { id } = req.params;
+  const { description, prevb, newb, type, accessibility } = req.body;
+  
+  const newdescription =
+    prevb && newb ? `Route from ${prevb} to ${newb}` : null;
+
+  try {
+    const result = await query(
+      `UPDATE gis.paths
+      SET
+      description = COALESCE($1, description),type = COALESCE($2, type),accessibility_path_type = COALESCE($3, accessibility_path_type)
+      WHERE path_id = $4
+      RETURNING path_id;`,
+      [description || newdescription || null,type || null,accessibility,id]
+    );
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: "Route not found" });
+    }
+
+    res.json({
+      message: `Route ${id} updated successfully`,
+      updated_id: result[0].path_id
+    });
+
+  } catch (err) {
+    console.error("Update error", err);
+    res.status(500).json({ message: "Database error" });
+  }
+});
+
 
 
 
