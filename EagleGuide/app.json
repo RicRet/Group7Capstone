@@ -45,7 +45,8 @@
       "reactCompiler": true
     },
     "extra": {
-      "apiBaseUrl": "http://18.117.146.190:8080"
+      "apiBaseUrl": "http://18.117.146.190:8080",
+      "orsApiKey" : "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjkzM2Q3MjAyYmMzODQ0ZjliZWUwNGEwYmJhNjdiMjNlIiwiaCI6Im11cm11cjY0In0="
     }
   }
 }
