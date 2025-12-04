@@ -13,4 +13,5 @@ r.use('/users', users);
 r.use('/gis', gis);
 r.use('/', health);
 r.use('/routes', addroute);
+r.use('/userroute', addroute);
 export default r;
