@@ -7,7 +7,7 @@ console.log('✅ Loaded .env');
 //loads other imports
 const { default: express } = await import('express');
 const { default: cors } = await import('cors');
-const { default: routes } = await import('./addrouteps.js');
+const { default: userroute } = await import('./addroute.js');
 const { createApp } = await import('./app.js');
 
 
@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 8080;
 const app = createApp();
 
 //mounts the addroutefunction
-app.use('/v1', routes);
+app.use('/v1', userroute);
 
 
 app.listen(PORT, '0.0.0.0', () => {

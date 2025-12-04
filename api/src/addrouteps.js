@@ -5,19 +5,18 @@ const router = express.Router();
 
 //Function to inserst routes into db
 router.post('/routes', async (req, res) => {
-  const {  prevb, newb, routeType, accessibilityType } = req.body;
+  const { prevb, newb, type, accessibility } = req.body;
     
-  if (!prevb || !newb || !routeType || !accessibilityType) {
+  if (!prevb || !newb || !type || accessibility == null) {
     return res.json({ message: 'Needs all options selected' });
   }
 
   try {
     const result = await query(
-       `INSERT INTO gis.paths (description, type, accessibility_path_type)
+      `INSERT INTO gis.paths (description, type, accessibility_path_type)
        VALUES ($1, $2, $3)
        RETURNING path_id;`,
-      [`Route from ${prevb} to ${newb}`, routeType, accessibilityType]
-
+      [`Route from ${prevb} to ${newb}`, type, accessibility]
     );
 
     res.json({
@@ -25,8 +24,8 @@ router.post('/routes', async (req, res) => {
       path_id: result[0].path_id,
     });
   } catch (err) {
-    console.error('Insert error');
-  
+    console.error('Insert error', err);
+    res.status(500).json({ message: 'Database error' });
   }
 });
 
@@ -62,6 +61,38 @@ router.delete('/routes/:id', async (req, res) => {
     });
   } catch (err) {
     console.error('Deletion error');
+  }
+});
+
+router.put('/routes/:id', async (req, res) => {
+  const { id } = req.params;
+  const { description, prevb, newb, type, accessibility } = req.body;
+  
+  const newdescription =
+    prevb && newb ? `Route from ${prevb} to ${newb}` : null;
+
+  try {
+    const result = await query(
+      `UPDATE gis.paths
+      SET
+      description = COALESCE($1, description),type = COALESCE($2, type),accessibility_path_type = COALESCE($3, accessibility_path_type)
+      WHERE path_id = $4
+      RETURNING path_id;`,
+      [description || newdescription || null,type || null,accessibility,id]
+    );
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: "Route not found" });
+    }
+
+    res.json({
+      message: `Route ${id} updated successfully`,
+      updated_id: result[0].path_id
+    });
+
+  } catch (err) {
+    console.error("Update error", err);
+    res.status(500).json({ message: "Database error" });
   }
 });
 

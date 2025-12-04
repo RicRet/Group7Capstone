@@ -2,9 +2,11 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { login } from "./lib/api/login";
+import { useSession } from "./lib/session";
 
 const Login = () => {
     const router = useRouter();
+    const { login: loginWithSession } = useSession();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
@@ -14,10 +16,11 @@ const Login = () => {
         try {
             setMessage('');
             const response = await login({ username, password });
-                // routes to map and homescreen
-                setMessage('Login Suscessful!, redirecting to homepage.');
-                router.replace('/test1');
-                console.log('Login successful:', response);
+            await loginWithSession(username, password);
+            // routes to map and homescreen
+            setMessage('Login Suscessful!, redirecting to homepage.');
+            router.replace('/map');
+            console.log('Login successful:', response);
         }
         catch (error) {
             // if user and pass do not successfully login

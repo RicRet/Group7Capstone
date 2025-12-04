@@ -35,6 +35,10 @@ const Test = () => {
         <Text style={styles.buttonText}>Map</Text>
       </TouchableOpacity>
 
+      <TouchableOpacity style={styles.button} onPress={() => router.push("/navigation")}>
+        <Text style={styles.buttonText}>Navigation</Text>
+      </TouchableOpacity>
+
       <TouchableOpacity style={styles.button} onPress={() => router.push("/Login")}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
