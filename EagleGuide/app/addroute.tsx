@@ -76,6 +76,10 @@ const addr = async (prevb: string | null,newb: string | null,type: string | null
     return Alert.alert("Enter all options");
   }
 
+   if (prevb === newb) {
+    return Alert.alert("Invalid Route", "Start and end buildings cannot be the same.");
+  }
+
   try {
     //matches buildings to coordinates
     const startKey = prevb.replace(/\s/g, "") as MockCoordKey;

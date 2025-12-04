@@ -38,15 +38,6 @@ export default function EditRoute() {
     { label: 'Parking Garage', value: 'Parking Garage' },
   ]);
 
- 
-  const [open3, setOpen3] = useState(false);
-  const [value3, setValue3] = useState<string | null>(null);
-  const [items3, setItems3] = useState([
-    { label: 'Pedestrian', value: 'Pedestrian' },
-    { label: 'Bus', value: 'Bus' },
-  ]);
-
-  
   const [open4, setOpen4] = useState(false);
   const [value4, setValue4] = useState<number | null>(Number(params.accessible) ?? 1);
   const [items4, setItems4] = useState([
@@ -75,6 +66,10 @@ export default function EditRoute() {
     if (!value1 || !value2 || value4 == null) {
       return Alert.alert('Error', 'Please select start, end, and accessibility');
     }
+
+    if (value1 === value2) {
+    return Alert.alert("Invalid Route", "Start and end buildings cannot be the same.");
+  }
 
     try {
     //matches buildings to coordinates
@@ -107,10 +102,9 @@ export default function EditRoute() {
   };
 
   //Stops multiple dropdowns being open at one
-  const onOpen1 = () => { setOpen1(true); setOpen2(false); setOpen3(false); setOpen4(false); };
-  const onOpen2 = () => { setOpen1(false); setOpen2(true); setOpen3(false); setOpen4(false); };
-  const onOpen3 = () => { setOpen1(false); setOpen2(false); setOpen3(true); setOpen4(false); };
-  const onOpen4 = () => { setOpen1(false); setOpen2(false); setOpen3(false); setOpen4(true); };
+  const onOpen1 = () => { setOpen1(true); setOpen2(false); setOpen4(false); };
+  const onOpen2 = () => { setOpen1(false); setOpen2(true); setOpen4(false); };
+  const onOpen4 = () => { setOpen1(false); setOpen2(false); setOpen4(true); };
 
   return (
     <ScrollView
@@ -158,22 +152,6 @@ export default function EditRoute() {
             dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
             style={{ backgroundColor: '#6b6b6b' }}
           />
-
-          <Text style={styles.label}>Transportation type</Text>
-          <DropDownPicker
-            open={open3}
-            value={value3}
-            items={items3}
-            setOpen={setOpen3}
-            setValue={setValue3}
-            setItems={setItems3}
-            onOpen={onOpen3}
-            zIndex={2000}
-            containerStyle={{ marginBottom: 15 }}
-            dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
-            style={{ backgroundColor: '#6b6b6b' }}
-          />
-
           <Text style={styles.label}>Accessibility Needed?</Text>
           <DropDownPicker
             open={open4}
