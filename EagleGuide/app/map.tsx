@@ -14,12 +14,20 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import Addroute from './addroute';
 import Homepage from './homepage';
-
+import { useRouter } from 'expo-router';
+  
 const MapScreen = () => {
     const [showMenu, setShowMenu] = useState(false);
     const [currentSheet, setCurrentSheet] = useState('home');
 
-        const renderSheetContent = () => {
+    const router = useRouter();
+
+    const handleMenuPress = (path: string) => {
+        setShowMenu(false);
+        router.replace(path);
+    };
+
+    const renderSheetContent = () => {
         switch (currentSheet) {
             case 'home':
                 return <Homepage onNavigate={setCurrentSheet} />;
@@ -94,9 +102,18 @@ const MapScreen = () => {
 
                         {showMenu && (
                             <View style={styles.menuContainer}>
-                                {['Home', 'Settings', 'Profile', 'Help'].map((tab, index) => (
-                                    <TouchableOpacity key={index} style={styles.menuItem}>
-                                        <Text style={styles.menuText}>{tab}</Text>
+                                {[
+                                  { label: 'Home', path: '/home' },
+                                  { label: 'Settings', path: '/Settings' },
+                                  { label: 'Profile', path: '/profile' },
+                                  { label: 'Help', path: '/help' },
+                                ].map((item, index) => (
+                                    <TouchableOpacity
+                                        key={index}
+                                        style={styles.menuItem}
+                                        onPress={() => handleMenuPress(item.path)}
+                                    >
+                                        <Text style={styles.menuText}>{item.label}</Text>
                                     </TouchableOpacity>
                                 ))}
                             </View>
