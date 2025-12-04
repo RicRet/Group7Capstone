@@ -2,18 +2,19 @@ import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Alert, FlatList, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { addRoute, deleteRoute, getRoutes, SavedRoute } from './lib/api/addroute';
+import { addRoute, deleteRoute, getRoutes, SavedRoute } from './lib/api/addroutev2';
 
 
 
 export default function Addroute({ onNavigate }: { onNavigate: (screen: string) => void }) {
   const router = useRouter();
 const [savedRoutes, setSavedRoutes] = useState<SavedRoute[]>([]);
-
+//Test Id
+const userid: string = "2cf8f2eb-8adc-49de-a993-fe075ff4bdee";
 
 const loadSavedR = async () => {
   try {
-    const res = await getRoutes();
+    const res = await getRoutes(userid);
     setSavedRoutes(res);
   } catch {
     Alert.alert("Error", "Could not load saved routes");
@@ -55,34 +56,52 @@ const [items4, setItems4] = useState([
   { label: '1', value: 1 },
   { label: '2', value: 2 },
 ]);
-
-
   
+
 //to track input for route delete
  const [num, setNum] = useState('');
 
-  //Function To take front end data to backend
-  const addr = async ( prevb: string | null,newb: string | null,type: string | null,accessibility: number | null) => {
-  if (!prevb || !newb || !type || accessibility == null) {return Alert.alert('Enter all options');
+  //place holder Cordinates
+const mockCoords = {
+  StudentUnion: { lon: -97.150, lat: 33.214 },
+  Willis: { lon: -97.152, lat: 33.215 },
+  ParkingGarage: { lon: -97.148, lat: 33.216 },
+} as const;
+
+type MockCoordKey = keyof typeof mockCoords;
+
+// add route function
+const addr = async (prevb: string | null,newb: string | null,type: string | null,accessibility: number | null,userid: string) => {
+  if (!prevb || !newb || !type || accessibility == null) {
+    return Alert.alert("Enter all options");
   }
+
   try {
-    const res = await addRoute(prevb!, newb!, type!, accessibility!);
-    Alert.alert('Success', res.message);
-  } catch {
-    Alert.alert('Error', 'Could not reach the server');
+    
+    const startKey = prevb.replace(/\s/g, "") as MockCoordKey;
+    const endKey = newb.replace(/\s/g, "") as MockCoordKey;
+
+    const start = mockCoords[startKey];
+    const end = mockCoords[endKey];
+
+   const res = await addRoute(userid,prevb,newb,start.lon,start.lat,end.lon,end.lat,accessibility,null,null);
+    Alert.alert("Success", res.message);
+  } catch (err) {
+    console.error(err);
+    Alert.alert("Error", "Could not reach the server");
   }
 };
 
 //Function to delete route
  const del = async () => {
-    if (!num) return Alert.alert('Enter a route ID to delete');
+    if (!num) return Alert.alert("Enter a route ID to delete");
+
     try {
-      const id = Number(num);
-      const res = await deleteRoute(id);
-      Alert.alert('Deleted', res.message);
-      Keyboard.dismiss();
+      const res = await deleteRoute(num);
+      Alert.alert("Deleted", res.message);
+      loadSavedR();
     } catch {
-      Alert.alert('Error', 'Could not delete route');
+      Alert.alert("Error", "Could not delete route");
     }
   };
 
@@ -158,46 +177,56 @@ const [items4, setItems4] = useState([
   <Text style={styles.SavedRoutesHeader}>Saved Routes</Text>
   {/*Saved Route list */}
   <FlatList
-    data={savedRoutes}
-    keyExtractor={(route) => route.path_id.toString()}
-    contentContainerStyle={{ paddingBottom: 20 }}
-    renderItem={({ item:route }) => (
-      <View style={styles.routeCard}>
-        <Text style={styles.routeid}>Route #{route.path_id}</Text>
-        <Text style={styles.routeinfo}>Description: {route.description}</Text>
-        <Text style={styles.routeinfo}>Type: {route.type}</Text>
-        <Text style={styles.routeinfo}>Accessibility: {route.accessibility}</Text>
+  data={savedRoutes}
+  keyExtractor={(route) => route.saved_route_id}
+  contentContainerStyle={{ paddingBottom: 20 }}
+  renderItem={({ item: route }) => (
+    <View style={styles.routeCard}>
+      <Text style={styles.routeid}>Route #{route.saved_route_id}</Text>
+      <Text style={styles.routeinfo}>Description: {route.name}</Text>
+      <Text style={styles.routeinfo}>Accessibility: {route.is_accessible}</Text>
 
-        {/*Delete Button (edit will be added later)*/}
-        <View style={styles.buttonr}>
-         <TouchableOpacity
+      {/* Buttons */}
+      <View style={styles.buttonr}>
+        {/* Edit Button */}
+        <TouchableOpacity
           style={styles.editButton}
           onPress={() => {
             router.push({
-              pathname: '/editroute', 
-              params: { 
-                path_id: route.path_id.toString(),
-                description: route.description,
-                type: route.type,
-                accessibility: route.accessibility
-              }
+              pathname: '/editroute',
+              params: {
+                saved_route_id: route.saved_route_id,
+                name: route.name,
+                start_lon: route.start_lon,
+                start_lat: route.start_lat,
+                end_lon: route.end_lon,
+                end_lat: route.end_lat,
+                accessible: route.is_accessible,
+              },
             });
           }}
-        ></TouchableOpacity>
+        >
+          <Text style={styles.buttonText}>Edit</Text>
+        </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.deleteButton}
-            onPress={async () => {
-              await deleteRoute(route.path_id);
+        {/* Delete Button */}
+        <TouchableOpacity
+          style={styles.deleteButton}
+          onPress={async () => {
+            try {
+              await deleteRoute(route.saved_route_id);
               loadSavedR();
-            }}
-          >
-            <Text style={styles.buttonText}>Delete</Text>
-          </TouchableOpacity>
-        </View>
+            } catch {
+              Alert.alert('Error', 'Could not delete route');
+            }
+          }}
+        >
+          <Text style={styles.buttonText}>Delete</Text>
+        </TouchableOpacity>
       </View>
-    )}
-  />
+    </View>
+  )}
+/>
 </View>
       <TextInput
         style={styles.input}
@@ -214,7 +243,7 @@ const [items4, setItems4] = useState([
         Delete Route
       </Text>
 
-      <Text style={styles.link} onPress={() => addr(value1, value2, value3, value4)}>
+      <Text style={styles.link} onPress={() => addr(value1, value2, value3, value4,userid)}>
         Submit Route
       </Text>
 

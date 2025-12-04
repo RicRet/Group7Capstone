@@ -79,21 +79,19 @@ router.delete('/userroute/:id', async (req, res) => {
     res.status(500).json({ message: 'Database error' });
   }
 });
-
+//edit route function
 router.put('/userroute/:id', async (req, res) => {
   const { id } = req.params;
   const { name, start_lon, start_lat, end_lon, end_lat, accessible, length, duration } = req.body;
 
   try {
     const result = await query(
-      `
-      UPDATE users.user_saved_route
+      `UPDATE users.user_saved_route
       SET
       name = COALESCE($1, name),start_geom = COALESCE(ST_SetSRID(ST_Point($2, $3), 4326), start_geom),end_geom = COALESCE(ST_SetSRID(ST_Point($4, $5), 4326), end_geom),
       is_accessible = COALESCE($6, is_accessible),length_m = COALESCE($7, length_m),duration_s = COALESCE($8, duration_s)
       WHERE saved_route_id = $9
-      RETURNING saved_route_id;
-      `,
+      RETURNING saved_route_id;`,
       [name || null,start_lon || null,start_lat || null,end_lon || null,end_lat || null,accessible,length || null,duration || null,id]
     );
 
@@ -107,7 +105,7 @@ router.put('/userroute/:id', async (req, res) => {
     });
 
   } catch (err) {
-    console.error('Update error', err);
+    console.error('Edit error', err);
     res.status(500).json({ message: 'Database error' });
   }
 });

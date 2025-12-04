@@ -1,35 +1,73 @@
 import { http } from '../http';
 
+
 export type AddRouteResponse = {
   message: string;
-  path_id?: number;
+  saved_route_id?: string;
 };
 
+
 export type SavedRoute = {
-  path_id: number;
-  description: string;
-  type: string;
-  accessibility: number;
+  saved_route_id: string;
+  user_id: string;
+  name: string;
+  start_lon: number;
+  start_lat: number;
+  end_lon: number;
+  end_lat: number;
+  is_accessible: number;
+  length_m: number | null;
+  duration_s: number | null;
+  created_at: string;
 };
+
 
 export type DeleteRouteResponse = {
   message: string;
+  deleted_id?: string;
 };
 
-//calls function from backend
-export async function addRoute(prevb: string,newb: string,type: string,accessibility: number
+
+export async function addRoute(
+  userid: string,
+  prevb: string,
+  newb: string,
+  prevblon: number,
+  prevblat: number,
+  newblon: number,
+  newblat: number,
+  accessible: number,
+  length?: number | null,
+  duration?: number | null
 ) {
-  const res = await http.post<AddRouteResponse>('/routes', { prevb,newb,type,accessibility, });
+  const res = await http.post<AddRouteResponse>('/userroute', {userid,prevb,newb,prevblon,prevblat,newblon,newblat,accessible,length,duration,});
   return res.data;
 }
 
 
-export async function getRoutes() {
-  const res = await http.get<SavedRoute[]>('/routes');
+export async function getRoutes(userid: string) {
+  const res = await http.get<SavedRoute[]>(`/userroute/${userid}`);
   return res.data;
 }
 
-  export async function deleteRoute(id: number) {
-   const res = await http.delete<DeleteRouteResponse>(`/routes/${id}`);
-   return res.data;
+
+export async function deleteRoute(id: string) {
+  const res = await http.delete<DeleteRouteResponse>(`/userroute/${id}`);
+  return res.data;
+}
+
+
+export async function updateRoute(
+  id: string,
+  name?: string,
+  start_lon?: number,
+  start_lat?: number,
+  end_lon?: number,
+  end_lat?: number,
+  accessible?: number,
+  length?: number | null,
+  duration?: number | null
+) {
+  const res = await http.put(`/userroute/${id}`, {name,start_lon,start_lat,end_lon,end_lat,accessible,length,duration,});
+  return res.data;
 }
