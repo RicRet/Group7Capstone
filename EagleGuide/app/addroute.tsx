@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Alert, FlatList, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, FlatList, Keyboard, ScrollView, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { addRoute, deleteRoute, getRoutes, SavedRoute } from './lib/api/addroutev2';
 
@@ -209,6 +209,15 @@ const addr = async (prevb: string | null,newb: string | null,type: string | null
     </View>
   </View>
 </View>  
+<TouchableOpacity 
+  style={styles.submitButton}
+  onPress={() => addr(value1, value2, value3, value4, userid)}
+>
+  <Text style={styles.submitButtonText}>Submit Route</Text>
+</TouchableOpacity>
+
+
+
     <View style={styles.Savedroutes}>
   <Text style={styles.SavedRoutesHeader}>Saved Routes</Text>
   {/*Saved Route list */}
@@ -265,25 +274,8 @@ const addr = async (prevb: string | null,newb: string | null,type: string | null
   )}
 />
 </View>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter Route ID for deletion"
-        keyboardType="numeric"
-        value={num}
-        onChangeText={setNum}
-        returnKeyType="done"
-        onSubmitEditing={Keyboard.dismiss}
-      />
-
+     
       {/* Buttons */}
-      <Text style={styles.link} onPress={() => del()}>
-        Delete Route
-      </Text>
-
-      <Text style={styles.link} onPress={() => addr(value1, value2, value3, value4,userid)}>
-        Submit Route
-      </Text>
-
       <Text style={styles.link} onPress={() => onNavigate('home')}>
         Go back
       </Text>
@@ -391,11 +383,26 @@ buttonText: {
 },
 
 editButton: {
-    backgroundColor: '#4caf50', 
+    backgroundColor: '#b3b613ff', 
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 6,
     marginRight: 10, 
   },
   
+  submitButton: {
+  backgroundColor: '#4caf50',   
+  paddingVertical: 10,
+  paddingHorizontal: 20,
+  borderRadius: 6,
+  marginBottom: 20,
+  alignSelf: 'center',
+},
+
+submitButtonText: {
+  color: '#fff',
+  fontWeight: 'bold',
+  fontSize: 16,
+  textAlign: 'center',
+},
 });
