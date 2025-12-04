@@ -64,6 +64,49 @@ Notes:
 - On Web, CORS must be enabled on the API for browser access.
 - On Android release builds over HTTP, you may need to allow cleartext traffic.
 
+## Navigation Screen (Two Pins + Routing)
+
+We added a new screen at `app/navigation.tsx` that lets you:
+
+- Long-press the map to place Origin and Destination pins.
+- Swap or clear pins.
+- Fetch a route and draw it on the map.
+
+### Routing Provider
+
+The screen uses OpenRouteService (ORS) for routing when an API key is available. If no key is configured, it falls back to a straight line between pins.
+
+Configure your ORS key via either option:
+
+1. `app.json` (recommended for dev)
+
+```json
+{
+   "expo": {
+      "extra": {
+         "apiBaseUrl": "http://18.117.146.190:8080",
+         "orsApiKey": "YOUR_ORS_API_KEY"
+      }
+   }
+}
+```
+
+2. Environment variable
+
+```bash
+export EXPO_PUBLIC_ORS_API_KEY=YOUR_ORS_API_KEY
+```
+
+Restart Expo after adding the key.
+
+Open the screen from the Test hub:
+
+```text
+Test → Navigation
+```
+
+Or navigate programmatically: `router.push('/navigation')`.
+
 ## Sessions (using API Redis)
 
 - Login returns an opaque `token` (session id) from `POST /v1/auth/login`.
