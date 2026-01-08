@@ -2,9 +2,10 @@ import Constants from "expo-constants";
 import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, FlatList, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import MapView, { Marker, Polyline, PROVIDER_GOOGLE, Region } from "react-native-maps";
 import { getRouteFromORS, snapToRoad, type Coordinates, type Profile } from "./lib/api/directions";
+import { searchLocation, type GeocodeResult } from "./lib/api/geocoding";
 
 export default function NavigationScreen() {
   const router = useRouter();
@@ -17,6 +18,9 @@ export default function NavigationScreen() {
   const [orsKeyStatus, setOrsKeyStatus] = useState<string>("unknown");
   const [routeSample, setRouteSample] = useState<string>("");
   const [snappedPins, setSnappedPins] = useState<{ origin?: Coordinates; destination?: Coordinates }>({});
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<GeocodeResult[]>([]);
+  const [searching, setSearching] = useState(false);
 
   const initialRegion: Region = useMemo(
     () => ({
@@ -123,6 +127,32 @@ export default function NavigationScreen() {
     }
   };
 
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return;
+
+    setSearching(true);
+    try {
+      const results = await searchLocation(searchQuery);
+      setSearchResults(results);
+    } catch (error) {
+      Alert.alert("Search failed", "Unable to find locations.");
+    } finally {
+      setSearching(false);
+    }
+  };
+
+  const selectSearchResult = (result: GeocodeResult) => {
+    setDestination(result.coordinates);
+    setSearchResults([]);
+    setSearchQuery(result.label);
+
+    mapRef.current?.animateCamera({
+      center: result.coordinates,
+      zoom: 16,
+    });
+  };
+
+
   const darkStyle = [
     { elementType: "geometry", stylers: [{ color: "#6b6b6b" }] },
     { elementType: "labels.text.fill", stylers: [{ color: "#dcdcdcff" }] },
@@ -161,6 +191,31 @@ export default function NavigationScreen() {
       </MapView>
 
       <View style={styles.controls}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search for a place or address"
+          placeholderTextColor="#aaa"
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          onSubmitEditing={handleSearch}
+          returnKeyType="search"
+        />
+        {searching && <ActivityIndicator style={{ marginTop: 6 }} />}
+        {searchResults.length > 0 && (
+          <FlatList
+            data={searchResults}
+            keyExtractor={(item) => item.id}
+            style={styles.searchResults}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.searchItem}
+                onPress={() => selectSearchResult(item)}
+              >
+                <Text style={styles.searchText}>{item.label}</Text>
+              </TouchableOpacity>
+            )}
+          />
+        )}
         <View style={styles.row}>
           <TouchableOpacity style={styles.button} onPress={swapPins}>
             <Text style={styles.buttonText}>Swap</Text>
@@ -246,4 +301,26 @@ const styles = StyleSheet.create({
   },
   sampleTitle: { color: "#dcdcdcff", fontWeight: "700", marginBottom: 4 },
   sampleText: { color: "#dcdcdcff", fontFamily: Platform.select({ ios: "Menlo", android: "monospace" }) as any },
+  searchInput: {
+  backgroundColor: "#2f2f2f",
+  color: "#dcdcdcff",
+  paddingHorizontal: 12,
+  paddingVertical: 10,
+  borderRadius: 10,
+  marginBottom: 6,
+},
+searchResults: {
+  maxHeight: 160,
+  marginBottom: 8,
+},
+searchItem: {
+  paddingVertical: 8,
+  paddingHorizontal: 10,
+  borderBottomWidth: 1,
+  borderBottomColor: "#444",
+},
+searchText: {
+  color: "#dcdcdcff",
+},
+
 });

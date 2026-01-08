@@ -1,5 +1,4 @@
 // app/_layout.tsx
-import { NavigationProvider } from "@googlemaps/react-native-navigation-sdk";
 import { Stack } from "expo-router";
 import { SessionProvider } from "./lib/session";
 

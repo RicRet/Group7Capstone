@@ -31,7 +31,7 @@ const Test = () => {
         <Text style={styles.buttonText}>Home</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={() => router.push("/test2")}>
+      <TouchableOpacity style={styles.button} onPress={() => router.push("/map")}>
         <Text style={styles.buttonText}>Map</Text>
       </TouchableOpacity>
 
@@ -45,10 +45,6 @@ const Test = () => {
 
       <TouchableOpacity style={styles.button} onPress={() => router.push("/Signup")}>
         <Text style={styles.buttonText}>Signup</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.button} onPress={() => router.push("/test1")}>
-        <Text style={styles.buttonText}>test1</Text>
       </TouchableOpacity>
 
       <View style={{ height: 8 }} />
