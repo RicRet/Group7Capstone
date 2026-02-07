@@ -1,4 +1,5 @@
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { useRouter } from 'expo-router';
 import React, { useMemo, useRef, useState } from 'react';
 import {
     Keyboard,
@@ -14,7 +15,6 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import Addroute from './addroute';
 import Homepage from './homepage';
-import { useRouter } from 'expo-router';
   
 const MapScreen = () => {
     const [showMenu, setShowMenu] = useState(false);
@@ -24,7 +24,7 @@ const MapScreen = () => {
 
     const handleMenuPress = (path: string) => {
         setShowMenu(false);
-        router.replace(path);
+        router.push(path);
     };
 
     const renderSheetContent = () => {
@@ -103,13 +103,14 @@ const MapScreen = () => {
                         {showMenu && (
                             <View style={styles.menuContainer}>
                                 {[
-                                  { label: 'Home', path: '/home' },
+                                  { label: 'Home', path: '/homepage' },
+                                  { label: 'Navigation', path: '/navigation' },
+                                  { label: 'Add Route', path: '/addroute' },
                                   { label: 'Settings', path: '/Settings' },
-                                  { label: 'Profile', path: '/profile' },
-                                  { label: 'Help', path: '/help' },
-                                ].map((item, index) => (
+                                  { label: 'Login / Signup', path: '/Login' },
+                                ].map((item) => (
                                     <TouchableOpacity
-                                        key={index}
+                                        key={item.path}
                                         style={styles.menuItem}
                                         onPress={() => handleMenuPress(item.path)}
                                     >
