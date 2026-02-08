@@ -6,6 +6,7 @@ export const keys = {
   user: (userId) => `user:${userId}`,
   gis: {
     bbox: (hash) => `gis:buildings:bbox:${hash}`,
+    parkingLotsBbox: (hash) => `gis:parking-lots:bbox:${hash}`,
     near: (t, lat, lon, r) => `gis:near:${t}:${lat.toFixed(5)}:${lon.toFixed(5)}:${r}`
   }
 };
