@@ -8,6 +8,7 @@ export default function EditRoute() {
   const router = useRouter();
   const params = useLocalSearchParams<{
     id: string;
+    name: string;
     start_building: string;
     end_building: string;
     accessible: string;
@@ -47,13 +48,21 @@ export default function EditRoute() {
 
   //Name of current Route
   const [name, setName] = useState('');
+  useEffect(() => {
+  if (params.id) {
+    setValue1(params.start_building || 'Student Union');
+    setValue2(params.end_building || 'Willis');
+    setValue4(params.accessible ? Number(params.accessible) : 1);
+    setName(params.name || `Route from ${params.start_building || 'Student Union'} to ${params.end_building || 'Willis'}`);
+  }
+}, [params]);
 
   // sets up name to be currently selected values
-  useEffect(() => {
-    if (value1 && value2) {
-      setName(`Route from ${value1} to ${value2}`);
-    }
-  }, [value1, value2]);
+ useEffect(() => {
+  if (!params.name && value1 && value2) {
+    setName(`Route from ${value1} to ${value2}`);
+  }
+}, [value1, value2, params.name]);
 
   //place holder coordinates
   const mockCoords = {
