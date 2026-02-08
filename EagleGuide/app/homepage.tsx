@@ -219,7 +219,7 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
                 </View>
 
                 <Text style={styles.sectionTitle}>Quick Actions</Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.actionsRow}>
+                <View style={styles.actionsGrid}>
                     {navItems.map((item) => (
                         <TouchableOpacity
                             key={item.to}
@@ -232,7 +232,7 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
                             <Text style={styles.cardLabel}>{item.label}</Text>
                         </TouchableOpacity>
                     ))}
-                </ScrollView>
+                </View>
 
                 <View style={styles.legendCard}>
                     <View style={styles.legendHeader}>
@@ -275,6 +275,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 12,
     },
+    actionsGrid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        paddingHorizontal: 12,
+        gap: 12,
+    },
     logo: { width: 48, height: 48 },
     title: { color: '#dcdcdcff', fontSize: 22, fontWeight: '700' },
     headerActions: { flexDirection: 'row', alignItems: 'center' },
@@ -309,10 +315,6 @@ const styles = StyleSheet.create({
         marginHorizontal: 16,
         marginTop: 20,
         marginBottom: 8,
-    },
-    actionsRow: {
-        paddingHorizontal: 12,
-        gap: 12,
     },
     actionCard: {
         backgroundColor: '#2f2f2f',
