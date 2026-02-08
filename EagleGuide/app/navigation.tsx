@@ -2,8 +2,10 @@ import Constants from "expo-constants";
 import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, FlatList, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import DropDownPicker from "react-native-dropdown-picker";
 import MapView, { Marker, Polyline, PROVIDER_GOOGLE, Region } from "react-native-maps";
+import { addRoute, getRoutes, SavedRoute } from "./lib/api/addroutev2";
 import { getRouteFromORS, snapToRoad, type Coordinates, type Profile } from "./lib/api/directions";
 
 export default function NavigationScreen() {
@@ -17,6 +19,90 @@ export default function NavigationScreen() {
   const [orsKeyStatus, setOrsKeyStatus] = useState<string>("unknown");
   const [routeSample, setRouteSample] = useState<string>("");
   const [snappedPins, setSnappedPins] = useState<{ origin?: Coordinates; destination?: Coordinates }>({});
+
+  const [showViewRoutes, setShowViewRoutes] = useState(false);
+const [showAddRoute, setShowAddRoute] = useState(false);
+
+const [savedRoutes, setSavedRoutes] = useState<SavedRoute[]>([]);
+const userId = "2cf8f2eb-8adc-49de-a993-fe075ff4bdee";
+
+
+const [open1, setOpen1] = useState(false);
+const [value1, setValue1] = useState<string | null>(null);
+const [items1, setItems1] = useState([
+  { label: "Student Union", value: "Student Union" },
+  { label: "Willis", value: "Willis" },
+  { label: "Parking Garage", value: "Parking Garage" },
+]);
+
+const [open2, setOpen2] = useState(false);
+const [value2, setValue2] = useState<string | null>(null);
+const [items2, setItems2] = useState(items1);
+
+const [open3, setOpen3] = useState(false);
+const [value3, setValue3] = useState<string | null>(null);
+const [items3, setItems3] = useState([
+  { label: "Pedestrian", value: "Pedestrian" },
+  { label: "Bus", value: "Bus" },
+]);
+
+const [open4, setOpen4] = useState(false);
+const [value4, setValue4] = useState<number | null>(null);
+const [items4, setItems4] = useState([
+  { label: "Yes", value: 1 },
+  { label: "No", value: 0 },
+]);
+
+const loadSavedRoutes = async () => {
+  try {
+    const res = await getRoutes(userId);
+    setSavedRoutes(res);
+  } catch {
+    Alert.alert("Error", "Could not load saved routes");
+  }
+};
+
+useEffect(() => {
+  if (showAddRoute) loadSavedRoutes();
+}, [showAddRoute]);
+
+const addNewRoute = async () => {
+  if (!value1 || !value2 || !value3 || value4 === null) {
+    return Alert.alert("Error", "Please fill all fields");
+  }
+
+  if (value1 === value2) {
+    return Alert.alert("Invalid Route", "Start and end cannot match");
+  }
+
+  try {
+    await addRoute({
+      userid: userId,
+      prevb: value1,
+      newb: value2,
+      prevblon: -97.15,
+      prevblat: 33.21,
+      newblon: -97.152,
+      newblat: 33.215,
+      accessible: value4,
+      length: null,
+      duration: null,
+    });
+
+    Alert.alert("Success", "Route added");
+    loadSavedRoutes();
+  } catch {
+    Alert.alert("Error", "Could not save route");
+  }
+};
+
+const closeAllPickers = () => {
+  setOpen1(false);
+  setOpen2(false);
+  setOpen3(false);
+  setOpen4(false);
+};
+
 
   const initialRegion: Region = useMemo(
     () => ({
@@ -186,6 +272,22 @@ export default function NavigationScreen() {
         <TouchableOpacity style={[styles.button, styles.route]} onPress={fetchRoute} disabled={loading}>
           {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Find Route</Text>}
         </TouchableOpacity>
+       {/* 🔹 NEW: overlay trigger buttons */}
+<View style={[styles.row, { marginTop: 12 }]}>
+  <TouchableOpacity
+    style={styles.modeButton}
+    onPress={() => setShowViewRoutes(true)} // ✅ OPEN overlay
+  >
+    <Text style={styles.buttonText}>View Routes</Text>
+  </TouchableOpacity>
+
+  <TouchableOpacity
+    style={styles.modeButton}
+    onPress={() => setShowAddRoute(true)} // ✅ OPEN overlay
+  >
+    <Text style={styles.buttonText}>Add Route</Text>
+  </TouchableOpacity>
+</View>
         <TouchableOpacity style={[styles.button, styles.secondary]} onPress={() => router.back()}>
           <Text style={styles.buttonText}>Back</Text>
         </TouchableOpacity>
@@ -202,8 +304,146 @@ export default function NavigationScreen() {
           </View>
         ) : null}
       </View>
+      {/* ===== VIEW ROUTES OVERLAY ===== */}
+{showViewRoutes && (
+  <View style={styles.overlay}>
+    <View style={styles.overlayCard}>
+      <Text style={styles.overlayTitle}>Saved Routes</Text>
+
+      <Text style={styles.overlayText}>
+        This is the View Routes overlay.
+      </Text>
+
+      <TouchableOpacity
+        style={[styles.button, styles.secondary]}
+        onPress={() => setShowViewRoutes(false)}
+      >
+        <Text style={styles.buttonText}>Close</Text>
+      </TouchableOpacity>
     </View>
+  </View>
+)}
+
+{showAddRoute && (
+  <View style={styles.overlay}>
+    {/* ===== HEADER ===== */}
+    <View style={styles.overlayHeader}>
+      <Text style={styles.overlayTitle}>Add Route</Text>
+    </View>
+
+    {/* ===== BODY (FlatList lives HERE) ===== */}
+    <FlatList
+      data={savedRoutes}
+      keyExtractor={(item) => item.saved_route_id}
+      keyboardShouldPersistTaps="handled"
+      contentContainerStyle={{ paddingBottom: 30 }}
+
+      ListHeaderComponent={
+        <>
+          {/* FORM CONTROLS */}
+        <View style={{ zIndex: 4000, elevation: 4, marginBottom: 16 }}>
+  <DropDownPicker
+    open={open1}
+    value={value1}
+    items={items1}
+    setOpen={(o) => {
+      closeAllPickers();
+      setOpen1(o);
+    }}
+    setValue={setValue1}
+    listMode="SCROLLVIEW"
+    dropDownContainerStyle={{ maxHeight: 180 }}
+  />
+</View>
+
+{/* Destination */}
+<View style={{ zIndex: 3000, elevation: 3, marginBottom: 16 }}>
+  <DropDownPicker
+    open={open2}
+    value={value2}
+    items={items2}
+    setOpen={(o) => {
+      closeAllPickers();
+      setOpen2(o);
+    }}
+    setValue={setValue2}
+    listMode="SCROLLVIEW"
+    dropDownContainerStyle={{ maxHeight: 180 }}
+  />
+</View>
+
+{/* Route Type */}
+<View style={{ zIndex: 2000, elevation: 2, marginBottom: 16 }}>
+  <DropDownPicker
+    open={open3}
+    value={value3}
+    items={items3}
+    setOpen={(o) => {
+      closeAllPickers();
+      setOpen3(o);
+    }}
+    setValue={setValue3}
+    listMode="SCROLLVIEW"
+    dropDownContainerStyle={{ maxHeight: 160 }}
+  />
+</View>
+
+{/* Accessibility */}
+<View style={{ zIndex: 1000, elevation: 1, marginBottom: 16 }}>
+  <DropDownPicker
+    open={open4}
+    value={value4}
+    items={items4}
+    setOpen={(o) => {
+      closeAllPickers();
+      setOpen4(o);
+    }}
+    setValue={setValue4}
+    listMode="SCROLLVIEW"
+    dropDownContainerStyle={{ maxHeight: 160 }}
+  />
+</View>
+
+          <TouchableOpacity
+            style={styles.submitButton}
+            onPress={addNewRoute}
+          >
+            <Text style={styles.submitButtonText}>Submit Route</Text>
+          </TouchableOpacity>
+
+          <Text style={styles.overlaySectionTitle}>Saved Routes</Text>
+        </>
+      }
+
+      renderItem={({ item }) => (
+        <View style={styles.routeCard}>
+          <Text style={styles.routeinfo}>{item.name}</Text>
+          <Text style={styles.routeinfo}>
+            Accessible: {item.is_accessible ? "Yes" : "No"}
+          </Text>
+        </View>
+      )}
+    />
+
+    {/* ===== FOOTER ===== */}
+    <View style={styles.overlayFooter}>
+      <TouchableOpacity
+        style={[styles.button, styles.secondary]}
+        onPress={() => setShowAddRoute(false)}
+      >
+        <Text style={styles.buttonText}>Close</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+)}
+
+
+      
+    </View>
+    
+    
   );
+  
 }
 
 const styles = StyleSheet.create({
@@ -246,4 +486,97 @@ const styles = StyleSheet.create({
   },
   sampleTitle: { color: "#dcdcdcff", fontWeight: "700", marginBottom: 4 },
   sampleText: { color: "#dcdcdcff", fontFamily: Platform.select({ ios: "Menlo", android: "monospace" }) as any },
+  bigButton: {
+  flex: 1,
+  marginHorizontal: 6,
+  paddingVertical: 14,
+},
+
+overlayCard: {
+  width: "85%",
+  backgroundColor: "#3f3f3f",
+  borderRadius: 14,
+  padding: 16,
+},
+
+
+
+overlayText: {
+  color: "#dcdcdcff",
+  marginBottom: 16,
+  textAlign: "center",
+},
+
+
+overlay: {
+  position: "absolute",
+  left: 0,
+  right: 0,
+  bottom: 0,
+  height: "85%",
+  backgroundColor: "#3f3f3f",
+  borderTopLeftRadius: 18,
+  borderTopRightRadius: 18,
+},
+
+overlayHeader: {
+  padding: 16,
+  borderBottomWidth: 1,
+  borderBottomColor: "#4a4a4a",
+},
+
+overlayTitle: {
+  color: "#dcdcdcff",
+  fontSize: 18,
+  fontWeight: "700",
+  textAlign: "center",
+},
+
+overlayBody: {
+  flex: 1,
+  padding: 16,
+},
+
+overlayFooter: {
+  padding: 16,
+  borderTopWidth: 1,
+  borderTopColor: "#4a4a4a",
+},
+
+routeCard: {
+  backgroundColor: "#4a4a4a",
+  padding: 10,
+  borderRadius: 8,
+  marginBottom: 10,
+},
+
+routeinfo: {
+  color: "#dcdcdc",
+},
+
+submitButton: {
+  backgroundColor: "#4caf50",
+  paddingVertical: 12,
+  borderRadius: 8,
+  alignItems: "center",
+  marginBottom: 20,
+},
+
+submitButtonText: {
+  color: "#fff",
+  fontWeight: "700",
+  fontSize: 16,
+},
+
+overlaySectionTitle: {
+  color: "#dcdcdcff",
+  fontSize: 16,
+  fontWeight: "700",
+  marginBottom: 10,
+  textAlign: "center",
+},
+
+
+
+
 });
