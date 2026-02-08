@@ -8,8 +8,8 @@ import { loginSchema, signupSchema } from '../../validations/auth.schema.js';
 const r = Router();
 
 r.post('/signup', validate(signupSchema), async (req, res) => {
-  const { username, email, password } = req.body;
-  const user = await createUser(username, email, password);
+  const { username, email, password, firstName, lastName } = req.body;
+  const user = await createUser(username, email, password, firstName, lastName);
   if (!user) return res.status(409).json({ error: 'Username or email already exists' });
   res.status(201).json({ message: 'User created successfully'});
 });

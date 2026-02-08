@@ -19,7 +19,9 @@ const Settings: React.FC = () => {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [vibrationEnabled, setVibrationEnabled] = useState(true);
 
-  const handleBackPress = () => router.replace("/navigation");
+  const handleBackPress = () => {
+    router.replace("/homepage");
+  };
 
   const handleClearCache = () => {
     Alert.alert("Clear Cache", "Are you sure you want to clear app cache?", [

@@ -8,6 +8,9 @@ r.get('/me', requireSession, (req, res) => {
   res.json({
     userId: profile.id,
     username: profile.username,
+    firstName: profile.firstName,
+    lastName: profile.lastName,
+    avatarUrl: profile.avatarUrl,
     email: profile.email,
     roles: req.session.roles || []
   });

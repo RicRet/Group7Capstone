@@ -13,7 +13,8 @@ const Env = z.object({
   PGDATABASE: z.string(),
   PGSSL_MODE: z.string().optional(), // 'disable' | 'require' | 'verify-ca'
   PGSSL_CA_PATH: z.string().optional(),
-  REDIS_URL: z.string().url(),
+  // Make Redis optional; when absent, cache/analytics will run in disabled mode
+  REDIS_URL: z.string().url().optional(),
   CORS_ORIGIN: z.string().default('http://localhost:19006'),
   LOG_LEVEL: z.enum(['fatal','error','warn','info','debug','trace']).default('info')
 });

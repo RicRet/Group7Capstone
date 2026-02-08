@@ -33,7 +33,7 @@ const Storage = {
   }
 };
 
-export type SessionUser = { id: string; username?: string; roles: string[] };
+export type SessionUser = { id: string; username?: string; firstName?: string | null; lastName?: string | null; avatarUrl?: string | null; roles: string[] };
 export type SessionState = {
   token?: string;
   user?: SessionUser;
@@ -62,8 +62,8 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         setToken(t);
         setAuthToken(t);
         try {
-          const res = await http.get<{ userId: string; username?: string; roles: string[] }>("/v1/users/me");
-          setUser({ id: String(res.data.userId), username: res.data.username, roles: res.data.roles || [] });
+          const res = await http.get<{ userId: string; username?: string; firstName?: string | null; lastName?: string | null; avatarUrl?: string | null; roles: string[] }>("/v1/users/me");
+          setUser({ id: String(res.data.userId), username: res.data.username, firstName: res.data.firstName, lastName: res.data.lastName, avatarUrl: res.data.avatarUrl, roles: res.data.roles || [] });
         } catch {
           // token invalid; clear
           await Storage.removeItem(TOKEN_KEY);
@@ -85,8 +85,8 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
   const refreshMe = useCallback(async () => {
     if (!token) return;
-    const res = await http.get<{ userId: string; username?: string; roles: string[] }>("/v1/users/me");
-    setUser({ id: String(res.data.userId), username: res.data.username, roles: res.data.roles || [] });
+    const res = await http.get<{ userId: string; username?: string; firstName?: string | null; lastName?: string | null; avatarUrl?: string | null; roles: string[] }>("/v1/users/me");
+    setUser({ id: String(res.data.userId), username: res.data.username, firstName: res.data.firstName, lastName: res.data.lastName, avatarUrl: res.data.avatarUrl, roles: res.data.roles || [] });
   }, [token]);
 
   const logout = useCallback(async () => {
