@@ -6,7 +6,9 @@ const r = Router();
 r.get('/health', (_req, res) => res.json({ ok: true }));
 r.get('/ready', async (_req, res) => {
   try {
-    await redis.ping();
+    if (redis && redis.isOpen) {
+      await redis.ping();
+    }
     await pg.query('SELECT 1');
     res.json({ ok: true });
   } catch {

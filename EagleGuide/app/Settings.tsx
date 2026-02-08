@@ -1,14 +1,14 @@
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  Switch,
-  Alert,
+    Alert,
+    ScrollView,
+    StyleSheet,
+    Switch,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
-import { useRouter } from "expo-router";
 
 const Settings: React.FC = () => {
   const router = useRouter();
@@ -17,7 +17,7 @@ const Settings: React.FC = () => {
   const [vibrationEnabled, setVibrationEnabled] = useState(true);
 
   const handleBackPress = () => {
-    router.replace("/home");
+    router.replace("/homepage");
   };
 
   const handleClearCache = () => {
