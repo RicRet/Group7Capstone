@@ -21,8 +21,6 @@ const MapScreen = () => {
     const [showMenu, setShowMenu] = useState(false);
     const [currentSheet, setCurrentSheet] = useState('home');
     const [parkingLots, setParkingLots] = useState<ParkingLotFeature[]>([]);
-    const [loadingLots, setLoadingLots] = useState(false);
-    const [parkingError, setParkingError] = useState<string | null>(null);
 
     const router = useRouter();
 
@@ -67,15 +65,11 @@ const MapScreen = () => {
     useEffect(() => {
         let cancelled = false;
         async function loadLots() {
-            setLoadingLots(true);
-            setParkingError(null);
             try {
                 const data = await fetchParkingLots(bbox);
                 if (!cancelled) setParkingLots(data.features || []);
-            } catch (err: any) {
-                if (!cancelled) setParkingError(err?.message || 'Failed to load parking lots');
-            } finally {
-                if (!cancelled) setLoadingLots(false);
+            } catch {
+                if (!cancelled) setParkingLots([]);
             }
         }
         loadLots();
@@ -160,14 +154,6 @@ const MapScreen = () => {
                                         })}
                     </MapView>
 
-                                        {(loadingLots || parkingError) && (
-                                            <View style={styles.statusBanner}>
-                                                <Text style={styles.statusText}>
-                                                    {loadingLots ? 'Loading parking lots…' : parkingError}
-                                                </Text>
-                                            </View>
-                                        )}
-
                     {/* Floating menu button */}
                     <View style={styles.topRightContainer}>
                         <TouchableOpacity
@@ -250,14 +236,4 @@ const styles = StyleSheet.create({
   bottomSheetBackground: {
     backgroundColor: '#3f3f3f',
   },
-    statusBanner: {
-        position: 'absolute',
-        top: 20,
-        alignSelf: 'center',
-        backgroundColor: 'rgba(0,0,0,0.7)',
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 8,
-    },
-    statusText: { color: '#fff' },
 });

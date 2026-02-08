@@ -8,8 +8,14 @@ function hashBbox(b) {
   return crypto.createHash('md5').update(b.join(',')).digest('hex').slice(0, 10);
 }
 
+// Snap bounding boxes to a coarse grid to avoid thousands of near-duplicate keys
+function normalizeBbox(bbox, precision = 3) {
+  return bbox.map((v) => Number(v.toFixed(precision)));
+}
+
 export async function buildingsByBbox([minLon, minLat, maxLon, maxLat]) {
-  const k = keys.gis.bbox(hashBbox([minLon, minLat, maxLon, maxLat]));
+  const norm = normalizeBbox([minLon, minLat, maxLon, maxLat]);
+  const k = keys.gis.bbox(hashBbox(norm));
   const cached = await jsonGet(k);
   if (cached) return cached;
 
@@ -17,7 +23,7 @@ export async function buildingsByBbox([minLon, minLat, maxLon, maxLat]) {
     `SELECT ST_AsGeoJSON(geom)::json AS geojson
      FROM buildings
      WHERE geom && ST_MakeEnvelope($1,$2,$3,$4, 4326)`,
-    [minLon, minLat, maxLon, maxLat]
+    norm
   );
   const features = rows.map(r => ({ type: 'Feature', geometry: r.geojson, properties: {} }));
   const fc = { type: 'FeatureCollection', features };
@@ -26,7 +32,8 @@ export async function buildingsByBbox([minLon, minLat, maxLon, maxLat]) {
 }
 
 export async function parkingLotsByBbox([minLon, minLat, maxLon, maxLat]) {
-  const k = keys.gis.parkingLotsBbox(hashBbox([minLon, minLat, maxLon, maxLat]));
+  const norm = normalizeBbox([minLon, minLat, maxLon, maxLat]);
+  const k = keys.gis.parkingLotsBbox(hashBbox(norm));
   const cached = await jsonGet(k);
   if (cached) return cached;
 
@@ -35,7 +42,7 @@ export async function parkingLotsByBbox([minLon, minLat, maxLon, maxLat]) {
             ST_AsGeoJSON(location::geometry)::json AS geometry
        FROM gis.parking_lots
       WHERE ST_Intersects(location, ST_MakeEnvelope($1,$2,$3,$4, 4326)::geography)`,
-    [minLon, minLat, maxLon, maxLat]
+    norm
   );
 
   const features = rows.map(r => ({

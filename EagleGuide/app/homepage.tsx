@@ -14,10 +14,23 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
     const [checkingLoc, setCheckingLoc] = useState(false);
 
     const navItems = [
-        { label: "Map", to: "/map" },
         { label: "Navigation", to: "/navigation" },
         { label: "Add Route", to: "/addroute" },
     ];
+
+    const legendItems = useMemo(
+        () => [
+            { label: "Zone A", color: "#ff4040" },
+            { label: "Zone V", color: "#cfae01" },
+            { label: "Zone FS", color: "#63f922" },
+            { label: "Zone SV", color: "#0de989" },
+            { label: "Zone E", color: "#0d89e9" },
+            { label: "Zone RR", color: "#6322f9" },
+            { label: "Zone RM", color: "#cf01ae" },
+            { label: "Zone AT", color: "#ff4040" },
+        ],
+        []
+    );
 
     const campusCenter = useMemo(() => ({ latitude: 33.2106, longitude: -97.1470 }), []);
     const campusRadiusM = 1500; // 1.5 km radius around campus center
@@ -127,9 +140,6 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
                     )}
                     {locStatus === "granted" && coords && (
                         <>
-                            <Text style={styles.locationText}>
-                                Lat {coords.latitude.toFixed(5)}, Lon {coords.longitude.toFixed(5)}
-                            </Text>
                             <Text style={[styles.locationBadge, onCampus ? styles.onCampus : styles.offCampus]}>
                                 {onCampus ? "On campus" : "Outside campus"}
                             </Text>
@@ -174,6 +184,21 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
                         </TouchableOpacity>
                     ))}
                 </ScrollView>
+
+                <View style={styles.legendCard}>
+                    <View style={styles.legendHeader}>
+                        <Text style={[styles.sectionTitle, styles.legendTitle]}>Parking Legend</Text>
+                        <Text style={styles.legendNote}>Colors match the lots shown on the map</Text>
+                    </View>
+                    <View style={styles.legendGrid}>
+                        {legendItems.map((item) => (
+                            <View key={item.label} style={styles.legendItem}>
+                                <View style={[styles.legendSwatch, { backgroundColor: item.color }]} />
+                                <Text style={styles.legendLabel}>{item.label}</Text>
+                            </View>
+                        ))}
+                    </View>
+                </View>
             </ScrollView>
         </View>
     );
@@ -278,6 +303,45 @@ const styles = StyleSheet.create({
         paddingVertical: 6,
     },
     logoutText: { color: '#ffdada', fontWeight: '600' },
+    legendCard: {
+        marginTop: 20,
+        marginHorizontal: 16,
+        backgroundColor: '#2f2f2f',
+        borderRadius: 14,
+        padding: 14,
+        gap: 12,
+    },
+    legendHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    legendGrid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 10,
+    },
+    legendItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        backgroundColor: '#3a3a3a',
+        borderRadius: 10,
+        paddingVertical: 8,
+        paddingHorizontal: 10,
+    },
+    legendSwatch: {
+        width: 18,
+        height: 18,
+        borderRadius: 4,
+    },
+    legendLabel: { color: '#dcdcdcff', fontWeight: '600' },
+    legendNote: { color: '#9e9e9e', fontSize: 12 },
+    legendTitle: {
+        marginHorizontal: 0,
+        marginTop: 0,
+        marginBottom: 0,
+    },
 });
 
 const mapStyle = [
