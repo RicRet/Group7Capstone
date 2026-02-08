@@ -14,7 +14,7 @@ export default function Index() {
     );
   }
 
-  return <Redirect href={user ? "/map" : "/Login"} />;
+  return <Redirect href={user ? "/homepage" : "/Login"} />;
 }
 
 const styles = StyleSheet.create({
