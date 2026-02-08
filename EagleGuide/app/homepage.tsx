@@ -1,6 +1,6 @@
 import * as Location from "expo-location";
-import { useRouter } from "expo-router";
-import React, { useEffect, useMemo, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { useSession } from "./lib/session";
@@ -41,27 +41,38 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
         }
     }, [loading, refreshMe]);
 
-    useEffect(() => {
-        (async () => {
-            setCheckingLoc(true);
-            try {
-                const { status } = await Location.requestForegroundPermissionsAsync();
-                if (status !== "granted") {
-                    setLocStatus("denied");
-                    setCheckingLoc(false);
-                    return;
+    useFocusEffect(
+        useCallback(() => {
+            let active = true;
+            const loadLocation = async () => {
+                setCheckingLoc(true);
+                try {
+                    const { status } = await Location.requestForegroundPermissionsAsync();
+                    if (!active) return;
+                    if (status !== "granted") {
+                        setLocStatus("denied");
+                        setCoords(null);
+                        return;
+                    }
+                    setLocStatus("granted");
+                    const current = await Location.getCurrentPositionAsync({});
+                    if (!active) return;
+                    setCoords(current.coords);
+                } catch (err) {
+                    if (!active) return;
+                    console.warn("Location error", err);
+                    setLocStatus("error");
+                } finally {
+                    if (active) setCheckingLoc(false);
                 }
-                setLocStatus("granted");
-                const current = await Location.getCurrentPositionAsync({});
-                setCoords(current.coords);
-            } catch (err) {
-                console.warn("Location error", err);
-                setLocStatus("error");
-            } finally {
-                setCheckingLoc(false);
-            }
-        })();
-    }, []);
+            };
+
+            loadLocation();
+            return () => {
+                active = false;
+            };
+        }, [])
+    );
 
     const distanceMeters = (a: { latitude: number; longitude: number }, b: { latitude: number; longitude: number }) => {
         const toRad = (x: number) => (x * Math.PI) / 180;

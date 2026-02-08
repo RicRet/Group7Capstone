@@ -5,7 +5,7 @@ import { SessionProvider } from "./lib/session";
 export default function RootLayout() {
    return (
     <SessionProvider>
-    <Stack initialRouteName="homepage">
+    <Stack initialRouteName="index">
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="homepage" options={{ headerShown: false }} />
       <Stack.Screen name="map" options={{ headerShown: false }} />
