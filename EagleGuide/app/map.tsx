@@ -1,4 +1,5 @@
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { useRouter } from 'expo-router';
 import React, { useMemo, useRef, useState } from 'react';
 import {
     Keyboard,
@@ -14,12 +15,19 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import Addroute from './addroute';
 import Homepage from './homepage';
-
+  
 const MapScreen = () => {
     const [showMenu, setShowMenu] = useState(false);
     const [currentSheet, setCurrentSheet] = useState('home');
 
-        const renderSheetContent = () => {
+    const router = useRouter();
+
+    const handleMenuPress = (path: string) => {
+        setShowMenu(false);
+        router.push(path);
+    };
+
+    const renderSheetContent = () => {
         switch (currentSheet) {
             case 'home':
                 return <Homepage onNavigate={setCurrentSheet} />;
@@ -94,9 +102,19 @@ const MapScreen = () => {
 
                         {showMenu && (
                             <View style={styles.menuContainer}>
-                                {['Home', 'Settings', 'Profile', 'Help'].map((tab, index) => (
-                                    <TouchableOpacity key={index} style={styles.menuItem}>
-                                        <Text style={styles.menuText}>{tab}</Text>
+                                {[
+                                  { label: 'Home', path: '/homepage' },
+                                  { label: 'Navigation', path: '/navigation' },
+                                  { label: 'Add Route', path: '/addroute' },
+                                  { label: 'Settings', path: '/Settings' },
+                                  { label: 'Login / Signup', path: '/Login' },
+                                ].map((item) => (
+                                    <TouchableOpacity
+                                        key={item.path}
+                                        style={styles.menuItem}
+                                        onPress={() => handleMenuPress(item.path)}
+                                    >
+                                        <Text style={styles.menuText}>{item.label}</Text>
                                     </TouchableOpacity>
                                 ))}
                             </View>

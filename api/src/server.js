@@ -1,8 +1,9 @@
 //loads env before anything else
 
 import dotenv from 'dotenv';
-dotenv.config({ path: './src/.env' });
-console.log('✅ Loaded .env');
+// Load .env from the project root (api/.env)
+dotenv.config();
+console.log('✅ Loaded .env from default location');
 
 //loads other imports
 const { default: express } = await import('express');
@@ -21,7 +22,7 @@ app.use('/v1', userroute);
 
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(` API server listening on http://0.0.0.0:${PORT}`);
+  console.log(`API server listening on http://0.0.0.0:${PORT}`);
 });
 
 

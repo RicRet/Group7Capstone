@@ -1,193 +1,288 @@
+import * as Location from "expo-location";
 import { useRouter } from "expo-router";
-import React, { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
+import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import MapView, { Marker } from "react-native-maps";
+import { useSession } from "./lib/session";
 
 
-export default function Home({ onNavigate }: { onNavigate: (screen: string) => void }){
-  const router = useRouter();
-  const [routeText, setRouteText] = useState('');
-  const [bookmarks, setBookmarks] = useState([
-          'Willis Library',
-          'Union',
-          'Lot 20',
-          'Language',
-          'Eagle Landing',
-      ]);
+export default function Home({ onNavigate }: { onNavigate?: (screen: string) => void }) {
+    const router = useRouter();
+    const { user, loading, refreshMe, logout } = useSession();
+    const [locStatus, setLocStatus] = useState<"unknown" | "denied" | "granted" | "error">("unknown");
+    const [coords, setCoords] = useState<Location.LocationObjectCoords | null>(null);
+    const [checkingLoc, setCheckingLoc] = useState(false);
 
-    // Add bookmark via prompt
-      const addBookmark = () => {
-          Alert.prompt(
-              'Add Bookmark',
-              'Enter the name of your new bookmark:',
-              [
-                  { text: 'Cancel', style: 'cancel' },
-                  {
-                      text: 'Add',
-                      onPress: (bookmarkName?: string) => {
-                          if (bookmarkName && bookmarkName.trim() && !bookmarks.includes(bookmarkName.trim())) {
-                              setBookmarks([...bookmarks, bookmarkName.trim()]);
-                          }
-                      },
-                  },
-              ],
-              'plain-text'
-          );
-      };
-  
-      // Delete bookmark
-      const deleteBookmark = (item: string) => {
-          setBookmarks(bookmarks.filter((b) => b !== item));
-      };
-  
+    const navItems = [
+        { label: "Map", to: "/map" },
+        { label: "Navigation", to: "/navigation" },
+        { label: "Add Route", to: "/addroute" },
+    ];
 
-  return (
-  <View>
-      <View style={styles.bottomContainer}>
-                  {/* Search Bar */}
-                  <View style={styles.searchBar}>
-                      <TextInput
-                          style={styles.searchInput}
-                          placeholder='Search route (e.g. "Willis Library to Union")'
-                          placeholderTextColor="#dcdcdcff"
-                          value={routeText}
-                          onChangeText={setRouteText}
-                          returnKeyType="done"
-                      />
-                  </View>
-      
-                  {/* Bookmarks */}
-                  <ScrollView
-                      horizontal
-                      showsHorizontalScrollIndicator={false}
-                      style={styles.bookmarksContainer}
-                  >
-                      {bookmarks.map((item, index) => (
-                          <View key={index} style={styles.bookmarkItem}>
-                              <Text style={styles.bookmarkText}>{item}</Text>
-                              <TouchableOpacity onPress={() => deleteBookmark(item)}>
-                                  <Text style={styles.deleteText}>✕</Text>
-                              </TouchableOpacity>
-                          </View>
-                      ))}
-      
-                      {/* Add Bookmark "+" Box */}
-                      <TouchableOpacity style={styles.addBox} onPress={addBookmark}>
-                          <Text style={styles.addBoxText}>＋</Text>
-                      </TouchableOpacity>
-                  </ScrollView>
-      
-                  <TouchableOpacity style={styles.navButton}>
-                      <Text style={styles.navButtonText}>Start Navigation</Text>
-                  </TouchableOpacity>
-      
-      
-              </View>
-        {/*First Button */}
-     <TouchableOpacity
-  style={styles.button}
-  onPress={() => onNavigate('addroute')}
->
-  <Text style={styles.buttonText}>Add Route (Placeholder)</Text>
-</TouchableOpacity>
+    const campusCenter = useMemo(() => ({ latitude: 33.2106, longitude: -97.1470 }), []);
+    const campusRadiusM = 1500; // 1.5 km radius around campus center
 
-        {/* Second Button */}
-       <View style={{ height: 20 }} /> 
-       <TouchableOpacity
-        style={styles.button}
-        onPress={() => router.push("/map")}
-      >
-        <Text style={styles.buttonText}>View Routes (Placeholder)</Text>
-      </TouchableOpacity>
-    </View>
-  );
+    useEffect(() => {
+        if (!loading) {
+            refreshMe().catch(() => {});
+        }
+    }, [loading, refreshMe]);
+
+    useEffect(() => {
+        (async () => {
+            setCheckingLoc(true);
+            try {
+                const { status } = await Location.requestForegroundPermissionsAsync();
+                if (status !== "granted") {
+                    setLocStatus("denied");
+                    setCheckingLoc(false);
+                    return;
+                }
+                setLocStatus("granted");
+                const current = await Location.getCurrentPositionAsync({});
+                setCoords(current.coords);
+            } catch (err) {
+                console.warn("Location error", err);
+                setLocStatus("error");
+            } finally {
+                setCheckingLoc(false);
+            }
+        })();
+    }, []);
+
+    const distanceMeters = (a: { latitude: number; longitude: number }, b: { latitude: number; longitude: number }) => {
+        const toRad = (x: number) => (x * Math.PI) / 180;
+        const R = 6371000; // meters
+        const dLat = toRad(b.latitude - a.latitude);
+        const dLon = toRad(b.longitude - a.longitude);
+        const lat1 = toRad(a.latitude);
+        const lat2 = toRad(b.latitude);
+        const sinDlat = Math.sin(dLat / 2);
+        const sinDlon = Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(
+            Math.sqrt(sinDlat * sinDlat + Math.cos(lat1) * Math.cos(lat2) * sinDlon * sinDlon),
+            Math.sqrt(1 - (sinDlat * sinDlat + Math.cos(lat1) * Math.cos(lat2) * sinDlon * sinDlon))
+        );
+        return R * c;
+    };
+
+    const onCampus = coords
+        ? distanceMeters(campusCenter, { latitude: coords.latitude, longitude: coords.longitude }) <= campusRadiusM
+        : null;
+
+    return (
+        <View style={styles.container}>
+            <ScrollView contentContainerStyle={styles.scrollContent}>
+                <View style={styles.header}>
+                    <View style={styles.brandRow}>
+                        <Image
+                            source={require("../assets/images/UNT_logo.png")}
+                            resizeMode="contain"
+                            style={styles.logo}
+                        />
+                        <Text style={styles.title}>Eagle Guide</Text>
+                    </View>
+                    <View style={styles.headerActions}>
+                        {loading ? (
+                            <ActivityIndicator color="#65d159" />
+                        ) : user ? (
+                            <View style={styles.userPill}>
+                                <Text style={styles.userText}>Hi, {user.username ?? user.id}</Text>
+                                <TouchableOpacity onPress={logout} style={styles.logoutBtn}>
+                                    <Text style={styles.logoutText}>Logout</Text>
+                                </TouchableOpacity>
+                            </View>
+                        ) : (
+                            <View style={styles.authRow}>
+                                <TouchableOpacity style={styles.authButton} onPress={() => router.push("/Login")}>
+                                    <Text style={styles.authText}>Login</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[styles.authButton, styles.authSecondary]}
+                                    onPress={() => router.push("/Signup")}
+                                >
+                                    <Text style={styles.authTextLight}>Sign Up</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                    </View>
+                </View>
+
+                <Image
+                    source={require("../assets/images/CampusImage.jpg")}
+                    resizeMode="cover"
+                    style={styles.hero}
+                />
+
+                <View style={styles.locationCard}>
+                    <View style={styles.locationHeader}>
+                        <Text style={styles.sectionTitle}>My Location</Text>
+                        {checkingLoc && <ActivityIndicator color="#65d159" size="small" />}
+                    </View>
+                    {locStatus === "denied" && (
+                        <Text style={styles.locationText}>Location permission is needed to show your position.</Text>
+                    )}
+                    {locStatus === "error" && (
+                        <Text style={styles.locationText}>Could not read location. Please try again.</Text>
+                    )}
+                    {locStatus === "granted" && coords && (
+                        <>
+                            <Text style={styles.locationText}>
+                                Lat {coords.latitude.toFixed(5)}, Lon {coords.longitude.toFixed(5)}
+                            </Text>
+                            <Text style={[styles.locationBadge, onCampus ? styles.onCampus : styles.offCampus]}>
+                                {onCampus ? "On campus" : "Outside campus"}
+                            </Text>
+                            {!onCampus && <Text style={styles.locationText}>You appear to be outside the campus area.</Text>}
+                            <MapView
+                                style={styles.locationMap}
+                                pointerEvents="none"
+                                region={{
+                                    latitude: coords.latitude,
+                                    longitude: coords.longitude,
+                                    latitudeDelta: 0.01,
+                                    longitudeDelta: 0.01,
+                                }}
+                                showsUserLocation
+                                customMapStyle={mapStyle as any}
+                            >
+                                <Marker
+                                    coordinate={{ latitude: coords.latitude, longitude: coords.longitude }}
+                                    title="You"
+                                    pinColor="#65d159"
+                                />
+                            </MapView>
+                        </>
+                    )}
+                    {locStatus === "granted" && !coords && !checkingLoc && (
+                        <Text style={styles.locationText}>Locating you…</Text>
+                    )}
+                </View>
+
+                <Text style={styles.sectionTitle}>Quick Actions</Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.actionsRow}>
+                    {navItems.map((item) => (
+                        <TouchableOpacity
+                            key={item.to}
+                            style={styles.actionCard}
+                            onPress={() => {
+                                router.push(item.to);
+                                onNavigate?.(item.to);
+                            }}
+                        >
+                            <Text style={styles.cardLabel}>{item.label}</Text>
+                        </TouchableOpacity>
+                    ))}
+                </ScrollView>
+            </ScrollView>
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
-   background: {
-    flex: 1,
-    width: "100%",
-    height: "100%",
-  },
-  button: {
-    backgroundColor: "#45ca3e", 
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 10,
-    marginTop: 20,
-    alignItems: "center",
-  },
-  text: {
-    marginTop: 50,        
-    fontSize: 30,
-    fontWeight: "bold",
-    textAlign: "center",
-    color: "green",
-  },
-   buttonText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  // bottom
-  bottomContainer: {
-        width: '100%',
-        paddingHorizontal: 15,
+    container: {
+        flex: 1,
+        backgroundColor: '#1f1f1f',
     },
-    searchBar: {
-        backgroundColor: '#6b6b6b',
-        borderRadius: 10,
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-        elevation: 3,
-        marginBottom: 8,
+    scrollContent: {
+        paddingBottom: 40,
     },
-    searchInput: { fontSize: 16, color: '#dcdcdcff' },
-
-    /** Bookmarks **/
-    bookmarksContainer: {
-        flexDirection: 'row',
-        marginBottom: 10,
-    },
-    bookmarkItem: {
+    header: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#6b6b6b',
-        borderRadius: 20,
+        justifyContent: 'space-between',
+        paddingHorizontal: 16,
+        paddingVertical: 14,
+        backgroundColor: '#2a2a2a',
+        gap: 12,
+    },
+    brandRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+    },
+    logo: { width: 48, height: 48 },
+    title: { color: '#dcdcdcff', fontSize: 22, fontWeight: '700' },
+    headerActions: { flexDirection: 'row', alignItems: 'center' },
+    authRow: { flexDirection: 'row', gap: 10 },
+    authButton: {
+        backgroundColor: '#65d159',
         paddingHorizontal: 14,
         paddingVertical: 8,
-        marginRight: 8,
-        elevation: 3,
+        borderRadius: 10,
     },
-    bookmarkText: { fontSize: 14, color: '#dcdcdcff', marginRight: 6 },
-    deleteText: { color: 'red', fontSize: 16, fontWeight: '700' },
-
-    /** Add Box **/
-    addBox: {
-        width: 40,
-        height: 40,
-        backgroundColor: '#45ca3e',
-        borderRadius: 20,
+    authSecondary: { backgroundColor: '#4a4a4a' },
+    authText: { color: '#0d0d0d', fontWeight: '700' },
+    authTextLight: { color: '#dcdcdcff', fontWeight: '700' },
+    userPill: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#3f3f3f',
+        borderRadius: 12,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        gap: 10,
+    },
+    userText: { color: '#dcdcdcff', fontWeight: '600' },
+    hero: {
+      width: '100%',
+      height: 200,
+    },
+    sectionTitle: {
+        color: '#65d159',
+        fontSize: 16,
+        fontWeight: '700',
+        marginHorizontal: 16,
+        marginTop: 20,
+        marginBottom: 8,
+    },
+    actionsRow: {
+        paddingHorizontal: 12,
+        gap: 12,
+    },
+    actionCard: {
+        backgroundColor: '#2f2f2f',
+        borderRadius: 14,
+        paddingVertical: 18,
+        paddingHorizontal: 20,
+        minWidth: 140,
         alignItems: 'center',
         justifyContent: 'center',
-        elevation: 3,
     },
-    addBoxText: {
-        fontSize: 24,
-        color: '#dcdcdcff',
-        fontWeight: '700',
+    cardLabel: { color: '#dcdcdcff', fontSize: 16, fontWeight: '600' },
+    locationCard: {
+        marginTop: 16,
+        marginHorizontal: 16,
+        backgroundColor: '#2f2f2f',
+        borderRadius: 14,
+        padding: 14,
+        gap: 8,
     },
-
-    /** Navigation Button **/
-    navButton: {
-        backgroundColor: '#45ca3e',
-        paddingVertical: 14,
+    locationHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    locationText: { color: '#dcdcdcff' },
+    locationBadge: {
+        alignSelf: 'flex-start',
+        paddingHorizontal: 10,
+        paddingVertical: 6,
         borderRadius: 10,
-        alignItems: 'center',
-        elevation: 4,
+        fontWeight: '700',
+        color: '#0d0d0d',
     },
-    navButtonText: { color: '#dcdcdcff', fontSize: 18, fontWeight: '600' },
-    contentContainer: {
-    padding: 20,
-    backgroundColor: '#3f3f3f',
-  },
+    onCampus: { backgroundColor: '#65d159' },
+    offCampus: { backgroundColor: '#e24a4a' },
+    locationMap: { width: '100%', height: 170, borderRadius: 12 },
+    logoutBtn: {
+        backgroundColor: '#6b6b6b',
+        borderRadius: 8,
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+    },
+    logoutText: { color: '#ffdada', fontWeight: '600' },
 });
+
+const mapStyle = [
+  { elementType: 'geometry', stylers: [{ color: '#6b6b6b' }] },
+  { elementType: 'labels.text.fill', stylers: [{ color: '#dcdcdcff' }] },
+  { elementType: 'labels.text.stroke', stylers: [{ color: '#6b6b6b' }] },
+  { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#999999' }] },
+];

@@ -1,4 +1,5 @@
 import { getSession, touchSession } from '../services/session.service.js';
+import { getUserProfile } from '../services/users.service.js';
 
 export async function requireSession(req, res, next) {
   const auth = req.headers.authorization || '';
@@ -11,5 +12,9 @@ export async function requireSession(req, res, next) {
   await touchSession(sid);
   req.session = session;
   req.sid = sid;
+  // Attach quick-access user profile from cache (fallback to DB)
+  if (session.userId) {
+    req.user = await getUserProfile(session.userId);
+  }
   next();
 }

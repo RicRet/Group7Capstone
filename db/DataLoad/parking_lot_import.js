@@ -29,11 +29,12 @@ async function main() {
 
       const wkt = polygonWKT(closed);
       const desc = f.properties?.description ?? 'Parking Lot';
+      const zone = f.properties?.zone ?? null;
 
       await client.query(
         `INSERT INTO gis.parking_lots(description, location)
          VALUES ($1, ST_GeogFromText($2))`,
-        [desc, wkt]
+        [desc, wkt, zone]
       );
       console.log(`Inserted parking lot: ${desc}`);
     }

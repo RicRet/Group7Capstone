@@ -26,6 +26,7 @@ PLEASE KEEP TRACK OF ALL NPM INSTALLS/PACKAGES/MODULES HERE:
       npm install react-native
       npm install react-native-maps
       npx expo install @gorhom/bottom-sheet react-native-reanimated react-native-gesture-handler
+      npm install @googlemaps/react-native-navigation-sdk
    ```
 
 AXIOS
@@ -63,3 +64,85 @@ const data = await getHealth(); // { ok: true }
 Notes:
 - On Web, CORS must be enabled on the API for browser access.
 - On Android release builds over HTTP, you may need to allow cleartext traffic.
+
+## Navigation Screen (Two Pins + Routing)
+
+We added a new screen at `app/navigation.tsx` that lets you:
+
+- Long-press the map to place Origin and Destination pins.
+- Swap or clear pins.
+- Fetch a route and draw it on the map.
+
+### Routing Provider
+
+The screen uses OpenRouteService (ORS) for routing when an API key is available. If no key is configured, it falls back to a straight line between pins.
+
+Configure your ORS key via either option:
+
+1. `app.json` (recommended for dev)
+
+```json
+{
+   "expo": {
+      "extra": {
+         "apiBaseUrl": "http://18.117.146.190:8080",
+         "orsApiKey": "YOUR_ORS_API_KEY"
+      }
+   }
+}
+```
+
+2. Environment variable
+
+```bash
+export EXPO_PUBLIC_ORS_API_KEY=YOUR_ORS_API_KEY
+```
+
+Restart Expo after adding the key.
+
+Open the screen from the Test hub:
+
+```text
+Test → Navigation
+```
+
+Or navigate programmatically: `router.push('/navigation')`.
+
+## Sessions (using API Redis)
+
+- Login returns an opaque `token` (session id) from `POST /v1/auth/login`.
+- Add the header `Authorization: Bearer <token>` on protected requests.
+- The API stores sessions in Redis and refreshes TTL on each request.
+
+### Frontend usage
+
+- Store the `token` securely (for now, AsyncStorage is acceptable for dev):
+
+```ts
+// We provide a SessionProvider + axios interceptor.
+// Wrap your app in SessionProvider (see app/_layout.tsx).
+// After login, axios auto-sends Authorization: Bearer <token>.
+```
+```
+
+- Example: `GET /v1/users/me`
+
+```ts
+import { http } from "./lib/http";
+export async function getMe() {
+   const res = await http.get("/v1/users/me");
+   return res.data;
+}
+```
+
+### Screens to update
+
+- `app/Login.tsx`: on success, save `token` and navigate.
+- `app/homepage.tsx` or `app/_layout.tsx`: bootstrap session by reading stored token.
+- `app/map.tsx` and other protected screens: use `authFetch` for calls that require a session.
+
+### Logout
+
+With SessionProvider, call `logout()` from `useSession()`; it clears token and header.
+
+Optional: We can centralize session state with React Context or Zustand and wrap `authFetch` globally. Ask if you want me to scaffold that next.
