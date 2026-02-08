@@ -3,9 +3,11 @@ import { useEffect, useState } from 'react';
 import { Alert, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { updateRoute } from './lib/api/addroutev2';
+import { useTheme } from "./Theme";
 
 export default function EditRoute() {
   const router = useRouter();
+  const { theme } = useTheme();
   const params = useLocalSearchParams<{
     id: string;
     start_building: string;
@@ -108,22 +110,23 @@ export default function EditRoute() {
 
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: '#3f3f3f', padding: 20 }}
+      style={{ flex: 1, backgroundColor: theme.background, padding: 20 }}
       keyboardShouldPersistTaps="handled"
       nestedScrollEnabled
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View>
-          <Text style={styles.title}>Edit Route</Text>
+          <Text style={[styles.title, { color: theme.text }]}>Edit Route</Text>
 
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: theme.inputBackground, color: theme.text }]}
             placeholder="Route Name"
+            placeholderTextColor={theme.lighttext}
             value={name}
             onChangeText={setName}
           />
 
-           <Text style={styles.label}>Start Building</Text>
+          <Text style={[styles.label, { color: theme.text }]}>Start Building</Text>
           <DropDownPicker
             open={open1}
             value={value1}
@@ -134,11 +137,12 @@ export default function EditRoute() {
             onOpen={onOpen1}
             zIndex={4000}
             containerStyle={{ marginBottom: 15 }}
-            dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
-            style={{ backgroundColor: '#6b6b6b' }}
+            dropDownContainerStyle={{ backgroundColor: theme.box }}
+            style={{ backgroundColor: theme.inputBackground }}
+            textStyle={{ color: theme.text }}
           />
 
-          <Text style={styles.label}>End Building</Text>
+          <Text style={[styles.label, { color: theme.text }]}>End Building</Text>
           <DropDownPicker
             open={open2}
             value={value2}
@@ -149,10 +153,12 @@ export default function EditRoute() {
             onOpen={onOpen2}
             zIndex={3000}
             containerStyle={{ marginBottom: 15 }}
-            dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
-            style={{ backgroundColor: '#6b6b6b' }}
+            dropDownContainerStyle={{ backgroundColor: theme.box }}
+            style={{ backgroundColor: theme.inputBackground }}
+            textStyle={{ color: theme.text }}
           />
-          <Text style={styles.label}>Accessibility Needed?</Text>
+
+          <Text style={[styles.label, { color: theme.text }]}>Accessibility Needed?</Text>
           <DropDownPicker
             open={open4}
             value={value4}
@@ -163,11 +169,12 @@ export default function EditRoute() {
             onOpen={onOpen4}
             zIndex={1000}
             containerStyle={{ marginBottom: 25 }}
-            dropDownContainerStyle={{ backgroundColor: '#6b6b6b' }}
-            style={{ backgroundColor: '#6b6b6b' }}
+            dropDownContainerStyle={{ backgroundColor: theme.box }}
+            style={{ backgroundColor: theme.inputBackground }}
+            textStyle={{ color: theme.text }}
           />
 
-          <TouchableOpacity style={styles.saveButton} onPress={saveRoute}>
+          <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.green }]} onPress={saveRoute}>
             <Text style={styles.buttonText}>Save</Text>
           </TouchableOpacity>
         </View>
@@ -177,9 +184,28 @@ export default function EditRoute() {
 }
 
 const styles = StyleSheet.create({
-  title: { fontSize: 20, fontWeight: 'bold', color: '#dcdcdc', marginBottom: 20 },
-  label: { color: '#dcdcdc', marginBottom: 5, fontWeight: '600' },
-  input: { width: '100%', backgroundColor: '#6b6b6b', color: '#dcdcdc', borderRadius: 8, padding: 10, marginBottom: 15 },
-  saveButton: { backgroundColor: '#4caf50', paddingVertical: 12, borderRadius: 8, alignItems: 'center' },
-  buttonText: { color: '#fff', fontWeight: 'bold' },
+  title: { 
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    marginBottom: 20 
+  },
+  label: { 
+    marginBottom: 5, 
+    fontWeight: '600' 
+  },
+  input: { 
+    width: '100%', 
+    borderRadius: 8, 
+    padding: 10, 
+    marginBottom: 15 
+  },
+  saveButton: { 
+    paddingVertical: 12, 
+    borderRadius: 8, 
+    alignItems: 'center' 
+  },
+  buttonText: { 
+    color: '#fff', 
+    fontWeight: 'bold' 
+  },
 });

@@ -2,9 +2,11 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { signUp } from "./lib/api/signup";
+import { useTheme } from "./Theme";
 
 const Signup = () => {
     const router = useRouter();
+    const { theme } = useTheme();
     // user inputs
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -52,178 +54,178 @@ const Signup = () => {
         }
     }
 
-    return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Sign Up</Text>
-            
-            <TextInput
-                style={styles.input}
-                placeholder="Username"
-                placeholderTextColor="#dcdcdcff"
-                value={username}
-                onChangeText={setUsername}
-            />
+  return (
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <Text style={[styles.title, { color: theme.text }]}>Sign Up</Text>
 
-            <TextInput
-                style={styles.input}
-                placeholder="Email"
-                placeholderTextColor="#dcdcdcff"
-                value={email}
-                onChangeText={setEmail}
-            />
-            
-            <TextInput
-                style={styles.input}
-                placeholder="Password"
-                placeholderTextColor="#dcdcdcff"
-                secureTextEntry={true}
-                value={password}
-                onChangeText={setPassword}
-            />
+      <TextInput
+        style={[
+          styles.input,
+          { backgroundColor: theme.inputBackground, borderColor: theme.border, color: theme.text }
+        ]}
+        placeholder="Username"
+        placeholderTextColor={theme.lighttext}
+        value={username}
+        onChangeText={setUsername}
+      />
 
-            <TextInput
-                style={styles.input}
-                placeholder="Confirm Password"
-                placeholderTextColor="#dcdcdcff"
-                secureTextEntry={true}
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-            />
+      <TextInput
+        style={[
+          styles.input,
+          { backgroundColor: theme.inputBackground, borderColor: theme.border, color: theme.text }
+        ]}
+        placeholder="Email"
+        placeholderTextColor={theme.lighttext}
+        value={email}
+        onChangeText={setEmail}
+      />
 
-            <View style={styles.requirementsContainer}>
-                <Text style={styles.requirementsTitle}>Password Requirements:</Text>
-                <RequirementItem met={requirements.minLength} text="At least 8 characters" />
-                <RequirementItem met={requirements.hasNumber} text="Contains a number" />
-                <RequirementItem met={requirements.hasSpecialChar} text="Contains a special character" />
-                <RequirementItem met={requirements.hasUppercase} text="Contains uppercase letter" />
-                <RequirementItem met={requirements.passwordsMatch} text="Passwords match" />
-            </View>
+      <TextInput
+        style={[
+          styles.input,
+          { backgroundColor: theme.inputBackground, borderColor: theme.border, color: theme.text }
+        ]}
+        placeholder="Password"
+        placeholderTextColor={theme.lighttext}
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+      />
 
-            {message ? (
-                <Text style={styles.message}>
-                    {message}
-                </Text>
-            ) : null}
-            
-            <TouchableOpacity 
-                style={[styles.button, !allRequirementsMet && styles.buttonDisabled]} 
-                onPress={handleSignUp}
-                disabled={!allRequirementsMet}
-            >
-                <Text style={styles.buttonText}>
-                    Sign Up
-                </Text>
-            </TouchableOpacity>
+      <TextInput
+        style={[
+          styles.input,
+          { backgroundColor: theme.inputBackground, borderColor: theme.border, color: theme.text }
+        ]}
+        placeholder="Confirm Password"
+        placeholderTextColor={theme.lighttext}
+        secureTextEntry
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+      />
 
-            <Text style={styles.link} onPress={() => router.replace('/Login')}>
-                Have an account? Login
-            </Text>
-        </View>
-    );
+      <View style={[styles.requirementsContainer, { backgroundColor: theme.box }]}>
+        <Text style={[styles.requirementsTitle, { color: theme.green }]}>
+          Password Requirements:
+        </Text>
+
+        {Object.entries(requirements).map(([key, met], i) => (
+          <RequirementItem
+            key={i}
+            met={met}
+            text={[
+              "At least 8 characters",
+              "Contains a number",
+              "Contains a special character",
+              "Contains uppercase letter",
+              "Passwords match",
+            ][i]}
+            theme={theme}
+          />
+        ))}
+      </View>
+
+      {message ? (
+        <Text style={[styles.message, { color: theme.lighttext }]}>{message}</Text>
+      ) : null}
+
+      <TouchableOpacity
+        style={[
+          styles.button,
+          { backgroundColor: allRequirementsMet ? theme.green : theme.disabled }
+        ]}
+        onPress={handleSignUp}
+        disabled={!allRequirementsMet}
+      >
+        <Text style={[styles.buttonText, { color: theme.text }]}>Sign Up</Text>
+      </TouchableOpacity>
+
+      <Text
+        style={[styles.link, { color: theme.text }]}
+        onPress={() => router.replace('/Login')}
+      >
+        Have an account? Login
+      </Text>
+    </View>
+  );
 };
 
-// will turn requirement text green when password requirements met
-const RequirementItem = ({ met, text }: { met: boolean; text: string }) => (
-    <View style={styles.requirementItem}>
-        <View style={[styles.checkbox, met && styles.checkboxMet]} />
-        <Text style={[styles.requirementText, met && styles.requirementMet]}>
-            {text}
-        </Text>
-    </View>
+const RequirementItem = ({ met, text, theme }: any) => (
+  <View style={styles.requirementItem}>
+    <View
+      style={[
+        styles.checkbox,
+        {
+          backgroundColor: met ? theme.green : theme.checkbox,
+          borderColor: met ? theme.green : theme.border
+        }
+      ]}
+    />
+    <Text style={{ color: met ? theme.green : theme.lighttext, fontSize: 12 }}>
+      {text}
+    </Text>
+  </View>
 );
 
-// will be ugly for now
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        padding: 10,
-        backgroundColor: '#3f3f3f',
-    },
-    title: {
-        fontSize: 40,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginBottom: 40,
-        color: '#dcdcdcff',
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#6b6b6b',
-        borderRadius: 16,
-        paddingHorizontal: 10,
-        marginTop: 20,
-        backgroundColor: '#6b6b6b',
-        fontSize: 28,
-    },
-    link: {
-        color: '#dcdcdcff',
-        fontSize: 18,
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
-    button: {
-        backgroundColor: '#45ca3e',
-        padding: 10,
-        borderRadius: 10,
-        alignItems: 'center',
-        marginTop: 30,
-        marginBottom: 10,
-    },
-    buttonText: {
-        color: '#dcdcdcff',
-        fontSize: 25,
-        fontWeight: 'bold',
-    },
-    buttonDisabled: {
-        backgroundColor: '#828282',
-        opacity: 0.6,
-    },
-    message: {
-        textAlign: 'center',
-        fontSize: 18,
-        fontWeight: '500',
-        padding: 10,
-        borderRadius: 5,
-    },
-    requirementsContainer: {
-        marginTop: 20,
-        padding: 10,
-        backgroundColor: '#545454',
-        borderRadius: 8,
-    },
-    requirementsTitle: {
-        fontSize: 14,
-        fontWeight: 'bold',
-        marginBottom: 8,
-        color: '#65d159',
-    },
-    requirementItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 5,
-    },
-    checkbox: {
-        width: 16,
-        height: 16,
-        borderWidth: 1,
-        borderColor: '#dcdcdcff',
-        borderRadius: 3,
-        marginRight: 8,
-        backgroundColor: 'white',
-    },
-    checkboxMet: {
-        backgroundColor: '#7fd871',
-        borderColor: '#7fd871',
-    },
-    requirementText: {
-        fontSize: 12,
-        color: '#dcdcdcff',
-    },
-    requirementMet: {
-        color: '#7fd871',
-        fontWeight: '500',
-    },
+  container: { 
+    flex: 1, 
+    justifyContent: 'center', 
+    padding: 10 
+  },
+  title: { 
+    fontSize: 40, 
+    fontWeight: 'bold', 
+    textAlign: 'center', 
+    marginBottom: 40 
+  },
+  input: {
+    borderWidth: 1,
+    borderRadius: 16,
+    paddingHorizontal: 10,
+    marginTop: 20,
+    fontSize: 28,
+  },
+  link: { 
+    fontSize: 18, 
+    fontWeight: 'bold', 
+    textAlign: 'center' },
+    button: { 
+    padding: 10, 
+    borderRadius: 10, 
+    alignItems: 'center', 
+    marginTop: 30 },
+    buttonText: { 
+    fontSize: 25, 
+    fontWeight: 'bold' 
+  },
+  message: { 
+    textAlign: 'center', 
+    fontSize: 18, 
+    marginTop: 10 
+  },
+  requirementsContainer: { 
+    marginTop: 20, 
+    padding: 10, 
+    borderRadius: 8 
+  },
+  requirementsTitle: { 
+    fontSize: 14, 
+    fontWeight: 'bold', 
+    marginBottom: 8 
+  },
+  requirementItem: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    marginBottom: 5 
+  },
+  checkbox: { 
+    width: 16, 
+    height: 16, 
+    borderWidth: 1, 
+    borderRadius: 3, 
+    marginRight: 8 
+  },
 });
 
 export default Signup;

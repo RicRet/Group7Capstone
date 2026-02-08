@@ -8,6 +8,10 @@ export const LightTheme = {
   green: "#2ecc71",
   border: "#dddddd",
   red: "#e74c3c",
+  inputBackground: "#eeeeee",
+  checkbox: "#ffffff",
+  checkboxMet: "#2ecc71",
+  disabled: "#828282"
 };
 
 export const DarkTheme = {
@@ -20,4 +24,8 @@ export const DarkTheme = {
   green: "#65d159",
   border: "#444444",
   red: "#ff6b6b",
+  inputBackground: "#6b6b6b",
+  checkbox: "#ffffff",
+  checkboxMet: "#65d159",
+  disabled: "#828282"
 };

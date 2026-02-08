@@ -3,9 +3,11 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { login } from "./lib/api/login";
 import { useSession } from "./lib/session";
+import { useTheme } from "./Theme";
 
 const Login = () => {
     const router = useRouter();
+    const { theme } = useTheme();
     const { login: loginWithSession } = useSession();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -18,8 +20,8 @@ const Login = () => {
             const response = await login({ username, password });
             await loginWithSession(username, password);
             // routes to map and homescreen
-            setMessage('Login Suscessful!, redirecting to homepage.');
-            router.replace('/map');
+            setMessage('Login Successful!, redirecting to homepage.');
+            router.replace('/navigation');
             console.log('Login successful:', response);
         }
         catch (error) {
@@ -32,93 +34,77 @@ const Login = () => {
         }
     }
 
-    return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Login</Text>
-            
-            <TextInput
-                style={styles.input}
-                placeholder="Username"
-                placeholderTextColor="#dcdcdcff"
-                value={username}
-                onChangeText={setUsername}
-            />
-            
-            <TextInput
-                style={styles.input}
-                placeholder="Password"
-                placeholderTextColor="#dcdcdcff"
-                secureTextEntry={true}
-                value={password}
-                onChangeText={setPassword}
-            />
+  return (
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <Text style={[styles.title, { color: theme.text }]}>Login</Text>
 
-            {message ? (
-                <Text style={styles.message}>
-                    {message}
-                </Text>
-            ) : null}
+      <TextInput
+        style={[styles.input, { backgroundColor: theme.inputBackground, borderColor: theme.border, color: theme.text }]}
+        placeholder="Username"
+        placeholderTextColor={theme.lighttext}
+        value={username}
+        onChangeText={setUsername}
+      />
 
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                <Text style={styles.buttonText}>Login</Text>
-            </TouchableOpacity>
+      <TextInput
+        style={[styles.input, { backgroundColor: theme.inputBackground, borderColor: theme.border, color: theme.text }]}
+        placeholder="Password"
+        placeholderTextColor={theme.lighttext}
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+      />
 
-            <Text style={styles.link} onPress={() => router.replace('/Signup')}>
-                No account? Sign Up
-            </Text>
-        </View>
-    );
+      {message ? <Text style={[styles.message, { color: theme.red }]}>{message}</Text> : null}
+
+      <TouchableOpacity style={[styles.button, { backgroundColor: theme.green }]} onPress={handleLogin}>
+        <Text style={[styles.buttonText, { color: theme.text }]}>Login</Text>
+      </TouchableOpacity>
+
+      <Text style={[styles.link, { color: theme.text }]} onPress={() => router.replace('/Signup')}>
+        No account? Sign Up
+      </Text>
+    </View>
+  );
 };
 
-// will be ugly for now
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        padding: 10,
-        backgroundColor: '#3f3f3f'
+  container: { 
+    flex: 1, 
+    justifyContent: 'center', 
+    padding: 10 },
+  title: { 
+    fontSize: 40, 
+    fontWeight: 'bold', 
+    textAlign: 'center', 
+    marginBottom: 40 
     },
-    title: {
-        fontSize: 40,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginBottom: 40,
-        color: '#dcdcdcff',
+  input: {
+    borderWidth: 1,
+    borderRadius: 16,
+    paddingHorizontal: 10,
+    marginTop: 20,
+    fontSize: 28,
     },
-    input: {
-        borderWidth: 1,
-        borderColor: '#6b6b6b',
-        borderRadius: 16,
-        paddingHorizontal: 10,
-        marginTop: 20,
-        backgroundColor: '#6b6b6b',
-        fontSize: 28,
+  link: { 
+    fontSize: 18, 
+    fontWeight: 'bold', 
+    textAlign: 'center' 
     },
-    link: {
-        color: '#dcdcdcff',
-        fontSize: 18,
-        fontWeight: 'bold',
-        textAlign: 'center',
+  button: { 
+    padding: 10, 
+    borderRadius: 10, 
+    alignItems: 'center', 
+    marginTop: 30 
     },
-    button: {
-        backgroundColor: '#45ca3e',
-        padding: 10,
-        borderRadius: 10,
-        alignItems: 'center',
-        marginTop: 30,
-        marginBottom: 10,
+  buttonText: { 
+    fontSize: 25, 
+    fontWeight: 'bold' 
     },
-    buttonText: {
-        color: '#dcdcdcff',
-        fontSize: 25,
-        fontWeight: 'bold',
-    },
-    message: {
-        textAlign: 'center',
-        fontSize: 18,
-        fontWeight: '500',
-        padding: 10,
-        borderRadius: 5,
+  message: { 
+    textAlign: 'center', 
+    fontSize: 18, 
+    marginBottom: 10 
     },
 });
 
