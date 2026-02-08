@@ -33,7 +33,7 @@ export async function parkingLotsByBbox([minLon, minLat, maxLon, maxLat]) {
   const rows = await query(
     `SELECT lot_id, description, zone, fill,
             ST_AsGeoJSON(location::geometry)::json AS geometry
-       FROM parking_lots
+       FROM gis.parking_lots
       WHERE ST_Intersects(location, ST_MakeEnvelope($1,$2,$3,$4, 4326)::geography)`,
     [minLon, minLat, maxLon, maxLat]
   );
