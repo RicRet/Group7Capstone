@@ -9,8 +9,12 @@ const baseSelect = `
     f.created_at,
     f.updated_at,
     u1.display_name AS user1_name,
+    u1.first_name AS user1_first,
+    u1.last_name AS user1_last,
     u1.email AS user1_email,
     u2.display_name AS user2_name,
+    u2.first_name AS user2_first,
+    u2.last_name AS user2_last,
     u2.email AS user2_email
   FROM users.app_friends f
   JOIN users.app_user u1 ON u1.user_id = f.user_id
@@ -27,6 +31,8 @@ function normalizeEdge(row, currentUserId) {
   const amFirst = row.user_id === currentUserId;
   const otherId = amFirst ? row.friend_user_id : row.user_id;
   const otherName = amFirst ? row.user2_name : row.user1_name;
+  const otherFirst = amFirst ? row.user2_first : row.user1_first;
+  const otherLast = amFirst ? row.user2_last : row.user1_last;
   const otherEmail = amFirst ? row.user2_email : row.user1_email;
   const direction = row.status === 'pending'
     ? (row.requested_by === currentUserId ? 'outgoing' : 'incoming')
@@ -35,6 +41,8 @@ function normalizeEdge(row, currentUserId) {
   return {
     userId: otherId,
     username: otherName,
+    firstName: otherFirst,
+    lastName: otherLast,
     email: otherEmail,
     status: row.status,
     direction,
@@ -80,9 +88,15 @@ export async function listFriendships(currentUserId) {
 export async function searchForUsers(term, currentUserId) {
   const like = `%${term.toLowerCase()}%`;
   const matches = await query(
-    `SELECT user_id, display_name, email
+    `SELECT user_id, display_name, first_name, last_name, email
      FROM users.app_user
-     WHERE (LOWER(display_name) LIKE $1 OR LOWER(email) LIKE $1)
+     WHERE (
+        LOWER(display_name) LIKE $1
+        OR LOWER(email) LIKE $1
+        OR LOWER(COALESCE(first_name, '')) LIKE $1
+        OR LOWER(COALESCE(last_name, '')) LIKE $1
+        OR LOWER(CONCAT(COALESCE(first_name, ''), ' ', COALESCE(last_name, ''))) LIKE $1
+     )
        AND user_id <> $2
      ORDER BY display_name ASC
      LIMIT 20`,
@@ -107,6 +121,8 @@ export async function searchForUsers(term, currentUserId) {
     return {
       userId: u.user_id,
       username: u.display_name,
+      firstName: u.first_name,
+      lastName: u.last_name,
       email: u.email,
       relationship
     };

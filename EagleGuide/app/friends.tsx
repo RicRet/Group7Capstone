@@ -106,27 +106,34 @@ export default function FriendsScreen() {
     [loadFriends, runSearch]
   );
 
-  const renderFriendRow = (edge: FriendEdge, actionLabel?: string, onAction?: () => void) => (
-    <View key={edge.userId} style={styles.friendRow}>
-      <View style={styles.friendMeta}>
-        <Text style={styles.friendName}>{edge.username || edge.email || edge.userId}</Text>
-        <Text style={styles.friendSub}>{edge.status === "pending" ? `${edge.direction === "incoming" ? "Incoming" : "Sent"} request` : "Friend"}</Text>
+  const renderFriendRow = (edge: FriendEdge, actionLabel?: string, onAction?: () => void) => {
+    const name = [edge.firstName, edge.lastName].filter(Boolean).join(" ") || edge.username || edge.email || edge.userId;
+    const usernameLine = edge.username ? `@${edge.username}` : edge.email || edge.userId;
+    return (
+      <View key={edge.userId} style={styles.friendRow}>
+        <View style={styles.friendMeta}>
+          <Text style={styles.friendName}>{name}</Text>
+          <Text style={styles.friendSub}>{usernameLine}</Text>
+          <Text style={styles.friendSub}>
+            {edge.status === "pending" ? `${edge.direction === "incoming" ? "Incoming" : "Sent"} request` : "Friend"}
+          </Text>
+        </View>
+        {actionLabel && onAction ? (
+          <TouchableOpacity
+            style={[styles.actionButton, actionId === edge.userId && styles.actionButtonDisabled]}
+            onPress={onAction}
+            disabled={actionId === edge.userId}
+          >
+            {actionId === edge.userId ? (
+              <ActivityIndicator color="#0d0d0d" />
+            ) : (
+              <Text style={styles.actionButtonText}>{actionLabel}</Text>
+            )}
+          </TouchableOpacity>
+        ) : null}
       </View>
-      {actionLabel && onAction ? (
-        <TouchableOpacity
-          style={[styles.actionButton, actionId === edge.userId && styles.actionButtonDisabled]}
-          onPress={onAction}
-          disabled={actionId === edge.userId}
-        >
-          {actionId === edge.userId ? (
-            <ActivityIndicator color="#0d0d0d" />
-          ) : (
-            <Text style={styles.actionButtonText}>{actionLabel}</Text>
-          )}
-        </TouchableOpacity>
-      ) : null}
-    </View>
-  );
+    );
+  };
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -181,11 +188,13 @@ export default function FriendsScreen() {
                 buttonLabel = "Add";
                 onPress = () => handleSend(r.userId);
               }
+              const name = [r.firstName, r.lastName].filter(Boolean).join(" ") || r.username || r.email || r.userId;
+              const usernameLine = r.username ? `@${r.username}` : r.email || r.relationship;
               return (
                 <View key={`search-${r.userId}`} style={styles.friendRow}>
                   <View style={styles.friendMeta}>
-                    <Text style={styles.friendName}>{r.username || r.email || r.userId}</Text>
-                    <Text style={styles.friendSub}>{r.email || r.relationship}</Text>
+                    <Text style={styles.friendName}>{name}</Text>
+                    <Text style={styles.friendSub}>{usernameLine}</Text>
                   </View>
                   <TouchableOpacity
                     style={[styles.actionButton, (isAccepted || isPendingOut) && styles.actionButtonDisabled]}

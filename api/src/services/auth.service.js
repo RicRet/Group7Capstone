@@ -6,7 +6,7 @@ import { getUserProfile } from './users.service.js';
 // replace with bcrypt/argon2 in real usage
 function hash(p) { return crypto.createHash('sha256').update(p).digest('hex'); }
 
-export async function createUser(username, email, password) {
+export async function createUser(username, email, password, firstName = null, lastName = null, avatarUrl = null) {
   // Check if username or email already exists
   const existing = await query(
     'SELECT user_id FROM users.app_user WHERE display_name = $1 OR email = $2',
@@ -16,10 +16,10 @@ export async function createUser(username, email, password) {
 
   const password_hash = hash(password);
   const inserted = await query(
-    `INSERT INTO users.app_user (display_name, email, password_hash)
-     VALUES ($1, $2, $3)
-     RETURNING user_id, display_name, email, created_at`,
-    [username, email, password_hash]
+    `INSERT INTO users.app_user (display_name, email, password_hash, first_name, last_name, avatar_url)
+     VALUES ($1, $2, $3, $4, $5, $6)
+     RETURNING user_id, display_name, email, first_name, last_name, avatar_url, created_at`,
+    [username, email, password_hash, firstName, lastName, avatarUrl]
   );
   return inserted[0];
 }
@@ -42,6 +42,16 @@ export async function login(username, password) {
   if (!user) return null;
   const sid = await createSession(user.id, user.roles, user.username);
   // Pre-warm profile cache for fast subsequent requests
-  await getUserProfile(user.id).catch(() => {});
-  return { sid, user: { id: user.id, username: user.username, roles: user.roles } };
+  const profile = await getUserProfile(user.id).catch(() => null);
+  return {
+    sid,
+    user: {
+      id: user.id,
+      username: user.username,
+      roles: user.roles,
+      firstName: profile?.firstName,
+      lastName: profile?.lastName,
+      avatarUrl: profile?.avatarUrl
+    }
+  };
 }

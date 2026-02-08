@@ -8,7 +8,7 @@ export async function getUserProfile(userId) {
   const cached = await jsonGet(cacheKey);
   if (cached) return cached;
   const rows = await query(
-    `SELECT user_id, display_name, email, created_at
+    `SELECT user_id, display_name, email, first_name, last_name, avatar_url, created_at
      FROM users.app_user
      WHERE user_id = $1`,
     [userId]
@@ -19,6 +19,9 @@ export async function getUserProfile(userId) {
     id: u.user_id,
     username: u.display_name,
     email: u.email,
+    firstName: u.first_name,
+    lastName: u.last_name,
+    avatarUrl: u.avatar_url,
     createdAt: u.created_at
   };
   await jsonSet(cacheKey, profile, TTL.user);

@@ -3,6 +3,8 @@ import { http } from '../http';
 export type FriendEdge = {
   userId: string;
   username?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
   email?: string | null;
   status: 'pending' | 'accepted' | 'blocked';
   direction: 'incoming' | 'outgoing' | 'accepted';
@@ -20,6 +22,8 @@ export type FriendsResponse = {
 export type FriendSearchResult = {
   userId: string;
   username?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
   email?: string | null;
   relationship: 'none' | 'accepted' | 'pending_in' | 'pending_out';
 };

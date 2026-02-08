@@ -9,6 +9,10 @@ export type LoginResponse = {
   token: string;
   user: {
     id: string;
+    username?: string;
+    firstName?: string | null;
+    lastName?: string | null;
+    avatarUrl?: string | null;
     roles: string[];
   };
 };
