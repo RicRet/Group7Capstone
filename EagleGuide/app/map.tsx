@@ -168,6 +168,7 @@ const MapScreen = () => {
                                 {[
                                   { label: 'Home', path: '/homepage' },
                                   { label: 'Navigation', path: '/navigation' },
+                                                                    { label: 'Shared Navigation', path: '/share-navigation' },
                                   { label: 'Add Route', path: '/addroute' },
                                   { label: 'Settings', path: '/Settings' },
                                   { label: 'Login / Signup', path: '/Login' },

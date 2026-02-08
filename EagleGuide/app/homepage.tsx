@@ -1,8 +1,10 @@
+import * as Linking from "expo-linking";
 import * as Location from "expo-location";
 import { useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, Image, ScrollView, Share, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
+import { createShareLocation } from "./lib/api/shareLocation";
 import { useSession } from "./lib/session";
 
 
@@ -12,10 +14,13 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
     const [locStatus, setLocStatus] = useState<"unknown" | "denied" | "granted" | "error">("unknown");
     const [coords, setCoords] = useState<Location.LocationObjectCoords | null>(null);
     const [checkingLoc, setCheckingLoc] = useState(false);
+    const [shareLoading, setShareLoading] = useState(false);
 
     const navItems = [
         { label: "Navigation", to: "/navigation" },
+        { label: "Shared Navigation", to: "/share-navigation" },
         { label: "Add Route", to: "/addroute" },
+        { label: "Friends", to: "/friends" },
     ];
 
     const legendItems = useMemo(
@@ -93,6 +98,28 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
     const onCampus = coords
         ? distanceMeters(campusCenter, { latitude: coords.latitude, longitude: coords.longitude }) <= campusRadiusM
         : null;
+
+    const shareMyLocation = async () => {
+        if (!coords) return Alert.alert("Locate first", "We need your location before sharing.");
+        if (!user) return Alert.alert("Login required", "Please log in to share your location.");
+        setShareLoading(true);
+        try {
+            const res = await createShareLocation({
+                latitude: coords.latitude,
+                longitude: coords.longitude,
+                label: onCampus ? "On campus" : "My location",
+            });
+            const url = Linking.createURL("/navigation", { queryParams: { shareId: res.shareId } });
+            await Share.share({
+                title: "Meet me here",
+                message: `Meet me here: ${url}`,
+            });
+        } catch (err: any) {
+            Alert.alert("Could not share", (err?.message || "Please try again").slice(0, 200));
+        } finally {
+            setShareLoading(false);
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -173,6 +200,17 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
                                     pinColor="#65d159"
                                 />
                             </MapView>
+                            <TouchableOpacity
+                                style={[styles.shareBtn, shareLoading && styles.shareBtnDisabled]}
+                                onPress={shareMyLocation}
+                                disabled={shareLoading}
+                            >
+                                {shareLoading ? (
+                                    <ActivityIndicator color="#0d0d0d" />
+                                ) : (
+                                    <Text style={styles.shareBtnText}>Share My Location</Text>
+                                )}
+                            </TouchableOpacity>
                         </>
                     )}
                     {locStatus === "granted" && !coords && !checkingLoc && (
@@ -352,6 +390,20 @@ const styles = StyleSheet.create({
         marginHorizontal: 0,
         marginTop: 0,
         marginBottom: 0,
+    },
+    shareBtn: {
+        marginTop: 12,
+        backgroundColor: '#65d159',
+        paddingVertical: 12,
+        borderRadius: 10,
+        alignItems: 'center',
+    },
+    shareBtnDisabled: {
+        opacity: 0.7,
+    },
+    shareBtnText: {
+        color: '#0d0d0d',
+        fontWeight: '700',
     },
 });
 

@@ -12,6 +12,7 @@ export default function RootLayout() {
       <Stack.Screen name="navigation" options={{ headerShown: false }} />
       <Stack.Screen name="addroute" options={{ headerShown: false }} />
       <Stack.Screen name="editroute" options={{ headerShown: false }} />
+      <Stack.Screen name="friends" options={{ headerShown: false }} />
       <Stack.Screen name="Login" options={{ headerShown: false }} />
       <Stack.Screen name="Signup" options={{ headerShown: false }} />
       <Stack.Screen name="Settings" options={{ headerShown: false }} />
