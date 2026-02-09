@@ -250,9 +250,9 @@ const addr = async (prevb: string | null,newb: string | null,type: string | null
             />
           </View>
 
-          <Text style={[styles.link, { color: theme.text }]} onPress={() => onNavigate('homepage')}>
-            Go back
-          </Text>
+          <TouchableOpacity style={[styles.button, { backgroundColor: theme.button }]} onPress={() => router.back()}>
+            <Text style={[styles.buttonText, { color: theme.text }]}>Back</Text>
+          </TouchableOpacity>
         </View>
       </TouchableWithoutFeedback>
     </ScrollView>
@@ -276,6 +276,12 @@ const styles = StyleSheet.create({
     fontSize: 16, 
     fontWeight: 'bold', 
     textAlign: 'center' 
+  },
+  button: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 10,
+    alignItems: "center",
   },
   dropdownRow: { 
     flexDirection: 'row', 
