@@ -21,7 +21,7 @@ const Login = () => {
             await loginWithSession(username, password);
             // routes to homepage after successful login
             setMessage('Login Successful!, redirecting to homepage.');
-            router.replace('/homepage');
+            router.replace('/map');
             console.log('Login successful:', response);
         }
         catch (error) {

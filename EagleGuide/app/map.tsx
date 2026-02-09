@@ -122,16 +122,16 @@ const MapScreen = () => {
         >
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={styles.container}>
-                    {/* Map */}
-                                        <MapView
-                                                provider={PROVIDER_GOOGLE}
-                                                customMapStyle={darkStyle}
-                                                style={StyleSheet.absoluteFillObject}
-                                                region={region}
-                                                onRegionChangeComplete={setRegion}
-                                                showsUserLocation
-                                                showsCompass
->
+                        {/* Map */}
+                                <MapView
+                                    customMapStyle={darkStyle}
+                                    style={styles.map}
+                                    initialRegion={initialRegion}
+                                    region={region}
+                                    onRegionChangeComplete={setRegion}
+                                    showsUserLocation
+                                    showsCompass
+            >
                     <Marker
                         coordinate={{ latitude: 33.2106, longitude: -97.1470 }}
                         title="University Union"
