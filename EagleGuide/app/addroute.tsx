@@ -1,12 +1,25 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Alert, FlatList, Keyboard, ScrollView, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { addRoute, deleteRoute, getRoutes, SavedRoute } from './lib/api/addroutev2';
 import { useTheme } from "./Theme";
+//props for functions
+type AddrouteProps = {
+  onClose?: () => void;
+  onEdit?: (route: SavedRoute) => void;
+  onNavigate?: (data: {
+    originLat: number;
+    originLon: number;
+    destLat: number;
+    destLon: number;
+    accessible: string;
+  }) => void;
+};
 
 
-export default function Addroute({ onNavigate }: { onNavigate: (screen: string) => void }) {
+export default function Addroute({ onClose, onEdit, onNavigate }: AddrouteProps) {
+
   const router = useRouter();
   const { theme } = useTheme();
 const [savedRoutes, setSavedRoutes] = useState<SavedRoute[]>([]);
@@ -122,86 +135,71 @@ const addr = async (prevb: string | null,newb: string | null,type: string | null
     }
   };
 
-  return (
-    <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps="handled">
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={[styles.container, { backgroundColor: theme.background }]}>
+ return (
+  <View style={{ flex: 1, backgroundColor: theme.background }}>
+    <FlatList
+      data={savedRoutes}
+      keyExtractor={(route) => route.saved_route_id}
+      keyboardShouldPersistTaps="handled"
+      contentContainerStyle={{ paddingBottom: 40 }}
+      ListHeaderComponent={() => (
+        <View style={styles.container}>
           <Text style={[styles.title, { color: theme.text }]}>
             Choose current building and then destination:
           </Text>
 
           <View style={styles.dropdownGrid}>
             <View style={[styles.dropdownRow, { zIndex: 4000 }]}>
-              <View style={[styles.dropdownBox, { zIndex: 4000 }]}>
+              <View style={styles.dropdownBox}>
                 <DropDownPicker
                   open={open1}
                   value={value1}
                   items={items1}
                   setOpen={setOpen1}
                   setValue={setValue1}
-                  containerStyle={{ height: 50 }}
-                  dropDownContainerStyle={{
-                    backgroundColor: theme.box,
-                    position: 'absolute',
-                    zIndex: 10000,
-                  }}
                   style={{ backgroundColor: theme.inputBackground }}
+                  dropDownContainerStyle={{ backgroundColor: theme.box }}
                   textStyle={{ color: theme.text }}
                 />
               </View>
 
-              <View style={[styles.dropdownBox, { zIndex: 3000 }]}>
+              <View style={styles.dropdownBox}>
                 <DropDownPicker
                   open={open2}
                   value={value2}
                   items={items2}
                   setOpen={setOpen2}
                   setValue={setValue2}
-                  containerStyle={{ height: 50 }}
-                  dropDownContainerStyle={{
-                    backgroundColor: theme.box,
-                    position: 'absolute',
-                    zIndex: 10000,
-                  }}
                   style={{ backgroundColor: theme.inputBackground }}
+                  dropDownContainerStyle={{ backgroundColor: theme.box }}
                   textStyle={{ color: theme.text }}
                 />
               </View>
             </View>
 
             <View style={[styles.dropdownRow, { zIndex: 2000 }]}>
-              <View style={[styles.dropdownBox, { zIndex: 2000 }]}>
+              <View style={styles.dropdownBox}>
                 <DropDownPicker
                   open={open3}
                   value={value3}
                   items={items3}
                   setOpen={setOpen3}
                   setValue={setValue3}
-                  containerStyle={{ height: 50 }}
-                  dropDownContainerStyle={{
-                    backgroundColor: theme.box,
-                    position: 'absolute',
-                    zIndex: 10000,
-                  }}
                   style={{ backgroundColor: theme.inputBackground }}
+                  dropDownContainerStyle={{ backgroundColor: theme.box }}
                   textStyle={{ color: theme.text }}
                 />
               </View>
 
-              <View style={[styles.dropdownBox, { zIndex: 1000 }]}>
+              <View style={styles.dropdownBox}>
                 <DropDownPicker
                   open={open4}
                   value={value4}
                   items={items4}
                   setOpen={setOpen4}
                   setValue={setValue4}
-                  containerStyle={{ height: 50 }}
-                  dropDownContainerStyle={{
-                    backgroundColor: theme.box,
-                    position: 'absolute',
-                    zIndex: 10000,
-                  }}
                   style={{ backgroundColor: theme.inputBackground }}
+                  dropDownContainerStyle={{ backgroundColor: theme.box }}
                   textStyle={{ color: theme.text }}
                 />
               </View>
@@ -210,53 +208,69 @@ const addr = async (prevb: string | null,newb: string | null,type: string | null
 
           <TouchableOpacity
             style={[styles.submitButton, { backgroundColor: theme.green }]}
+            onPress={() => addr(value1, value2, value3, value4, userid)}
           >
             <Text style={styles.submitButtonText}>Submit Route</Text>
           </TouchableOpacity>
 
-          <View style={[styles.Savedroutes, { backgroundColor: theme.box }]}>
-            <Text style={[styles.SavedRoutesHeader, { color: theme.text }]}>
-              Saved Routes
-            </Text>
-
-            <FlatList
-              data={savedRoutes}
-              keyExtractor={(route) => route.saved_route_id}
-              scrollEnabled={false}
-              renderItem={({ item: route }) => (
-                <View style={[styles.routeCard, { backgroundColor: theme.background }]}>
-                  <Text style={[styles.routeid, { color: theme.text }]}>
-                    Route Name: {route.name}
-                  </Text>
-                  <Text style={[styles.routeinfo, { color: theme.lighttext }]}>
-                    Accessibility: {route.is_accessible ? "Yes" : "No"}
-                  </Text>
-
-                  <View style={styles.buttonr}>
-                    <TouchableOpacity
-                      style={[styles.editButton, { backgroundColor: theme.button }]}
-                    >
-                      <Text style={styles.buttonText}>Edit</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                      style={[styles.deleteButton, { backgroundColor: theme.red }]}
-                    >
-                      <Text style={styles.buttonText}>Delete</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              )}
-            />
-          </View>
-
-          <TouchableOpacity style={[styles.button, { backgroundColor: theme.button }]} onPress={() => router.back()}>
-            <Text style={[styles.buttonText, { color: theme.text }]}>Back</Text>
-          </TouchableOpacity>
+          <Text style={[styles.SavedRoutesHeader, { color: theme.text }]}>
+            Saved Routes
+          </Text>
         </View>
-      </TouchableWithoutFeedback>
-    </ScrollView>
-  );
+      )}
+      renderItem={({ item }) => (
+        <View style={[styles.routeCard, { backgroundColor: theme.box }]}>
+          <Text style={[styles.routeid, { color: theme.text }]}>
+            Route Name: {item.name}
+          </Text>
+
+          <Text style={[styles.routeinfo, { color: theme.lighttext }]}>
+            Accessibility: {item.is_accessible ? "Yes" : "No"}
+          </Text>
+
+          <View style={styles.buttonr}>
+            <TouchableOpacity
+              style={[styles.editButton, { backgroundColor: theme.button }]}
+              onPress={() => onEdit?.(item)}
+            >
+              <Text style={styles.buttonText}>Edit</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.editButton, { backgroundColor: theme.green }]}
+              onPress={() =>
+                onNavigate?.({
+                  originLat: item.start_lat,
+                  originLon: item.start_lon,
+                  destLat: item.end_lat,
+                  destLon: item.end_lon,
+                  accessible: item.is_accessible ? "Yes" : "No",
+                })
+              }
+            >
+              <Text style={styles.buttonText}>Find Route</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.deleteButton, { backgroundColor: theme.red }]}
+              onPress={async () => {
+                await deleteRoute(item.saved_route_id);
+                loadSavedR();
+              }}
+            >
+              <Text style={styles.buttonText}>Delete</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+      ListFooterComponent={() => (
+        <TouchableOpacity onPress={onClose} style={{ marginVertical: 20 }}>
+          <Text style={[styles.link, { color: theme.text }]}>Close</Text>
+        </TouchableOpacity>
+      )}
+    />
+  </View>
+);
 }
 
 const styles = StyleSheet.create({

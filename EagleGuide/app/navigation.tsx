@@ -13,6 +13,9 @@ import {
   View
 } from "react-native";
 import MapView, { Marker, Polyline, PROVIDER_GOOGLE, Region } from "react-native-maps";
+import Addroute from "./addroute";
+import Editroute from "./editroute";
+import { SavedRoute } from "./lib/api/addroutev2";
 import {
   getRouteFromORS,
   snapToRoad,
@@ -22,6 +25,9 @@ import {
 } from "./lib/api/directions";
 import { searchLocation, type GeocodeResult } from "./lib/api/geocoding";
 import { useTheme } from "./Theme";
+
+
+
 
 const formatDuration = (seconds: number) => {
   const min = Math.floor(seconds / 60);
@@ -37,6 +43,9 @@ const formatDistance = (meters: number) => {
 };
 
 export default function NavigationScreen() {
+  const [showAddRoute, setShowAddRoute] = useState(false);
+const [editingRoute, setEditingRoute] = useState<SavedRoute | null>(null);
+
   const router = useRouter();
   const { theme, isDark } = useTheme();
   const mapRef = useRef<MapView>(null);
@@ -275,6 +284,13 @@ export default function NavigationScreen() {
             <TouchableOpacity style={[styles.button, { backgroundColor: theme.button, flex: 1, marginRight: 5 }]} onPress={fetchRoute} disabled={loading}>
             {loading ? <ActivityIndicator color="#fff" /> : <Text style={[styles.buttonText, { color: "#fff" }]}>Find Route</Text>}
             </TouchableOpacity>
+            <TouchableOpacity
+             style={[styles.button, { backgroundColor: theme.button }]}
+             onPress={() => setShowAddRoute(true)}
+         >
+           <Text style={[styles.buttonText, { color: theme.text }]}> View Route</Text>
+           </TouchableOpacity>
+
             <TouchableOpacity style={[styles.button, { backgroundColor: theme.button }]} onPress={() => router.back()}>
                 <Text style={[styles.buttonText, { color: theme.text }]}>Back</Text>
             </TouchableOpacity>
@@ -307,7 +323,37 @@ export default function NavigationScreen() {
             )}
           />
         )}
+        
       </View>
+      {/*addroute and editroute overlay */}
+{showAddRoute && !editingRoute && (
+  <View style={styles.overlay}>
+    <Addroute
+      onClose={() => setShowAddRoute(false)}
+      onEdit={(route) => setEditingRoute(route)}
+      onNavigate={(data) => {
+        setOrigin({
+          latitude: data.originLat,
+          longitude: data.originLon,
+        });
+        setDestination({
+          latitude: data.destLat,
+          longitude: data.destLon,
+        });
+        setShowAddRoute(false);
+      }}
+    />
+  </View>
+)}
+{editingRoute && (
+  <View style={styles.overlay}>
+    <Editroute
+      route={editingRoute}
+      onClose={() => setEditingRoute(null)}
+    />
+  </View>
+)}
+
     </View>
   );
 }
@@ -384,5 +430,17 @@ const styles = StyleSheet.create({
   stepSubText: {
       fontSize: 12,
   },
-});
+  overlay: {
+  position: "absolute",
+  left: 0,
+  right: 0,
+  bottom: 0,
+  height: "90%",
+  backgroundColor: "#3f3f3f",
+  borderTopLeftRadius: 18,
+  borderTopRightRadius: 18,
+  overflow: "hidden",
+  zIndex: 100,
+},
 
+});
