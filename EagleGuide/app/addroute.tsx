@@ -46,6 +46,8 @@ useEffect(() => {
     { label: 'Student Union', value: 'Student Union' },
     { label: 'Willis', value: 'Willis' },
     { label: 'Parking Garage', value: 'Parking Garage' },
+    { label: 'Discovery Park', value: 'Discovery Park' },
+
   ]);
 
   //For dropdown 2
@@ -55,6 +57,8 @@ useEffect(() => {
     { label: 'Student Union', value: 'Student Union' },
     { label: 'Willis', value: 'Willis' },
     { label: 'Parking Garage', value: 'Parking Garage' },
+    { label: 'Discovery Park', value: 'Discovery Park' },
+
   ]);
  //For dropdown 3
  const [open3, setOpen3] = useState(false);
@@ -77,9 +81,10 @@ const [items4, setItems4] = useState([
 
   //place holder Cordinates
 const mockCoords = {
-  StudentUnion: { lon: -97.150, lat: 33.214 },
-  Willis: { lon: -97.152, lat: 33.215 },
-  ParkingGarage: { lon: -97.148, lat: 33.216 },
+   StudentUnion: { lon: -97.1477, lat: 33.2109 },
+   Willis: { lon:-97.152, lat: 33.2101 },
+  ParkingGarage: { lon: -97.14476651696336, lat: 33.210964362912854 },
+   DiscoveryPark: { lon: -97.1510, lat: 33.2540 },
 } as const;
 
 type MockCoordKey = keyof typeof mockCoords;
@@ -101,6 +106,8 @@ const addr = async (prevb: string | null,newb: string | null,type: string | null
 
     const start = mockCoords[startKey];
     const end = mockCoords[endKey];
+
+   
 
    const res = await addRoute({
   userid,
@@ -151,6 +158,9 @@ const addr = async (prevb: string | null,newb: string | null,type: string | null
           <View style={styles.dropdownGrid}>
             <View style={[styles.dropdownRow, { zIndex: 4000 }]}>
               <View style={styles.dropdownBox}>
+                <Text style={[styles.dropdownLabel, { color: theme.text }]}>
+                Starting Building
+                </Text>
                 <DropDownPicker
                   open={open1}
                   value={value1}
@@ -164,6 +174,9 @@ const addr = async (prevb: string | null,newb: string | null,type: string | null
               </View>
 
               <View style={styles.dropdownBox}>
+                 <Text style={[styles.dropdownLabel, { color: theme.text }]}>
+                End Building
+                </Text>
                 <DropDownPicker
                   open={open2}
                   value={value2}
@@ -179,6 +192,9 @@ const addr = async (prevb: string | null,newb: string | null,type: string | null
 
             <View style={[styles.dropdownRow, { zIndex: 2000 }]}>
               <View style={styles.dropdownBox}>
+                 <Text style={[styles.dropdownLabel, { color: theme.text }]}>
+                Pedestrian or Bus?
+                </Text>
                 <DropDownPicker
                   open={open3}
                   value={value3}
@@ -192,6 +208,9 @@ const addr = async (prevb: string | null,newb: string | null,type: string | null
               </View>
 
               <View style={styles.dropdownBox}>
+                <Text style={[styles.dropdownLabel, { color: theme.text }]}>
+                Accessible Needed?
+                </Text>
                 <DropDownPicker
                   open={open4}
                   value={value4}
@@ -364,4 +383,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold', 
     fontSize: 16 
   },
+  dropdownLabel: {
+  marginBottom: 6,
+  fontSize: 14,
+  fontWeight: '600',
+},
+
 });

@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import { Alert, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, } from 'react-native';
+import { Alert, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { SavedRoute, updateRoute } from './lib/api/addroutev2';
 import { useTheme } from "./Theme";
@@ -24,6 +24,7 @@ const { theme } = useTheme();
     { label: 'Student Union', value: 'Student Union' },
     { label: 'Willis', value: 'Willis' },
     { label: 'Parking Garage', value: 'Parking Garage' },
+     { label: 'Discovery Park', value: 'Discovery Park' },
   ]);
 
  
@@ -33,6 +34,7 @@ const { theme } = useTheme();
     { label: 'Student Union', value: 'Student Union' },
     { label: 'Willis', value: 'Willis' },
     { label: 'Parking Garage', value: 'Parking Garage' },
+     { label: 'Discovery Park', value: 'Discovery Park' },
   ]);
 
   const [open4, setOpen4] = useState(false);
@@ -56,9 +58,10 @@ useEffect(() => {
 
   //place holder coordinates
   const mockCoords = {
-    StudentUnion: { lon: -97.150, lat: 33.214 },
-    Willis: { lon: -97.152, lat: 33.215 },
-    ParkingGarage: { lon: -97.148, lat: 33.216 },
+    StudentUnion: { lon: -97.1477, lat: 33.2109 },
+    Willis: { lon:-97.152, lat: 33.2101 },
+   ParkingGarage: { lon: -97.14476651696336, lat: 33.210964362912854 },
+   DiscoveryPark: { lon: -97.1510, lat: 33.2540 },
   } as const;
 
   const saveRoute = async () => {
@@ -104,11 +107,6 @@ useEffect(() => {
   const onOpen4 = () => { setOpen1(false); setOpen2(false); setOpen4(true); };
 
   return (
-    <ScrollView
-      style={{ flex: 1, backgroundColor: theme.background, padding: 20 }}
-      keyboardShouldPersistTaps="handled"
-      nestedScrollEnabled
-    >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View>
           <Text style={[styles.title, { color: theme.text }]}>Edit Route</Text>
@@ -174,7 +172,6 @@ useEffect(() => {
           </TouchableOpacity>
         </View>
       </TouchableWithoutFeedback>
-    </ScrollView>
   );
 }
 
