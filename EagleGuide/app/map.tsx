@@ -1,6 +1,6 @@
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useRouter } from 'expo-router';
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
     Keyboard,
     KeyboardAvoidingView,
@@ -12,13 +12,15 @@ import {
     View,
 } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker, Polygon, PROVIDER_GOOGLE, Region } from 'react-native-maps';
 import Addroute from './addroute';
 import Homepage from './homepage';
+import { fetchParkingLots, ParkingLotFeature } from './lib/api/parkingLots';
   
 const MapScreen = () => {
     const [showMenu, setShowMenu] = useState(false);
     const [currentSheet, setCurrentSheet] = useState('home');
+    const [parkingLots, setParkingLots] = useState<ParkingLotFeature[]>([]);
 
     const router = useRouter();
 
@@ -40,6 +42,56 @@ const MapScreen = () => {
 
     const sheetRef = useRef<BottomSheet>(null);
     const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
+
+    const initialRegion: Region = {
+        latitude: 33.2106,
+        longitude: -97.1470,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+    };
+    const [region, setRegion] = useState<Region>(initialRegion);
+
+    const bbox = useMemo(() => {
+        const halfLat = region.latitudeDelta / 2;
+        const halfLon = region.longitudeDelta / 2;
+        return {
+            minLon: region.longitude - halfLon,
+            minLat: region.latitude - halfLat,
+            maxLon: region.longitude + halfLon,
+            maxLat: region.latitude + halfLat,
+        };
+    }, [region]);
+
+    useEffect(() => {
+        let cancelled = false;
+        async function loadLots() {
+            try {
+                const data = await fetchParkingLots(bbox);
+                if (!cancelled) setParkingLots(data.features || []);
+            } catch {
+                if (!cancelled) setParkingLots([]);
+            }
+        }
+        loadLots();
+        return () => {
+            cancelled = true;
+        };
+    }, [bbox]);
+
+    const toPolygon = (feature: ParkingLotFeature) => {
+        const coords = feature.geometry?.coordinates?.[0] || [];
+        return coords.map(([lon, lat]) => ({ latitude: lat, longitude: lon }));
+    };
+
+    const fillColor = (fill?: string | null) => {
+        if (!fill) return 'rgba(0, 122, 255, 0.25)';
+        const match = /rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/i.exec(fill);
+        if (match) {
+            const [r, g, b] = match.slice(1).map(Number);
+            return `rgba(${r}, ${g}, ${b}, 0.3)`;
+        }
+        return 'rgba(0, 122, 255, 0.25)';
+    };
 
     // dark map style
     const darkStyle = [
@@ -70,25 +122,36 @@ const MapScreen = () => {
         >
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={styles.container}>
-                    {/* Map */}
-                    <MapView
-                        provider={PROVIDER_GOOGLE}
-                        customMapStyle={darkStyle}
-                        style={StyleSheet.absoluteFillObject}
-                        initialRegion={{
-                        latitude: 33.2106,
-                        longitude: -97.1470,
-                        latitudeDelta: 0.01,
-                        longitudeDelta: 0.01,
-                    }}
-                    showsUserLocation
-                    showsCompass
->
+                        {/* Map */}
+                                <MapView
+                                    customMapStyle={darkStyle}
+                                    style={styles.map}
+                                    initialRegion={initialRegion}
+                                    region={region}
+                                    onRegionChangeComplete={setRegion}
+                                    showsUserLocation
+                                    showsCompass
+            >
                     <Marker
                         coordinate={{ latitude: 33.2106, longitude: -97.1470 }}
                         title="University Union"
                         description="University of North Texas"
                     />
+
+                                        {parkingLots.map((lot) => {
+                                            const coords = toPolygon(lot);
+                                            if (!coords.length) return null;
+                                            return (
+                                                <Polygon
+                                                    key={`lot-${lot.properties.lot_id}`}
+                                                    coordinates={coords}
+                                                    strokeColor="#333"
+                                                    strokeWidth={1}
+                                                    fillColor={fillColor(lot.properties.fill)}
+                                                    tappable
+                                                />
+                                            );
+                                        })}
                     </MapView>
 
                     {/* Floating menu button */}
@@ -105,6 +168,7 @@ const MapScreen = () => {
                                 {[
                                   { label: 'Home', path: '/homepage' },
                                   { label: 'Navigation', path: '/navigation' },
+                                                                    { label: 'Shared Navigation', path: '/share-navigation' },
                                   { label: 'Add Route', path: '/addroute' },
                                   { label: 'Settings', path: '/Settings' },
                                   { label: 'Login / Signup', path: '/Login' },

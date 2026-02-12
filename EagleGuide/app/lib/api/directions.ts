@@ -3,26 +3,36 @@ import Constants from "expo-constants";
 export type Coordinates = { latitude: number; longitude: number };
 export type Profile = "foot-walking" | "cycling-regular" | "driving-car";
 
-/**
- * Calls OpenRouteService Directions API.
- * Requires `EXPO_PUBLIC_ORS_API_KEY` or `extra.orsApiKey` in `app.json`.
- */
+export type RouteStep = {
+  distance: number;
+  duration: number;
+  type: number;
+  instruction: string;
+  name: string;
+  way_points: [number, number];
+};
+
+export type RouteData = {
+  coordinates: Coordinates[];
+  steps: RouteStep[];
+  summary: {
+    distance: number;
+    duration: number;
+  };
+};
+
 export async function getRouteFromORS(
   start: Coordinates,
   end: Coordinates,
   profile: Profile = "foot-walking"
-): Promise<Coordinates[]> {
+): Promise<RouteData | null> {
   const apiKey =
     (Constants.expoConfig?.extra as any)?.orsApiKey ||
     (process.env.EXPO_PUBLIC_ORS_API_KEY as string);
 
-  if (!apiKey) {
-    throw new Error("Missing ORS API key");
-  }
+  if (!apiKey) throw new Error("Missing ORS API key");
 
-  const base = `https://api.openrouteservice.org/v2/directions/${profile}`;
-  const geojsonUrl = `${base}/geojson?api_key=${encodeURIComponent(apiKey)}`;
-  const jsonUrl = `${base}?api_key=${encodeURIComponent(apiKey)}`;
+  const url = `https://api.openrouteservice.org/v2/directions/${profile}?api_key=${encodeURIComponent(apiKey)}`;
 
   const body = {
     coordinates: [
@@ -31,102 +41,99 @@ export async function getRouteFromORS(
     ],
     elevation: false,
     preference: "recommended",
-    instructions: false,
-    geometry: true,
+    instructions: true,
+    instructions_format: "text",
     units: "m",
+    geometry: "true",
   };
-  // Try GeoJSON endpoint first for direct coordinates
+
   try {
-    const respGeo = await fetch(geojsonUrl, {
+    const resp = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
-    const text = respGeo.ok ? null : await respGeo.text().catch(() => null);
-    const dataGeo = respGeo.ok ? await respGeo.json() : null;
-    const coordsGeo: [number, number][] | null = dataGeo?.features?.[0]?.geometry?.coordinates || null;
-    if (respGeo.ok && coordsGeo && coordsGeo.length > 1) {
-      return coordsGeo.map(([lon, lat]) => ({ latitude: lat, longitude: lon }));
-    }
-    // If 200 but empty, fall through to JSON endpoint
-    if (!respGeo.ok) {
-      console.warn(`ORS geojson error ${respGeo.status}: ${(text || '').slice(0, 200)}`);
-    }
-  } catch (e) {
-    console.warn(`ORS geojson fetch failed: ${String(e).slice(0, 200)}`);
-  }
 
-  // Fallback to JSON endpoint and decode encoded polyline from routes[0].geometry
-  const respJson = await fetch(jsonUrl, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  if (!respJson.ok) {
-    let text: string;
-    try { text = await respJson.text(); } catch { text = "<no body>"; }
-    throw new Error(`ORS error ${respJson.status}: ${text.slice(0, 300)}`);
+    if (!resp.ok) {
+      const text = await resp.text();
+      throw new Error(`ORS error ${resp.status}: ${text.slice(0, 300)}`);
+    }
+
+    const data = await resp.json();
+    const route = data.routes?.[0];
+
+    if (!route) return null;
+
+    let decodedCoords: Coordinates[] = [];
+    if (typeof route.geometry === "string") {
+      decodedCoords = decodePolyline(route.geometry, 5).map(([lat, lon]) => ({
+        latitude: lat,
+        longitude: lon,
+      }));
+    } else if (Array.isArray(route.geometry?.coordinates)) {
+       decodedCoords = route.geometry.coordinates.map((c: number[]) => ({
+           latitude: c[1],
+           longitude: c[0]
+       }));
+    }
+
+    const steps: RouteStep[] = route.segments?.[0]?.steps || [];
+    
+    const summary = route.summary || { distance: 0, duration: 0 };
+
+    return {
+      coordinates: decodedCoords,
+      steps,
+      summary
+    };
+
+  } catch (err) {
+    console.warn("Route fetch failed:", err);
+    throw err;
   }
-  const dataJson = await respJson.json();
-  const encoded: string | undefined = dataJson?.routes?.[0]?.geometry;
-  if (encoded && typeof encoded === "string") {
-    const decoded5 = decodePolyline(encoded, 5);
-    if (decoded5.length > 1) return decoded5.map(([lat, lon]) => ({ latitude: lat, longitude: lon }));
-    const decoded6 = decodePolyline(encoded, 6);
-    if (decoded6.length > 1) return decoded6.map(([lat, lon]) => ({ latitude: lat, longitude: lon }));
-  }
-  // Last resort: check for any coordinates in features (some variants)
-  const coordsAlt: [number, number][] | null = dataJson?.features?.[0]?.geometry?.coordinates || null;
-  if (coordsAlt && coordsAlt.length > 1) return coordsAlt.map(([lon, lat]) => ({ latitude: lat, longitude: lon }));
-  return [];
 }
 
-// Decodes an encoded polyline string into [lat, lon] pairs
 function decodePolyline(str: string, precision = 5): [number, number][] {
-  let index = 0, lat = 0, lon = 0;
-  const coordinates: [number, number][] = [];
-  const factor = Math.pow(10, precision);
-
-  while (index < str.length) {
-    let result = 0, shift = 0, b: number;
-    do {
-      b = str.charCodeAt(index++) - 63;
-      result |= (b & 0x1f) << shift;
-      shift += 5;
-    } while (b >= 0x20);
-    const dlat = (result & 1) ? ~(result >> 1) : (result >> 1);
-    lat += dlat;
-
-    result = 0; shift = 0;
-    do {
-      b = str.charCodeAt(index++) - 63;
-      result |= (b & 0x1f) << shift;
-      shift += 5;
-    } while (b >= 0x20);
-    const dlon = (result & 1) ? ~(result >> 1) : (result >> 1);
-    lon += dlon;
-
-    coordinates.push([lat / factor, lon / factor]);
-  }
-  return coordinates;
+    let index = 0, lat = 0, lon = 0;
+    const coordinates: [number, number][] = [];
+    const factor = Math.pow(10, precision);
+  
+    while (index < str.length) {
+      let result = 0, shift = 0, b: number;
+      do {
+        b = str.charCodeAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      const dlat = (result & 1) ? ~(result >> 1) : (result >> 1);
+      lat += dlat;
+  
+      result = 0; shift = 0;
+      do {
+        b = str.charCodeAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      const dlon = (result & 1) ? ~(result >> 1) : (result >> 1);
+      lon += dlon;
+  
+      coordinates.push([lat / factor, lon / factor]);
+    }
+    return coordinates;
 }
 
-/**
- * Snap a coordinate to the nearest routable point using ORS Snap API.
- * Returns the snapped coordinate or the original if snapping fails.
- */
 export async function snapToRoad(coord: Coordinates, profile: Profile = "foot-walking"): Promise<Coordinates> {
-  const apiKey =
+    const apiKey =
     (Constants.expoConfig?.extra as any)?.orsApiKey ||
     (process.env.EXPO_PUBLIC_ORS_API_KEY as string);
-
+ 
   if (!apiKey) return coord;
-
+ 
   const url = `https://api.openrouteservice.org/v2/snap/${profile}?api_key=${encodeURIComponent(apiKey)}`;
   const body = {
     coordinates: [[coord.longitude, coord.latitude]],
   };
-
+ 
   try {
     const resp = await fetch(url, {
       method: "POST",

@@ -1,11 +1,16 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Image, ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { login } from "./lib/api/login";
 import { useSession } from "./lib/session";
+import { useTheme } from "./Theme";
+
+const eagleLogo = require("../assets/images/Unt_eagle.png");
+const campusBackground = require("../assets/images/untAerial.jpeg");
 
 const Login = () => {
     const router = useRouter();
+    const { theme } = useTheme();
     const { login: loginWithSession } = useSession();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -17,8 +22,8 @@ const Login = () => {
             setMessage('');
             const response = await login({ username, password });
             await loginWithSession(username, password);
-            // routes to map and homescreen
-            setMessage('Login Suscessful!, redirecting to homepage.');
+            // routes to homepage after successful login
+            setMessage('Login Successful!, redirecting to homepage.');
             router.replace('/map');
             console.log('Login successful:', response);
         }
@@ -32,94 +37,183 @@ const Login = () => {
         }
     }
 
-    return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Login</Text>
-            
-            <TextInput
-                style={styles.input}
-                placeholder="Username"
-                placeholderTextColor="#dcdcdcff"
-                value={username}
-                onChangeText={setUsername}
-            />
-            
-            <TextInput
-                style={styles.input}
-                placeholder="Password"
-                placeholderTextColor="#dcdcdcff"
-                secureTextEntry={true}
-                value={password}
-                onChangeText={setPassword}
-            />
+  return (
+    <ImageBackground
+      source={campusBackground}
+      style={styles.bg}
+      resizeMode="cover"
+    >
+      {/* Dark overlay */}
+      <View style={styles.overlay} />
 
-            {message ? (
-                <Text style={styles.message}>
-                    {message}
-                </Text>
-            ) : null}
+      <View style={styles.screen}>
+        <View style={styles.formWrap}>
+          {/* Header */}
+          <View style={styles.header}>
+            <View style={styles.brandRow}>
+              <Image source={eagleLogo} style={styles.logo} resizeMode="contain" />
+              <Text style={styles.title}>EagleGuide</Text>
+            </View>
 
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                <Text style={styles.buttonText}>Login</Text>
-            </TouchableOpacity>
+            <View style={styles.whiteLine} />
+            <Text style={styles.unt}>UNT</Text>
+          </View>
 
-            <Text style={styles.link} onPress={() => router.replace('/Signup')}>
-                No account? Sign Up
-            </Text>
+          {/* Username */}
+          <TextInput
+            style={styles.input}
+            placeholder="Username"
+            placeholderTextColor="#FFFFFF"
+            value={username}
+            onChangeText={setUsername}
+            autoCapitalize="none"
+          />
+
+          {/* Password */}
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            placeholderTextColor="#FFFFFF"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+
+          {/* Message */}
+          {message ? (
+            <Text style={[styles.message, { color: theme.red }]}>{message}</Text>
+          ) : null}
+
+          {/* Login Button */}
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleLogin}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
+
+          {/* Sign up */}
+          <Text style={styles.linkStrong} onPress={() => router.replace("/Signup")}>
+            No account? <Text style={styles.linkStrong}>Sign Up</Text>
+          </Text>
         </View>
-    );
+      </View>
+    </ImageBackground>
+  );
 };
 
-// will be ugly for now
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        padding: 10,
-        backgroundColor: '#3f3f3f'
-    },
-    title: {
-        fontSize: 40,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginBottom: 40,
-        color: '#dcdcdcff',
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#6b6b6b',
-        borderRadius: 16,
-        paddingHorizontal: 10,
-        marginTop: 20,
-        backgroundColor: '#6b6b6b',
-        fontSize: 28,
-    },
-    link: {
-        color: '#dcdcdcff',
-        fontSize: 18,
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
-    button: {
-        backgroundColor: '#45ca3e',
-        padding: 10,
-        borderRadius: 10,
-        alignItems: 'center',
-        marginTop: 30,
-        marginBottom: 10,
-    },
-    buttonText: {
-        color: '#dcdcdcff',
-        fontSize: 25,
-        fontWeight: 'bold',
-    },
-    message: {
-        textAlign: 'center',
-        fontSize: 18,
-        fontWeight: '500',
-        padding: 10,
-        borderRadius: 5,
-    },
+  container: { 
+    flex: 1, 
+    justifyContent: "center", 
+    padding: 10,
+  },
+
+  title: { 
+    fontSize: 40, 
+    fontWeight: "bold", 
+    textAlign: "center", 
+    marginBottom: 8 ,
+    color: "#FFFFFF",
+  },
+
+  input: {
+    borderWidth: 1,
+    borderRadius: 16,
+    paddingHorizontal: 10,
+    marginTop: 20,
+    fontSize: 28,
+    borderColor: "#16A34A",
+    color: "#FFFFFF", 
+  },
+
+  link: { 
+    fontSize: 18, 
+    fontWeight: "bold", 
+    textAlign: "center",
+    color: "#FFFFFF",
+  },
+
+  button: { 
+    padding: 10, 
+    borderRadius: 10, 
+    alignItems: "center", 
+    marginTop: 30,
+    backgroundColor: "#16A34A",
+  },
+
+  buttonText: { 
+    fontSize: 25, 
+    fontWeight: "bold",
+    color: "#FFFFFF",
+  },
+
+  message: { 
+    textAlign: "center", 
+    fontSize: 18, 
+    marginBottom: 10,
+  },
+
+  bg: {
+    flex: 1,
+    backgroundColor: "#000",
+  },
+
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.60)",
+  },
+
+  screen: {
+    flex: 1,
+    justifyContent: "center",
+  },
+
+  formWrap: {
+    width: "100%",
+    maxWidth: 420,
+    alignSelf: "center",
+    paddingHorizontal: 24,
+  },
+
+  header: {
+    alignItems: "center",
+    marginBottom: 32,
+  },
+
+  brandRow: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    marginBottom: 6,
+    justifyContent: "center",
+  },
+
+  logo: {
+    width: 56,
+    height: 56,
+    marginRight: 10,
+  },
+
+  whiteLine: {
+    width: "100%",
+    height: 3,
+    backgroundColor: "#FFFFFF",
+    marginBottom: 8,
+  },
+
+  unt: {
+    color: "#FFFFFF",
+    fontSize: 36,
+    fontWeight: "900",
+    fontFamily: "serif",
+  },
+
+  linkStrong: {
+    fontWeight: "700",
+    textDecorationLine: "underline",
+    color: "#FFFFFF",
+  },
 });
 
 export default Login;

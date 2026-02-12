@@ -2,7 +2,8 @@
 
 export const TTL = Object.freeze({
   session: 60 * 30, // 30min
-  gis: 60 * 10,     // 10min
+  gis: 0,           // persistent GIS cache
   prefs: 60 * 5,     // 5min
-  user: 60 * 10      // 10min user profile cache
+  user: 60 * 10,     // 10min user profile cache
+  shareLocation: 60 * 30 // 30min share token
 });
