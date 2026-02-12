@@ -1,11 +1,16 @@
 import { Router } from 'express';
 import { requireSession } from '../../middleware/requireSession.js';
 import { validate } from '../../middleware/validate.js';
-import { createUser, login } from '../../services/auth.service.js';
+import { createUser, isEmailAvailable, login } from '../../services/auth.service.js';
 import { deleteSession } from '../../services/session.service.js';
-import { loginSchema, signupSchema } from '../../validations/auth.schema.js';
+import { emailCheckSchema, loginSchema, signupSchema } from '../../validations/auth.schema.js';
 
 const r = Router();
+
+r.post('/signup/check-email', validate(emailCheckSchema), async (req, res) => {
+  const ok = await isEmailAvailable(req.body.email);
+  res.json({ available: ok });
+});
 
 r.post('/signup', validate(signupSchema), async (req, res) => {
   const { username, email, password, firstName, lastName } = req.body;

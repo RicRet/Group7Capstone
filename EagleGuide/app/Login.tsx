@@ -94,7 +94,7 @@ const Login = () => {
           </TouchableOpacity>
 
           {/* Sign up */}
-          <Text style={styles.linkStrong} onPress={() => router.replace("/Signup")}>
+          <Text style={styles.linkStrong} onPress={() => router.replace("/SignupEmail")}>
             No account? <Text style={styles.linkStrong}>Sign Up</Text>
           </Text>
         </View>
