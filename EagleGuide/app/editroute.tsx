@@ -108,7 +108,8 @@ useEffect(() => {
 
   return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View>
+  <View style={{ flex: 1, backgroundColor: theme.background }}>
+
           <Text style={[styles.title, { color: theme.text }]}>Edit Route</Text>
 
           <TextInput
