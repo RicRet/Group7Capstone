@@ -13,6 +13,9 @@ import {
   View
 } from "react-native";
 import MapView, { Marker, Polyline, PROVIDER_GOOGLE, Region } from "react-native-maps";
+import Addroute from "./addroute";
+import Editroute from "./editroute";
+import { SavedRoute } from "./lib/api/addroutev2";
 import {
   getRouteFromORS,
   snapToRoad,
@@ -22,6 +25,9 @@ import {
 } from "./lib/api/directions";
 import { searchLocation, type GeocodeResult } from "./lib/api/geocoding";
 import { useTheme } from "./Theme";
+
+
+
 
 const formatDuration = (seconds: number) => {
   const min = Math.floor(seconds / 60);
@@ -35,14 +41,11 @@ const formatDistance = (meters: number) => {
   if (meters >= 1000) return `${(meters / 1000).toFixed(1)} km`;
   return `${Math.round(meters)} m`;
 };
-import Addroute from "./addroute";
-import Editroute from "./editroute";
-import { SavedRoute } from "./lib/api/addroutev2";
-import { getRouteFromORS, snapToRoad, type Coordinates, type Profile } from "./lib/api/directions";
-
-
 
 export default function NavigationScreen() {
+  const [showAddRoute, setShowAddRoute] = useState(false);
+const [editingRoute, setEditingRoute] = useState<SavedRoute | null>(null);
+
   const router = useRouter();
   const { theme, isDark } = useTheme();
   const mapRef = useRef<MapView>(null);
@@ -62,14 +65,6 @@ export default function NavigationScreen() {
   const [searchResults, setSearchResults] = useState<GeocodeResult[]>([]);
   const [searching, setSearching] = useState(false);
 
-const [showAddRoute, setShowAddRoute] = useState(false);
-const [editingRoute, setEditingRoute] = useState<SavedRoute | null>(null);
-
-
-
-
-const pinsReady = !!origin && !!destination;
-
   const initialRegion: Region = useMemo(
     () => ({
       latitude: 33.2106,
@@ -81,7 +76,6 @@ const pinsReady = !!origin && !!destination;
   );
 
   useEffect(() => {
-  
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") return;
@@ -172,12 +166,6 @@ const pinsReady = !!origin && !!destination;
       setLoading(false);
     }
   };
-//for route fetching for saved routes
-  useEffect(() => {
-  if (origin && destination) {
-    fetchRoute();
-  }
-}, [origin, destination,profile]);
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
@@ -296,6 +284,13 @@ const pinsReady = !!origin && !!destination;
             <TouchableOpacity style={[styles.button, { backgroundColor: theme.button, flex: 1, marginRight: 5 }]} onPress={fetchRoute} disabled={loading}>
             {loading ? <ActivityIndicator color="#fff" /> : <Text style={[styles.buttonText, { color: "#fff" }]}>Find Route</Text>}
             </TouchableOpacity>
+            <TouchableOpacity
+             style={[styles.button, { backgroundColor: theme.button }]}
+             onPress={() => setShowAddRoute(true)}
+         >
+           <Text style={[styles.buttonText, { color: theme.text }]}> View Route</Text>
+           </TouchableOpacity>
+
             <TouchableOpacity style={[styles.button, { backgroundColor: theme.button }]} onPress={() => router.back()}>
                 <Text style={[styles.buttonText, { color: theme.text }]}>Back</Text>
             </TouchableOpacity>
@@ -328,39 +323,14 @@ const pinsReady = !!origin && !!destination;
             )}
           />
         )}
-        <TouchableOpacity style={[styles.button, styles.route]} onPress={fetchRoute} disabled={loading}>
-          {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Find Route</Text>}
-        </TouchableOpacity>
-        <TouchableOpacity
-  style={styles.button}
-  onPress={() => setShowAddRoute(true)}
->
-  <Text style={styles.buttonText}>View Route</Text>
-</TouchableOpacity>
-        <TouchableOpacity style={[styles.button, styles.secondary]} onPress={() => router.back()}>
-          <Text style={styles.buttonText}>Back</Text>
-        </TouchableOpacity>
-        <Text style={styles.hint}>Long-press to set pins. Green: origin, Red: destination.</Text>
-        <Text style={styles.hint}>{`ORS key: ${orsKeyStatus}`}</Text>
-        <Text style={styles.hint}>{`Route points: ${routeCoords ? routeCoords.length : 0}`}</Text>
-        {routeSample ? (
-          <View style={styles.sampleBox}>
-            <Text style={styles.sampleTitle}>Route sample (first 5):</Text>
-            <Text style={styles.sampleText}>{routeSample}</Text>
-            {routeCoords && routeCoords.length === 2 ? (
-              <Text style={styles.hint}>Provider returned only 2 points (straight segment).</Text>
-            ) : null}
-          </View>
-        ) : null}
+        
       </View>
-      {/*addroute and viewroute overlays*/}
-   {showAddRoute && !editingRoute && (
+      {/*addroute and editroute overlay */}
+{showAddRoute && !editingRoute && (
   <View style={styles.overlay}>
     <Addroute
       onClose={() => setShowAddRoute(false)}
-      onEdit={(route) => {
-        setEditingRoute(route);
-      }}
+      onEdit={(route) => setEditingRoute(route)}
       onNavigate={(data) => {
         setOrigin({
           latitude: data.originLat,
@@ -375,7 +345,6 @@ const pinsReady = !!origin && !!destination;
     />
   </View>
 )}
-
 {editingRoute && (
   <View style={styles.overlay}>
     <Editroute
@@ -461,10 +430,6 @@ const styles = StyleSheet.create({
   stepSubText: {
       fontSize: 12,
   },
-});
-
-  sampleTitle: { color: "#dcdcdcff", fontWeight: "700", marginBottom: 4 },
-  sampleText: { color: "#dcdcdcff", fontFamily: Platform.select({ ios: "Menlo", android: "monospace" }) as any },
   overlay: {
   position: "absolute",
   left: 0,
@@ -477,4 +442,5 @@ const styles = StyleSheet.create({
   overflow: "hidden",
   zIndex: 100,
 },
+
 });

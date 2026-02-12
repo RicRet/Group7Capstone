@@ -2,25 +2,8 @@
 import { useEffect, useState } from 'react';
 import { Alert, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { updateRoute } from './lib/api/addroutev2';
-import { useTheme } from "./Theme";
-
-export default function EditRoute() {
-  const router = useRouter();
-  const { theme } = useTheme();
-  const params = useLocalSearchParams<{
-    id: string;
-    name: string;
-    start_building: string;
-    end_building: string;
-    accessible: string;
-  }>();
-
-  if (!params.id) {
-    Alert.alert('Error', 'Missing route ID');
-    router.push('/addroute');
-  }
 import { SavedRoute, updateRoute } from './lib/api/addroutev2';
+import { useTheme } from "./Theme";
 
 
 type EditrouteProps = {
@@ -31,7 +14,7 @@ type EditrouteProps = {
 
 
 export default function Editroute({ route, onClose }: EditrouteProps) {
-
+const { theme } = useTheme();
   const routeId = route.saved_route_id;
 
  
