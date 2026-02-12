@@ -12,7 +12,7 @@ import {
     View,
 } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import MapView, { Marker, Polygon, PROVIDER_GOOGLE, Region } from 'react-native-maps';
+import MapView, { Marker, Polygon, Region } from 'react-native-maps';
 import Addroute from './addroute';
 import Homepage from './homepage';
 import { fetchParkingLots, ParkingLotFeature } from './lib/api/parkingLots';
@@ -21,6 +21,7 @@ const MapScreen = () => {
     const [showMenu, setShowMenu] = useState(false);
     const [currentSheet, setCurrentSheet] = useState('home');
     const [parkingLots, setParkingLots] = useState<ParkingLotFeature[]>([]);
+    const requestSeq = useRef(0);
 
     const router = useRouter();
 
@@ -63,15 +64,20 @@ const MapScreen = () => {
     }, [region]);
 
     useEffect(() => {
+        const seq = ++requestSeq.current; // prevent stale responses from overriding newer ones
         let cancelled = false;
+
         async function loadLots() {
             try {
                 const data = await fetchParkingLots(bbox);
-                if (!cancelled) setParkingLots(data.features || []);
+                if (!cancelled && seq === requestSeq.current) {
+                    setParkingLots(data.features || []);
+                }
             } catch {
-                if (!cancelled) setParkingLots([]);
+                // keep the last successful render if this request fails
             }
         }
+
         loadLots();
         return () => {
             cancelled = true;
