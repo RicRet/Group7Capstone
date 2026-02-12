@@ -3,13 +3,22 @@ import { useEffect, useState } from 'react';
 import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { addRoute, deleteRoute, getRoutes, SavedRoute } from './lib/api/addroutev2';
-
+//props for functions
 type AddrouteProps = {
   onClose?: () => void;
-  onNavigate?: (screen: string) => void;
+  onEdit?: (route: SavedRoute) => void;
+  onNavigate?: (data: {
+    originLat: number;
+    originLon: number;
+    destLat: number;
+    destLon: number;
+    accessible: string;
+  }) => void;
 };
 
-export default function Addroute({ onClose, onNavigate }: AddrouteProps) {
+
+export default function Addroute({ onClose, onEdit, onNavigate }: AddrouteProps) {
+
   const router = useRouter();
 const [savedRoutes, setSavedRoutes] = useState<SavedRoute[]>([]);
 //Test Id
@@ -210,38 +219,27 @@ return (
 
           <View style={styles.buttonr}>
             <TouchableOpacity
-              style={styles.editButton}
-              onPress={() =>
-                router.push({
-                  pathname: "/editroute",
-                  params: {
-                    id: item.saved_route_id,
-                    name: item.name,
-                    accessible: item.is_accessible,
-                    returnScreen: "addroute",
-                  },
-                })
-              }
-            >
-              <Text style={styles.buttonText}>Edit</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
+  style={styles.editButton}
+  onPress={() => onEdit?.(item)}
+>
+  <Text style={styles.buttonText}>Edit</Text>
+</TouchableOpacity>
+
+           <TouchableOpacity
   style={[styles.editButton, { backgroundColor: "#4caf50" }]}
-  onPress={() => {
-    router.push({
-      pathname: "/navigation",
-      params: {
-        originLat: item.start_lat,
-        originLon: item.start_lon,
-        destLat: item.end_lat,
-        destLon:  item.end_lon,
-        profile: item.is_accessible ? "foot-walking" : "driving-car",
-      },
-    });
-  }}
+  onPress={() =>
+    onNavigate?.({
+      originLat: item.start_lat,
+      originLon: item.start_lon,
+      destLat: item.end_lat,
+      destLon: item.end_lon,
+      accessible: item.is_accessible ? "Yes" : "No",
+    })
+  }
 >
   <Text style={styles.buttonText}>Find Route</Text>
 </TouchableOpacity>
+
 
             <TouchableOpacity
               style={styles.deleteButton}

@@ -1,11 +1,15 @@
 import Constants from "expo-constants";
 import * as Location from "expo-location";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Alert, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import MapView, { Marker, Polyline, PROVIDER_GOOGLE, Region } from "react-native-maps";
 import Addroute from "./addroute";
+import Editroute from "./editroute";
+import { SavedRoute } from "./lib/api/addroutev2";
 import { getRouteFromORS, snapToRoad, type Coordinates, type Profile } from "./lib/api/directions";
+
+
 
 export default function NavigationScreen() {
   const router = useRouter();
@@ -20,37 +24,10 @@ export default function NavigationScreen() {
   const [snappedPins, setSnappedPins] = useState<{ origin?: Coordinates; destination?: Coordinates }>({});
 
 const [showAddRoute, setShowAddRoute] = useState(false);
+const [editingRoute, setEditingRoute] = useState<SavedRoute | null>(null);
 
-const params = useLocalSearchParams();
 
-const {
-  originLat,
-  originLon,
-  destLat,
-  destLon,
-  accessible,
-} = useLocalSearchParams();
-//sets orgin and destination pins
-useEffect(() => {
- if (!originLat || !originLon || !destLat || !destLon) return;
 
-  if (origin && destination) return;
-
-  const o = {
-    latitude: Number(originLat),
-    longitude: Number(originLon),
-  };
-
-  const d = {
-    latitude: Number(destLat),
-    longitude: Number(destLon),
-  };
-
-  setOrigin(o);
-  setDestination(d);
-
-  mapRef.current?.animateCamera({center: o,zoom: 16,});
-}, [originLat, originLon, destLat, destLon]);
 
 const pinsReady = !!origin && !!destination;
 
@@ -65,9 +42,7 @@ const pinsReady = !!origin && !!destination;
   );
 
   useEffect(() => {
-    //so route isn't overwritten
-    if (originLat && originLon) return;
-
+  
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") return;
@@ -161,6 +136,12 @@ const pinsReady = !!origin && !!destination;
       setLoading(false);
     }
   };
+//for route fetching for saved routes
+  useEffect(() => {
+  if (origin && destination) {
+    fetchRoute();
+  }
+}, [origin, destination,profile]);
 
   const darkStyle = [
     { elementType: "geometry", stylers: [{ color: "#6b6b6b" }] },
@@ -247,11 +228,38 @@ const pinsReady = !!origin && !!destination;
           </View>
         ) : null}
       </View>
-    {showAddRoute && (
-      <View style={styles.overlay}>
-        <Addroute onClose={() => setShowAddRoute(false)} />
-      </View>
-    )}
+      {/*addroute and viewroute overlays*/}
+   {showAddRoute && !editingRoute && (
+  <View style={styles.overlay}>
+    <Addroute
+      onClose={() => setShowAddRoute(false)}
+      onEdit={(route) => {
+        setEditingRoute(route);
+      }}
+      onNavigate={(data) => {
+        setOrigin({
+          latitude: data.originLat,
+          longitude: data.originLon,
+        });
+        setDestination({
+          latitude: data.destLat,
+          longitude: data.destLon,
+        });
+        setShowAddRoute(false);
+      }}
+    />
+  </View>
+)}
+
+{editingRoute && (
+  <View style={styles.overlay}>
+    <Editroute
+      route={editingRoute}
+      onClose={() => setEditingRoute(null)}
+    />
+  </View>
+)}
+
     </View>
   );
 }

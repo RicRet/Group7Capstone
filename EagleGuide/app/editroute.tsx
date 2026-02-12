@@ -1,29 +1,24 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
+
 import { useEffect, useState } from 'react';
 import { Alert, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { updateRoute } from './lib/api/addroutev2';
+import { SavedRoute, updateRoute } from './lib/api/addroutev2';
 
-export default function EditRoute() {
-  const router = useRouter();
-  const params = useLocalSearchParams<{
-    id: string;
-    name: string;
-    start_building: string;
-    end_building: string;
-    accessible: string;
-  }>();
 
-  if (!params.id) {
-    Alert.alert('Error', 'Missing route ID');
-    router.push('/addroute');
-  }
+type EditrouteProps = {
+  route: SavedRoute;
+  onClose: () => void;
+};
 
-  const routeId = params.id;
+
+
+export default function Editroute({ route, onClose }: EditrouteProps) {
+
+  const routeId = route.saved_route_id;
 
  
   const [open1, setOpen1] = useState(false);
-  const [value1, setValue1] = useState<string | null>(params.start_building || 'Student Union');
+ const [value1, setValue1] = useState<string | null>('Student Union');
   const [items1, setItems1] = useState([
     { label: 'Student Union', value: 'Student Union' },
     { label: 'Willis', value: 'Willis' },
@@ -32,7 +27,7 @@ export default function EditRoute() {
 
  
   const [open2, setOpen2] = useState(false);
-  const [value2, setValue2] = useState<string | null>(params.end_building || 'Willis');
+  const [value2, setValue2] = useState<string | null>('Willis');
   const [items2, setItems2] = useState([
     { label: 'Student Union', value: 'Student Union' },
     { label: 'Willis', value: 'Willis' },
@@ -40,29 +35,23 @@ export default function EditRoute() {
   ]);
 
   const [open4, setOpen4] = useState(false);
-  const [value4, setValue4] = useState<number | null>(Number(params.accessible) ?? 1);
+ const [value4, setValue4] = useState<number | null>(route.is_accessible ?? 1);
   const [items4, setItems4] = useState([
     { label: 'Yes', value: 1 },
     { label: 'No', value: 0 },
   ]);
 
   //Name of current Route
-  const [name, setName] = useState('');
-  useEffect(() => {
-  if (params.id) {
-    setValue1(params.start_building || 'Student Union');
-    setValue2(params.end_building || 'Willis');
-    setValue4(params.accessible ? Number(params.accessible) : 1);
-    setName(params.name || `Route from ${params.start_building || 'Student Union'} to ${params.end_building || 'Willis'}`);
-  }
-}, [params]);
+  const [name, setName] = useState(route.name);
+ 
 
   // sets up name to be currently selected values
- useEffect(() => {
-  if (!params.name && value1 && value2) {
+useEffect(() => {
+  if (value1 && value2) {
     setName(`Route from ${value1} to ${value2}`);
   }
-}, [value1, value2, params.name]);
+}, [value1, value2]);
+
 
   //place holder coordinates
   const mockCoords = {
@@ -98,18 +87,16 @@ export default function EditRoute() {
         length: null,
         duration: null,
       });
-
       Alert.alert('Success', 'Route updated!');
-      router.replace({
-  pathname: '/addroute',
-  params: { reload: 'true' },
-});
-    } catch (err) {
+     
+      onClose();
+       } catch (err) {
       console.error(err);
       Alert.alert('Error', 'Could not update route');
     }
-  };
+  }; 
 
+      
   //Stops multiple dropdowns being open at one
   const onOpen1 = () => { setOpen1(true); setOpen2(false); setOpen4(false); };
   const onOpen2 = () => { setOpen1(false); setOpen2(true); setOpen4(false); };
