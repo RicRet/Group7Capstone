@@ -1,12 +1,14 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { signUp } from "./lib/api/signup";
+import { useSession } from "./lib/session";
 import { useTheme } from "./Theme";
 
 const Signup = () => {
     const router = useRouter();
     const { theme } = useTheme();
+  const { login: loginWithSession } = useSession();
   const params = useLocalSearchParams<{ email?: string }>();
     // user inputs
     const [username, setUsername] = useState('');
@@ -66,7 +68,9 @@ const Signup = () => {
           firstName: trimmedFirst || undefined,
           lastName: trimmedLast || undefined
         });
-        setMessage(response.message || 'You are signed up! Login to continue.');
+        await loginWithSession(username.trim(), password);
+        setMessage(response.message || 'Account created. Logging you in...');
+        router.replace('/map');
       }
       catch (error: any) {
         const apiError = error?.message;
@@ -77,7 +81,16 @@ const Signup = () => {
     };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
+    <KeyboardAvoidingView
+      style={[styles.container, { backgroundColor: theme.background }]}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={80}
+    >
+      <ScrollView
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
       <Text style={[styles.title, { color: theme.text }]}>Sign Up</Text>
       <Text style={[styles.subtitle, { color: theme.lighttext }]}>Step 2 of 2 — account details</Text>
 
@@ -198,7 +211,8 @@ const Signup = () => {
       >
         Have an account? Login
       </Text>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -221,9 +235,12 @@ const RequirementItem = ({ met, text, theme }: any) => (
 
 const styles = StyleSheet.create({
   container: { 
-    flex: 1, 
-    justifyContent: 'center', 
-    padding: 10 
+    flex: 1
+  },
+  content: {
+    padding: 16,
+    paddingBottom: 40,
+    alignItems: 'stretch'
   },
   title: { 
     fontSize: 40, 
