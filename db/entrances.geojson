@@ -1,1440 +1,3134 @@
 {
-  "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Willis_East_Entrance_1","entrance_accessible": "true","entrance_id": "WILLIS_E1"},
-      "geometry": {"coordinates": [-97.14874232297987,33.210046534036636],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Willis_East_Entrance_1","entrance_accessible": "true","entrance_id": "WILLIS_E1"},
-      "geometry": {"coordinates": [-97.14874232297987,33.210046534036636],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "EESC_West_Entrance_1","entrance_accessible": "true","entrance_id": "EESC_E1"},
-      "geometry": {"coordinates": [-97.14827370013765,33.210379623813125],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "EESC_West_Entrance_1","entrance_accessible": "true","entrance_id": "EESC_E1"},
-      "geometry": {"coordinates": [-97.14827370013765,33.210379623813125],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "EESC_West_Entrance_2","entrance_accessible": "true","entrance_id": "EESC_E2"},
-      "geometry": {"coordinates": [-97.14832750064222,33.21022585150847],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "EESC_West_Entrance_2","entrance_accessible": "true","entrance_id": "EESC_E2"},
-      "geometry": {"coordinates": [-97.14832750064222,33.21022585150847],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "EESC_South_Entrance_1","entrance_accessible": "true","entrance_id": "EESC_E3"},
-      "geometry": {"coordinates": [-97.1479376900435,33.210162861146756],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "EESC_South_Entrance_1","entrance_accessible": "true","entrance_id": "EESC_E3"},
-      "geometry": {"coordinates": [-97.1479376900435,33.210162861146756],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Hurley_North_Entrance_1","entrance_accessible": "true","entrance_id": "HURLEY_E1"},
-      "geometry": {"coordinates": [-97.14879486613367,33.21130265016156],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Hurley_North_Entrance_1","entrance_accessible": "true","entrance_id": "HURLEY_E1"},
-      "geometry": {"coordinates": [-97.14879486613367,33.21130265016156],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Hurley_South_Entrance_1","entrance_accessible": "true","entrance_id": "HURLEY_E2"},
-      "geometry": {"coordinates": [-97.14873876236422,33.211070782392795],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Hurley_South_Entrance_1","entrance_accessible": "true","entrance_id": "HURLEY_E2"},
-      "geometry": {"coordinates": [-97.14873876236422,33.211070782392795],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Union_West_Entrance_1","entrance_accessible": "true","entrance_id": "UNION_E1"},
-      "geometry": {"coordinates": [-97.14794285120031,33.21087809473616],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Union_West_Entrance_1","entrance_accessible": "true","entrance_id": "UNION_E1"},
-      "geometry": {"coordinates": [-97.14794285120031,33.21087809473616],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Union_East_Entrance_1","entrance_accessible": "true","entrance_id": "UNION_E2"},
-      "geometry": {"coordinates": [-97.14662539901349,33.210877748838826],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Union_East_Entrance_1","entrance_accessible": "true","entrance_id": "UNION_E2"},
-      "geometry": {"coordinates": [-97.14662539901349,33.210877748838826],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Union_South_Entrance_1","entrance_accessible": "true","entrance_id": "UNION_E3"},
-      "geometry": {"coordinates": [-97.14755231631467,33.20997516833137],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Union_South_Entrance_1","entrance_accessible": "true","entrance_id": "UNION_E3"},
-      "geometry": {"coordinates": [-97.14755231631467,33.20997516833137],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Matthews_Hall_North_Entrance_1","entrance_accessible": "true","entrance_id": "MATT_E1"},
-      "geometry": {"coordinates": [-97.14658120313787,33.2102617131238],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Matthews_Hall_North_Entrance_1","entrance_accessible": "true","entrance_id": "MATT_E1"},
-      "geometry": {"coordinates": [-97.14658120313787,33.2102617131238],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Matthews_Hall_East_Entrance_1","entrance_accessible": "false","entrance_id": "MATT_E2"},
-      "geometry": {"coordinates": [-97.14648156870516,33.21009998842986],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Matthews_Hall_East_Entrance_1","entrance_accessible": "false","entrance_id": "MATT_E2"},
-      "geometry": {"coordinates": [-97.14648156870516,33.21009998842986],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Matthew_Hall_East_Entrance_2","entrance_accessible": "false","entrance_id": "MATT_E3"},
-      "geometry": {"coordinates": [-97.14648632597246,33.20967548810856],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Matthew_Hall_East_Entrance_2","entrance_accessible": "false","entrance_id": "MATT_E3"},
-      "geometry": {"coordinates": [-97.14648632597246,33.20967548810856],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Matthew_Hall_South_Entrance_1","entrance_accessible": "false","entrance_id": "MATT_E4"},
-      "geometry": {"coordinates": [-97.14671696288686,33.2095073005584],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Matthew_Hall_South_Entrance_1","entrance_accessible": "false","entrance_id": "MATT_E4"},
-      "geometry": {"coordinates": [-97.14671696288686,33.2095073005584],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Union_West_Entrance_2","entrance_accessible": "false","entrance_id": "UNION_E4"},
-      "geometry": {"coordinates": [-97.14794453911767,33.210742131945366],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Union_West_Entrance_2","entrance_accessible": "false","entrance_id": "UNION_E4"},
-      "geometry": {"coordinates": [-97.14794453911767,33.210742131945366],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Union_West_Entrance_3","entrance_accessible": "false","entrance_id": "UNION_E5"},
-      "geometry": {"coordinates": [-97.14770292247225,33.2110851759042],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Union_West_Entrance_3","entrance_accessible": "false","entrance_id": "UNION_E5"},
-      "geometry": {"coordinates": [-97.14770292247225,33.2110851759042],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Union_North_Entrance_1","entrance_accessible": "false","entrance_id": "UNION_E6"},
-      "geometry": {"coordinates": [-97.1474695198413,33.211303951554925],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Union_North_Entrance_1","entrance_accessible": "false","entrance_id": "UNION_E6"},
-      "geometry": {"coordinates": [-97.1474695198413,33.211303951554925],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Union_East_Entrance_2","entrance_accessible": "false","entrance_id": "UNION_E7"},
-      "geometry": {"coordinates": [-97.14672611495823,33.211185817756686],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Union_East_Entrance_2","entrance_accessible": "false","entrance_id": "UNION_E7"},
-      "geometry": {"coordinates": [-97.14672611495823,33.211185817756686],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Sage_South_Entrance_1","entrance_accessible": "true","entrance_id": "SAGE_E1"},
-      "geometry": {"coordinates": [-97.14674868303679,33.21174150501021],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Sage_South_Entrance_1","entrance_accessible": "true","entrance_id": "SAGE_E1"},
-      "geometry": {"coordinates": [-97.14674868303679,33.21174150501021],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Sage_West_Entrance_1","entrance_accessible": "true","entrance_id": "SAGE_E2"},
-      "geometry": {"coordinates": [-97.14690984321817,33.212110100500894],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Sage_West_Entrance_1","entrance_accessible": "true","entrance_id": "SAGE_E2"},
-      "geometry": {"coordinates": [-97.14690984321817,33.212110100500894],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Sage_North_Entrance_1","entrance_accessible": "true","entrance_id": "SAGE_E3"},
-      "geometry": {"coordinates": [-97.14673653923175,33.21247200371705],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Sage_North_Entrance_1","entrance_accessible": "true","entrance_id": "SAGE_E3"},
-      "geometry": {"coordinates": [-97.14673653923175,33.21247200371705],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Sage_East_Entrance_1","entrance_accessible": "false","entrance_id": "SAGE_E4"},
-      "geometry": {"coordinates": [-97.14657709154663,33.21210668832015],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Sage_East_Entrance_1","entrance_accessible": "false","entrance_id": "SAGE_E4"},
-      "geometry": {"coordinates": [-97.14657709154663,33.21210668832015],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "RTFP_West_Entrance_1","entrance_accessible": "false","entrance_id": "RTFP_E1"},
-      "geometry": {"coordinates": [-97.1461279122921,33.21224656946691],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "RTFP_West_Entrance_1","entrance_accessible": "false","entrance_id": "RTFP_E1"},
-      "geometry": {"coordinates": [-97.1461279122921,33.21224656946691],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "RTFP_West_Entrance_2","entrance_accessible": "false","entrance_id": "RTFP_E2"},
-      "geometry": {"coordinates": [-97.14612626461397,33.21196866953085],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "RTFP_West_Entrance_2","entrance_accessible": "false","entrance_id": "RTFP_E2"},
-      "geometry": {"coordinates": [-97.14612626461397,33.21196866953085],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "RTFP_South_Entrance_1","entrance_accessible": "true","entrance_id": "RTFP_E3"},
-      "geometry": {"coordinates": [-97.14543219364586,33.21170855738545],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "RTFP_South_Entrance_1","entrance_accessible": "true","entrance_id": "RTFP_E3"},
-      "geometry": {"coordinates": [-97.14543219364586,33.21170855738545],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Matthews_Annex_West_Entrance_1","entrance_accessible": "true","entrance_id": "MHAX_E1"},
-      "geometry": {"coordinates": [-97.14504710166463,33.21127392185379],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Matthews_Annex_West_Entrance_1","entrance_accessible": "true","entrance_id": "MHAX_E1"},
-      "geometry": {"coordinates": [-97.14504710166463,33.21127392185379],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Wooten_West_Entrance_1","entrance_accessible": "true","entrance_id": "WOOT_E1"},
-      "geometry": {"coordinates": [-97.14595252956617,33.209865342634785],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Wooten_West_Entrance_1","entrance_accessible": "true","entrance_id": "WOOT_E1"},
-      "geometry": {"coordinates": [-97.14595252956617,33.209865342634785],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Wooten_East_Entrance_1","entrance_accessible": "true","entrance_id": "WOOT_E2"},
-      "geometry": {"coordinates": [-97.14539479344892,33.20986212136354],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Wooten_East_Entrance_1","entrance_accessible": "true","entrance_id": "WOOT_E2"},
-      "geometry": {"coordinates": [-97.14539479344892,33.20986212136354],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Eagle_Landing_South_Entrance","entrance_accessible": "true","entrance_id": "EAGL_E1"},
-      "geometry": {"coordinates": [-97.14681097841427,33.208399252481414],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Eagle_Landing_South_Entrance","entrance_accessible": "true","entrance_id": "EAGL_E1"},
-      "geometry": {"coordinates": [-97.14681097841427,33.208399252481414],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "BLB_East_Entrance_1","entrance_accessible": "true","entrance_id": "BLB_E1"},
-      "geometry": {"coordinates": [-97.14716049300044,33.20897254655408],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "BLB_East_Entrance_1","entrance_accessible": "true","entrance_id": "BLB_E1"},
-      "geometry": {"coordinates": [-97.14716049300044,33.20897254655408],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "BLB_West_Entrance_1","entrance_accessible": "true","entrance_id": "BLB_E2"},
-      "geometry": {"coordinates": [-97.1482419677796,33.20905791444474],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "BLB_West_Entrance_1","entrance_accessible": "true","entrance_id": "BLB_E2"},
-      "geometry": {"coordinates": [-97.1482419677796,33.20905791444474],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "BLB_South_Entrance_1","entrance_accessible": "false","entrance_id": "BLB_E3"},
-      "geometry": {"coordinates": [-97.14766109522118,33.208625621997015],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "BLB_South_Entrance_1","entrance_accessible": "false","entrance_id": "BLB_E3"},
-      "geometry": {"coordinates": [-97.14766109522118,33.208625621997015],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Greek_Center_West_Entrance_1","entrance_accessible": "true","entrance_id": "GLC_E1"},
-      "geometry": {"coordinates": [-97.14415983989458,33.208836594892546],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Greek_Center_West_Entrance_1","entrance_accessible": "true","entrance_id": "GLC_E1"},
-      "geometry": {"coordinates": [-97.14415983989458,33.208836594892546],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Greek_Center_East_1","entrance_accessible": "true","entrance_id": "GLC_E2"},
-      "geometry": {"coordinates": [-97.14381454463465,33.208835337606814],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Greek_Center_East_1","entrance_accessible": "true","entrance_id": "GLC_E2"},
-      "geometry": {"coordinates": [-97.14381454463465,33.208835337606814],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Kerr_North_Entrance_1","entrance_accessible": "true","entrance_id": "KERR_E1"},
-      "geometry": {"coordinates": [-97.14736911593394,33.2078343843049],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Kerr_North_Entrance_1","entrance_accessible": "true","entrance_id": "KERR_E1"},
-      "geometry": {"coordinates": [-97.14736911593394,33.2078343843049],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Kerr_South_Entrance_1","entrance_accessible": "true","entrance_id": "KERR_E2"},
-      "geometry": {"coordinates": [-97.14737871188288,33.207594093289046],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Kerr_South_Entrance_1","entrance_accessible": "true","entrance_id": "KERR_E2"},
-      "geometry": {"coordinates": [-97.14737871188288,33.207594093289046],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Welcome_Center_North_Entrance_1","entrance_accessible": "true","entrance_id": "WCTR_E1"},
-      "geometry": {"coordinates": [-97.14658089568132,33.207727425109695],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Welcome_Center_North_Entrance_1","entrance_accessible": "true","entrance_id": "WCTR_E1"},
-      "geometry": {"coordinates": [-97.14658089568132,33.207727425109695],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Joe_Green_East_Entrance_1","entrance_accessible": "true","entrance_id": "JOEG_E1"},
-      "geometry": {"coordinates": [-97.1461741718802,33.20706821930165],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Joe_Green_East_Entrance_1","entrance_accessible": "true","entrance_id": "JOEG_E1"},
-      "geometry": {"coordinates": [-97.1461741718802,33.20706821930165],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Joe_Green_West_Entrance_1","entrance_accessible": "true","entrance_id": "JOEG_E2"},
-      "geometry": {"coordinates": [-97.14635911093835,33.20706972122447],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Joe_Green_West_Entrance_1","entrance_accessible": "true","entrance_id": "JOEG_E2"},
-      "geometry": {"coordinates": [-97.14635911093835,33.20706972122447],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Sycamore_West_Entrance_1","entrance_accessible": "true","entrance_id": "SYMR_E1"},
-      "geometry": {"coordinates": [-97.14823247104228,33.212130382914296],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Sycamore_West_Entrance_1","entrance_accessible": "true","entrance_id": "SYMR_E1"},
-      "geometry": {"coordinates": [-97.14823247104228,33.212130382914296],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Sycamore_West_Entrance_2","entrance_accessible": "true","entrance_id": "SYMR_E2"},
-      "geometry": {"coordinates": [-97.14812825145773,33.21183254550898],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Sycamore_West_Entrance_2","entrance_accessible": "true","entrance_id": "SYMR_E2"},
-      "geometry": {"coordinates": [-97.14812825145773,33.21183254550898],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Sycamore_North_Entrance_1","entrance_accessible": "false","entrance_id": "SYMR_E4"},
-      "geometry": {"coordinates": [-97.14812960490049,33.21242901839153],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Sycamore_North_Entrance_2","entrance_accessible": "false","entrance_id": "SYMR_E4"},
-      "geometry": {"coordinates": [-97.1480704119084,33.21242846761483],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Sycamore_North_Entrance_1","entrance_accessible": "false","entrance_id": "SYMR_E4"},
-      "geometry": {"coordinates": [-97.14812960490049,33.21242901839153],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Sycamore_North_Entrance_2","entrance_accessible": "false","entrance_id": "SYMR_E4"},
-      "geometry": {"coordinates": [-97.1480704119084,33.21242846761483],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "LIFE_East_Entrance_1","entrance_accessible": "true","entrance_id": "LIFE_E1"},
-      "geometry": {"coordinates": [-97.14870739430708,33.21193860489211],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "LIFE_East_Entrance_1","entrance_accessible": "true","entrance_id": "LIFE_E1"},
-      "geometry": {"coordinates": [-97.14870739430708,33.21193860489211],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "LIFE_East_Entrance_2","entrance_accessible": "false","entrance_id": "LIFE_E2"},
-      "geometry": {"coordinates": [-97.14878446298131,33.21216294005478],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "LIFE_East_Entrance_2","entrance_accessible": "false","entrance_id": "LIFE_E2"},
-      "geometry": {"coordinates": [-97.14878446298131,33.21216294005478],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "GAB_West_Entrance_1","entrance_accessible": "true","entrance_id": "GAB_E1"},
-      "geometry": {"coordinates": [-97.1483811363004,33.21307144879714],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "GAB_West_Entrance_1","entrance_accessible": "true","entrance_id": "GAB_E1"},
-      "geometry": {"coordinates": [-97.1483811363004,33.21307144879714],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "GAB_East_Entrance_1","entrance_accessible": "true","entrance_id": "GAB_E2"},
-      "geometry": {"coordinates": [-97.14791827363172,33.21301662679535],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "GAB_East_Entrance_1","entrance_accessible": "true","entrance_id": "GAB_E2"},
-      "geometry": {"coordinates": [-97.14791827363172,33.21301662679535],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "GAB_East_Entrance_2","entrance_accessible": "false","entrance_id": "GAB_E3"},
-      "geometry": {"coordinates": [-97.14791243866638,33.213277561051825],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "GAB_East_Entrance_2","entrance_accessible": "false","entrance_id": "GAB_E3"},
-      "geometry": {"coordinates": [-97.14791243866638,33.213277561051825],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "GAB_West_Entrance_2","entrance_accessible": "false","entrance_id": "GAB_E4"},
-      "geometry": {"coordinates": [-97.14838515495842,33.21328249529833],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "GAB_West_Entrance_2","entrance_accessible": "false","entrance_id": "GAB_E4"},
-      "geometry": {"coordinates": [-97.14838515495842,33.21328249529833],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Marquis_North_Entrance_1","entrance_accessible": "true","entrance_id": "MARQ_E1"},
-      "geometry": {"coordinates": [-97.14896578446724,33.21350558291945],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Marquis_North_Entrance_1","entrance_accessible": "true","entrance_id": "MARQ_E1"},
-      "geometry": {"coordinates": [-97.14896578446724,33.21350558291945],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Marquis_South_Entrance_1","entrance_accessible": "true","entrance_id": "MARQ_E2"},
-      "geometry": {"coordinates": [-97.14891302328927,33.21289519374547],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Marquis_South_Entrance_1","entrance_accessible": "true","entrance_id": "MARQ_E2"},
-      "geometry": {"coordinates": [-97.14891302328927,33.21289519374547],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Marquis_East_Entrance_1","entrance_accessible": "false","entrance_id": "MARQ_E3"},
-      "geometry": {"coordinates": [-97.14878801148453,33.21318276934342],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Marquis_East_Entrance_1","entrance_accessible": "false","entrance_id": "MARQ_E3"},
-      "geometry": {"coordinates": [-97.14878801148453,33.21318276934342],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Terrill_North_Entrance_1","entrance_accessible": "true","entrance_id": "TERR_E1"},
-      "geometry": {"coordinates": [-97.14958146280627,33.213480624747845],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Terrill_North_Entrance_1","entrance_accessible": "true","entrance_id": "TERR_E1"},
-      "geometry": {"coordinates": [-97.14958146280627,33.213480624747845],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Terril_South_Entrance_1","entrance_accessible": "true","entrance_id": "TERR_E2"},
-      "geometry": {"coordinates": [-97.14959147617168,33.21286764126263],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Terril_South_Entrance_1","entrance_accessible": "true","entrance_id": "TERR_E2"},
-      "geometry": {"coordinates": [-97.14959147617168,33.21286764126263],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Terril_East_Entrance_1","entrance_accessible": "false","entrance_id": "TERR_E3"},
-      "geometry": {"coordinates": [-97.14950961194168,33.21328669034007],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Terril_East_Entrance_1","entrance_accessible": "false","entrance_id": "TERR_E3"},
-      "geometry": {"coordinates": [-97.14950961194168,33.21328669034007],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Terril_East_Entrance_2","entrance_accessible": "false","entrance_id": "TERR_E4"},
-      "geometry": {"coordinates": [-97.14951213862346,33.21311233755472],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Terril_East_Entrance_2","entrance_accessible": "false","entrance_id": "TERR_E4"},
-      "geometry": {"coordinates": [-97.14951213862346,33.21311233755472],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Physics_East_Entrance_1","entrance_accessible": "false","entrance_id": "PHYS_E1"},
-      "geometry": {"coordinates": [-97.14648943259044,33.2130627096594],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Physics_East_Entrance_1","entrance_accessible": "false","entrance_id": "PHYS_E1"},
-      "geometry": {"coordinates": [-97.14648943259044,33.2130627096594],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Physics_West_Entrance_1","entrance_accessible": "true","entrance_id": "PHYS_E2"},
-      "geometry": {"coordinates": [-97.14682867376182,33.21320642715824],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Physics_West_Entrance_1","entrance_accessible": "true","entrance_id": "PHYS_E2"},
-      "geometry": {"coordinates": [-97.14682867376182,33.21320642715824],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Curry_West_Entrance_1","entrance_accessible": "true","entrance_id": "CURY_E1"},
-      "geometry": {"coordinates": [-97.14688318894218,33.213523230964555],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Curry_West_Entrance_1","entrance_accessible": "true","entrance_id": "CURY_E1"},
-      "geometry": {"coordinates": [-97.14688318894218,33.213523230964555],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Curry_East_Entrance_1","entrance_accessible": "false","entrance_id": "CURY_E2"},
-      "geometry": {"coordinates": [-97.14648649275816,33.21352553737982],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Curry_East_Entrance_1","entrance_accessible": "false","entrance_id": "CURY_E2"},
-      "geometry": {"coordinates": [-97.14648649275816,33.21352553737982],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Art_North_Entrance_1","entrance_accessible": "true","entrance_id": "ART_E1"},
-      "geometry": {"coordinates": [-97.14556701403207,33.213449672824865],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Art_North_Entrance_1","entrance_accessible": "true","entrance_id": "ART_E1"},
-      "geometry": {"coordinates": [-97.14556701403207,33.213449672824865],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Art_East_Entrance_1","entrance_accessible": "true","entrance_id": "ART_E2"},
-      "geometry": {"coordinates": [-97.14472739768395,33.21309123501159],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Art_East_Entrance_1","entrance_accessible": "true","entrance_id": "ART_E2"},
-      "geometry": {"coordinates": [-97.14472739768395,33.21309123501159],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Art_North_Entrance_2","entrance_accessible": "false","entrance_id": "ART_E3"},
-      "geometry": {"coordinates": [-97.14516359239126,33.21327749612719],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Art_North_Entrance_2","entrance_accessible": "false","entrance_id": "ART_E3"},
-      "geometry": {"coordinates": [-97.14516359239126,33.21327749612719],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Art_South_Entrance_1","entrance_accessible": "false","entrance_id": "ART_E4"},
-      "geometry": {"coordinates": [-97.1451688934915,33.2129469138431],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Art_South_Entrance_1","entrance_accessible": "false","entrance_id": "ART_E4"},
-      "geometry": {"coordinates": [-97.1451688934915,33.2129469138431],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Art_West_Entrance_1","entrance_accessible": "false","entrance_id": "ART_E5"},
-      "geometry": {"coordinates": [-97.14573334150276,33.21324207482108],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Art_West_Entrance_1","entrance_accessible": "false","entrance_id": "ART_E5"},
-      "geometry": {"coordinates": [-97.14573334150276,33.21324207482108],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Art_West_Entrance_2","entrance_accessible": "false","entrance_id": "ART_E6"},
-      "geometry": {"coordinates": [-97.14574042275841,33.212973144817795],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Art_West_Entrance_2","entrance_accessible": "false","entrance_id": "ART_E6"},
-      "geometry": {"coordinates": [-97.14574042275841,33.212973144817795],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Art_South_Entrance_2","entrance_accessible": "true","entrance_id": "ART_E7"},
-      "geometry": {"coordinates": [-97.1451724912875,33.212788252397274],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Art_South_Entrance_2","entrance_accessible": "true","entrance_id": "ART_E7"},
-      "geometry": {"coordinates": [-97.1451724912875,33.212788252397274],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Art_South_Entrance_3","entrance_accessible": "false","entrance_id": "ART_E8"},
-      "geometry": {"coordinates": [-97.14551350038693,33.21280260588132],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Art_South_Entrance_3","entrance_accessible": "false","entrance_id": "ART_E8"},
-      "geometry": {"coordinates": [-97.14551350038693,33.21280260588132],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Language_East_Entrance_1","entrance_accessible": "true","entrance_id": "LANG_E1"},
-      "geometry": {"coordinates": [-97.14645374834181,33.21404126368887],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Language_East_Entrance_1","entrance_accessible": "true","entrance_id": "LANG_E1"},
-      "geometry": {"coordinates": [-97.14645374834181,33.21404126368887],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Language_South_Entrance_1","entrance_accessible": "true","entrance_id": "LANG_E2"},
-      "geometry": {"coordinates": [-97.14666602552799,33.213807764452156],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Language_South_Entrance_1","entrance_accessible": "true","entrance_id": "LANG_E2"},
-      "geometry": {"coordinates": [-97.14666602552799,33.213807764452156],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Language_West_Entrance_1","entrance_accessible": "false","entrance_id": "LANG_E3"},
-      "geometry": {"coordinates": [-97.14684701372516,33.21404929002455],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Language_West_Entrance_1","entrance_accessible": "false","entrance_id": "LANG_E3"},
-      "geometry": {"coordinates": [-97.14684701372516,33.21404929002455],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Auditorium_South_Entrance_1","entrance_accessible": "true","entrance_id": "AUDB_E1"},
-      "geometry": {"coordinates": [-97.1475151946776,33.21385915978597],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Auditorium_South_Entrance_1","entrance_accessible": "true","entrance_id": "AUDB_E1"},
-      "geometry": {"coordinates": [-97.1475151946776,33.21385915978597],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Auditorium_East_Entrance_1","entrance_accessible": "false","entrance_id": "AUDB_E2"},
-      "geometry": {"coordinates": [-97.14714923203059,33.213747673050634],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Auditorium_East_Entrance_1","entrance_accessible": "false","entrance_id": "AUDB_E2"},
-      "geometry": {"coordinates": [-97.14714923203059,33.213747673050634],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Auditorium_North_Entrance_1","entrance_accessible": "true","entrance_id": "AUDB_E3"},
-      "geometry": {"coordinates": [-97.14729963637359,33.214226277251456],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Auditorium_North_Entrance_1","entrance_accessible": "true","entrance_id": "AUDB_E3"},
-      "geometry": {"coordinates": [-97.14729963637359,33.214226277251456],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Auditorium_East_Entrance_1","entrance_accessible": "false","entrance_id": "AUDB_E4"},
-      "geometry": {"coordinates": [-97.14703884039386,33.21411599265063],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Auditorium_East_Entrance_1","entrance_accessible": "false","entrance_id": "AUDB_E4"},
-      "geometry": {"coordinates": [-97.14703884039386,33.21411599265063],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Hickory_West_Entrance_1","entrance_accessible": "true","entrance_id": "HKRY_E1"},
-      "geometry": {"coordinates": [-97.1481954301739,33.21431969918355],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Hickory_West_Entrance_1","entrance_accessible": "true","entrance_id": "HKRY_E1"},
-      "geometry": {"coordinates": [-97.1481954301739,33.21431969918355],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Hickory_North_Entrance_1","entrance_accessible": "false","entrance_id": "HKRY_E2"},
-      "geometry": {"coordinates": [-97.14803114926818,33.21445314475773],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Hickory_North_Entrance_1","entrance_accessible": "false","entrance_id": "HKRY_E2"},
-      "geometry": {"coordinates": [-97.14803114926818,33.21445314475773],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Hickory_East_Entrance_1","entrance_accessible": "false","entrance_id": "HKRY_E3"},
-      "geometry": {"coordinates": [-97.14764211208669,33.214273363769095],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Hickory_East_Entrance_1","entrance_accessible": "false","entrance_id": "HKRY_E3"},
-      "geometry": {"coordinates": [-97.14764211208669,33.214273363769095],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Hickory_South_Entrance_1","entrance_accessible": "false","entrance_id": "HKRY_E4"},
-      "geometry": {"coordinates": [-97.14803245896834,33.21402241015542],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Hickory_South_Entrance_1","entrance_accessible": "false","entrance_id": "HKRY_E4"},
-      "geometry": {"coordinates": [-97.14803245896834,33.21402241015542],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Music_Building_West_Entrance_1","entrance_accessible": "true","entrance_id": "MUSI_E1"},
-      "geometry": {"coordinates": [-97.1503668031392,33.21048109949146],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Music_Building_West_Entrance_2","entrance_accessible": "true","entrance_id": "MUSI_E2"},
-      "geometry": {"coordinates": [-97.1504298332237,33.210110010765135],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Music_Building_East_Entrance_1","entrance_accessible": "false","entrance_id": "MUSI_E3"},
-      "geometry": {"coordinates": [-97.14986905472095,33.210565650247545],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Music_Building_East_Entrance_2","entrance_accessible": "true","entrance_id": "MUSI_E4"},
-      "geometry": {"coordinates": [-97.1499561319574,33.210278674231816],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Music_Builduin_West_Entrance_2","entrance_accessible": "false","entrance_id": "MUSI_E5"},
-      "geometry": {"coordinates": [-97.15010079751966,33.21086245800498],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Music_Annex_North_Entrance_1","entrance_accessible": "false","entrance_id": "MUSA_E1"},
-      "geometry": {"coordinates": [-97.14976941081433,33.20991385603918],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Music_Annex_North_Entrance_2","entrance_accessible": "false","entrance_id": "MUSA_E2"},
-      "geometry": {"coordinates": [-97.15000517353953,33.20976250715812],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Music_Annex_East_Entrance_1","entrance_accessible": "false","entrance_id": "MUSA_E3"},
-      "geometry": {"coordinates": [-97.14966867583213,33.20977792898702],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Music_Annex_South_Entrance_1","entrance_accessible": "false","entrance_id": "MUSA_E4"},
-      "geometry": {"coordinates": [-97.14989586536763,33.209567403009416],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Crumley_North_Entrance_1","entrance_accessible": "true","entrance_id": "CRUM_E1"},
-      "geometry": {"coordinates": [-97.14942170344318,33.20919648268736],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Crumley_South_Entrance_1","entrance_accessible": "true","entrance_id": "CRUM_E2"},
-      "geometry": {"coordinates": [-97.14934316128347,33.20884016404702],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Music_PS_North_Entrance_1","entrance_accessible": "false","entrance_id": "MPS_E1"},
-      "geometry": {"coordinates": [-97.1510158172811,33.209688608246054],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Music_PS_South_Entrance","entrance_accessible": "false","entrance_id": "MPS_E2"},
-      "geometry": {"coordinates": [-97.15137943838941,33.20967303160931],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Music_PN_South_Entrance_1","entrance_accessible": "false","entrance_id": "MPN_E1"},
-      "geometry": {"coordinates": [-97.15101872625101,33.210139356499454],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Music_PN_North_Entrance","entrance_accessible": "false","entrance_id": "MPN_E2"},
-      "geometry": {"coordinates": [-97.1513947683747,33.210160446732615],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Chilton_East_Entrance_1","entrance_accessible": "true","entrance_id": "CHIL_E1"},
-      "geometry": {"coordinates": [-97.15091466599864,33.211024470129445],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Chilton_North_Entrance_1","entrance_accessible": "true","entrance_id": "CHIL_E2"},
-      "geometry": {"coordinates": [-97.15098922416482,33.211352171182256],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Chilton_West_Entrance_1","entrance_accessible": "true","entrance_id": "CHIL_E4"},
-      "geometry": {"coordinates": [-97.1515658073166,33.211222421690806],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Chilton_West_Entrance_2","entrance_accessible": "true","entrance_id": "CHIL_E5"},
-      "geometry": {"coordinates": [-97.15162544505303,33.21125132537996],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "McConnell_North_Entrance_1","entrance_accessible": "true","entrance_id": "MCON_E1"},
-      "geometry": {"coordinates": [-97.15127072445186,33.212502183040456],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "McConnell_South_Entrance_1","entrance_accessible": "true","entrance_id": "MCON_E2"},
-      "geometry": {"coordinates": [-97.15172323377357,33.21239333848709],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "McConnell_South_Entrance_1","entrance_accessible": "false","entrance_id": "MCON_E3"},
-      "geometry": {"coordinates": [-97.15119530623204,33.21236599588448],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Bruce_South_Entrance_1","entrance_accessible": "true","entrance_id": "BRUC_E1"},
-      "geometry": {"coordinates": [-97.15024352270828,33.21179017073439],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Bruce_East_Entrance_1","entrance_accessible": "false","entrance_id": "BRUC_E2"},
-      "geometry": {"coordinates": [-97.15003632735689,33.21227266116706],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Bruce_East_Entrance_2","entrance_accessible": "false","entrance_id": "BRUC_E3"},
-      "geometry": {"coordinates": [-97.15003632735615,33.211985911968725],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Chemistry_North_Entrance_1","entrance_accessible": "true","entrance_id": "CHEM_E1"},
-      "geometry": {"coordinates": [-97.15015834789574,33.214232225196724],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Chemistry_South_Entrance_1","entrance_accessible": "true","entrance_id": "CHEM_E2"},
-      "geometry": {"coordinates": [-97.15011985445767,33.21393737281912],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Chemistry_South_Entrance_2","entrance_accessible": "true","entrance_id": "CHEM_E3"},
-      "geometry": {"coordinates": [-97.15029093640202,33.2139430981386],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Chemistry_North_Entrance_2","entrance_accessible": "false","entrance_id": "CHEM_E4"},
-      "geometry": {"coordinates": [-97.14960660862572,33.214220774701744],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Science_Research_East_Entrance_1","entrance_accessible": "true","entrance_id": "SRB_E1"},
-      "geometry": {"coordinates": [-97.14863999564064,33.21391160903502],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Science_Research_East_Entrance_2","entrance_accessible": "false","entrance_id": "SRB_E2"},
-      "geometry": {"coordinates": [-97.14867848907767,33.214146346068276],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Discovery_North_Entrance_1","entrance_accessible": "true","entrance_id": "DISC_E1"},
-      "geometry": {"coordinates": [-97.15340043479986,33.25482838479208],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Discovery_South_Entrance_1","entrance_accessible": "true","entrance_id": "DISC_E2"},
-      "geometry": {"coordinates": [-97.15340043480035,33.253199085262395],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Discovery_East_Entrance_1","entrance_accessible": "false","entrance_id": "DISC_E3"},
-      "geometry": {"coordinates": [-97.15212611399122,33.253987829446984],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Discovery_West_Entrance_1","entrance_accessible": "false","entrance_id": "DISC_E4"},
-      "geometry": {"coordinates": [-97.15325081376302,33.25390031507065],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Discover_South_Entrance_2","entrance_accessible": "false","entrance_id": "DISC_E5"},
-      "geometry": {"coordinates": [-97.15292603414939,33.25423025401719],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Alpha_Delta_Pi_Entrance_1","entrance_accessible": "false","entrance_id": "ADP_E1"},
-      "geometry": {"coordinates": [-97.14210484509805,33.21023768673851],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Alumni_Center_Entrance_1","entrance_accessible": "true","entrance_id": "ALUM_E1"},
-      "geometry": {"coordinates": [-97.15345544973947,33.207223377951394],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Alumni_Pavilion_Entrance_1","entrance_accessible": "false","entrance_id": "ALUMP_E1"},
-      "geometry": {"coordinates": [-97.15835578340253,33.20545268480474],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Alpha_Phi_Entrance_1","entrance_accessible": "false","entrance_id": "APE_E1"},
-      "geometry": {"coordinates": [-97.14184062027886,33.2102526576341],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Arts_Annex_North_Entrance_1","entrance_accessible": "false","entrance_id": "ARTX_E1"},
-      "geometry": {"coordinates": [-97.14307003720359,33.213378595357284],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Arts_Annex_South_Entrance_1","entrance_accessible": "false","entrance_id": "ARTX_E2"},
-      "geometry": {"coordinates": [-97.14308094129319,33.21277109738732],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Arts_Annex_West_Entrance_1","entrance_accessible": "false","entrance_id": "ARTX_E3"},
-      "geometry": {"coordinates": [-97.14323312530163,33.21308269731844],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Air_Force_ROTC_East_Entrance_1","entrance_accessible": "false","entrance_id": "ATH1_E1"},
-      "geometry": {"coordinates": [-97.15645830312819,33.207630934337004],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Track_And_Field_North_Entrance_1","entrance_accessible": "false","entrance_id": "ATH2_E1"},
-      "geometry": {"coordinates": [-97.15655026625195,33.20813799268896],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Athletic_Center_Entrance_1","entrance_accessible": "false","entrance_id": "ATHC_E1"},
-      "geometry": {"coordinates": [-97.15884046857806,33.20271252255603],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Athletic_Center_Entrance_2","entrance_accessible": "false","entrance_id": "ATHC_E2"},
-      "geometry": {"coordinates": [-97.15926344717604,33.20272223808375],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Alpha_Tau_Omega_Entrance_1","entrance_accessible": "false","entrance_id": "ATO_E1"},
-      "geometry": {"coordinates": [-97.14419202866029,33.20698613196306],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Bain_South_Entrance_1","entrance_accessible": "false","entrance_id": "BAIN_E1"},
-      "geometry": {"coordinates": [-97.15262468284338,33.2096264255848],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Bain_South_Entrance_2","entrance_accessible": "false","entrance_id": "BAIN_E2"},
-      "geometry": {"coordinates": [-97.15234223893599,33.20962819795116],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Baptist_Student_Ministry_Entrance_1","entrance_accessible": "false","entrance_id": "BSM_E1"},
-      "geometry": {"coordinates": [-97.14602278020843,33.21078558237012],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Building_B_Entrance_1","entrance_accessible": "false","entrance_id": "BUILDB_E1"},
-      "geometry": {"coordinates": [-97.16207660329603,33.1996736970239],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Building_C_Entrance_1","entrance_accessible": "false","entrance_id": "BUILDC_E1"},
-      "geometry": {"coordinates": [-97.16175767413586,33.19904666025273],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Building_P_Entrance_1","entrance_accessible": "false","entrance_id": "BUILDP_E1"},
-      "geometry": {"coordinates": [-97.16190468523715,33.20114840803731],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Chestnut_North_Entrance_1","entrance_accessible": "false","entrance_id": "CHNT_E1"},
-      "geometry": {"coordinates": [-97.15241284998632,33.21254602399139],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Chestnut_South_Entrance_1","entrance_accessible": "true","entrance_id": "CHNT_E2"},
-      "geometry": {"coordinates": [-97.15255407194049,33.211877277987796],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Chestnut_West_Entrance_1","entrance_accessible": "true","entrance_id": "CHNT_E3"},
-      "geometry": {"coordinates": [-97.1527553132248,33.212407785428766],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Clark_Hall_North_Entrance_1","entrance_accessible": "true","entrance_id": "CLAR_E1"},
-      "geometry": {"coordinates": [-97.15143588984432,33.208078710196716],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Clark_Hall_South_Entrance_1","entrance_accessible": "false","entrance_id": "CLAR_E2"},
-      "geometry": {"coordinates": [-97.15150306271647,33.20791298420161],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Clark_Hall_South_Entrance_2","entrance_accessible": "true","entrance_id": "CLAR_E3"},
-      "geometry": {"coordinates": [-97.15147768336355,33.207556916076214],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Coliseum_North_Entrance_1","entrance_accessible": "true","entrance_id": "COL_E1"},
-      "geometry": {"coordinates": [-97.1537698042288,33.209004745805615],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Coliseum_East_Entrance_1","entrance_accessible": "false","entrance_id": "COL_E2"},
-      "geometry": {"coordinates": [-97.1536348049789,33.20835815443223],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Coliseum_West_Entrance_1","entrance_accessible": "false","entrance_id": "COL_E3"},
-      "geometry": {"coordinates": [-97.15483164245022,33.208363776423965],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Coliseum_West_Entrance_2","entrance_accessible": "false","entrance_id": "COL_E4"},
-      "geometry": {"coordinates": [-97.15482323032927,33.20899231746107],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "DATCU_East_Entrance_1","entrance_accessible": "true","entrance_id": "DATCU_E1"},
-      "geometry": {"coordinates": [-97.15802527122874,33.20384520698633],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "DATCU_West_Entrance_1","entrance_accessible": "true","entrance_id": "DATCU_E2"},
-      "geometry": {"coordinates": [-97.16014368590967,33.204157334239014],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "DATCU_South_Entrance_1","entrance_accessible": "true","entrance_id": "DATCU_E3"},
-      "geometry": {"coordinates": [-97.15984270109846,33.203000686172714],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "DATCU_North_Entrance_1","entrance_accessible": "true","entrance_id": "DATCU_E4"},
-      "geometry": {"coordinates": [-97.15850129985857,33.20494090596284],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Dance_Theatre_East_Entrance_1","entrance_accessible": "false","entrance_id": "DATH_E1"},
-      "geometry": {"coordinates": [-97.14157636236476,33.212304165798756],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Dance_Theatre_East_Entrance_2","entrance_accessible": "false","entrance_id": "DATH_E2"},
-      "geometry": {"coordinates": [-97.14157338614797,33.21210391330935],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Dance_Theatre_West_Entrance_1","entrance_accessible": "true","entrance_id": "DATH_E3"},
-      "geometry": {"coordinates": [-97.14174994609576,33.211985771027685],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Delta_Gamma_Entrance_1","entrance_accessible": "false","entrance_id": "DG_E1"},
-      "geometry": {"coordinates": [-97.14262347299253,33.20971351943227],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Delta_Sigma_Phi_Entrance_1","entrance_accessible": "false","entrance_id": "DSP_E1"},
-      "geometry": {"coordinates": [-97.14284908663643,33.20792235860327],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Ernie_Kuehne_Entrance_1","entrance_accessible": "false","entrance_id": "EKBPF_E1"},
-      "geometry": {"coordinates": [-97.16220587543287,33.199188285013946],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Enviromental_East_Entrance","entrance_accessible": "true","entrance_id": "ENVSCI_E1"},
-      "geometry": {"coordinates": [-97.15113118829096,33.21404594364162],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Enviromental_West_Entrance_1","entrance_accessible": "true","entrance_id": "ENVSCI_E2"},
-      "geometry": {"coordinates": [-97.15173578772516,33.214104590096724],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Enviromental_South_Entrance_1","entrance_accessible": "false","entrance_id": "ENVSCI_E3"},
-      "geometry": {"coordinates": [-97.1513907992727,33.21385175204135],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Gateway_South_Entrance_1","entrance_accessible": "true","entrance_id": "GATE_E1"},
-      "geometry": {"coordinates": [-97.1537149269205,33.20751409317255],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Gateway_East_Entrance_1","entrance_accessible": "true","entrance_id": "GATE_E2"},
-      "geometry": {"coordinates": [-97.15366447984962,33.20754014196547],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Gatewat_South_Entrance_1","entrance_accessible": "true","entrance_id": "GATE_E3"},
-      "geometry": {"coordinates": [-97.15439864606957,33.20750601157124],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Honors_South_Entrance_1","entrance_accessible": "true","entrance_id": "HNRS_E1"},
-      "geometry": {"coordinates": [-97.15173845951713,33.20691701140778],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Honors_North_Entrance_1","entrance_accessible": "true","entrance_id": "HNRS_E2"},
-      "geometry": {"coordinates": [-97.1517384595174,33.20707525291911],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Honors_East_Entrance_1","entrance_accessible": "true","entrance_id": "HNRS_E3"},
-      "geometry": {"coordinates": [-97.15118467528997,33.20697756476375],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Hurley_North_Entrance_1","entrance_accessible": "false","entrance_id": "HURLEY_E3"},
-      "geometry": {"coordinates": [-97.14847583596088,33.211286723170446],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Kappa_Delta_Entrance_1","entrance_accessible": "false","entrance_id": "KD_E1"},
-      "geometry": {"coordinates": [-97.14239980702092,33.209419125585256],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Kappa_Kappa_Gamma_Entrance_1","entrance_accessible": "false","entrance_id": "KKG_E1"},
-      "geometry": {"coordinates": [-97.14261282228829,33.20997712815924],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Kappa_Sigma_Entrance_1","entrance_accessible": "false","entrance_id": "KS_E1"},
-      "geometry": {"coordinates": [-97.1434529063673,33.207937802045436],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Legends_South_Entrance_1","entrance_accessible": "true","entrance_id": "LGNS_E1"},
-      "geometry": {"coordinates": [-97.15419492283382,33.21318630352137],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Legends_North_Entrance_1","entrance_accessible": "true","entrance_id": "LGNS_E2"},
-      "geometry": {"coordinates": [-97.15430173797847,33.21332064016845],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Lovelace_McNatt_Entrance_1","entrance_accessible": "false","entrance_id": "LMNF_E1"},
-      "geometry": {"coordinates": [-97.15949958430349,33.20236491385792],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Maple_South_Entrance_1","entrance_accessible": "true","entrance_id": "MAPL_E1"},
-      "geometry": {"coordinates": [-97.15010236913011,33.207900594555426],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Maple_North_Entrances","entrance_accessible": "true","entrance_id": "MAPL_E2"},
-      "geometry": {"coordinates": [-97.1500281971445,33.20806533250499],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Mean_Greens_North_Entrance_1","entrance_accessible": "true","entrance_id": "MEAN_E1"},
-      "geometry": {"coordinates": [-97.15015699661198,33.20753707391434],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Mean_Green_Olympic_Entrance_1","entrance_accessible": "false","entrance_id": "MGOSC_E1"},
-      "geometry": {"coordinates": [-97.16275034614462,33.19903382870707],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Ken_Bahnsen_South_Entrance_1","entrance_accessible": "true","entrance_id": "MGYM_E1"},
-      "geometry": {"coordinates": [-97.15379329451311,33.20978711825653],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Mozart_West_Entrance_1","entrance_accessible": "true","entrance_id": "MOZA_E1"},
-      "geometry": {"coordinates": [-97.15293130397808,33.20627983041609],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Methodist_Student_North_Entrance_1","entrance_accessible": "false","entrance_id": "MSC_E1"},
-      "geometry": {"coordinates": [-97.1489270303387,33.20803547717733],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Lofts_West_Entrance_1","entrance_accessible": "false","entrance_id": "NTL_E1"},
-      "geometry": {"coordinates": [-97.15489438974697,33.213068686766064],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Oak_Annex_West_Entrance_1","entrance_accessible": "false","entrance_id": "OAKX_E1"},
-      "geometry": {"coordinates": [-97.14511222353558,33.215932908475665],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Murchison_Arts_West_Entrance","entrance_accessible": "true","entrance_id": "PAC_E1"},
-      "geometry": {"coordinates": [-97.1554139029311,33.20644419495541],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Murchison_Arts_North_Entrance_1","entrance_accessible": "false","entrance_id": "PAC_E2"},
-      "geometry": {"coordinates": [-97.15500891212453,33.206615882299175],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Performing_Arts_East_Entrance","entrance_accessible": "true","entrance_id": "PACX_E1"},
-      "geometry": {"coordinates": [-97.15565935190449,33.20648814364701],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Pi_Beta_Phi_Entrance_1","entrance_accessible": "false","entrance_id": "PBP_E1"},
-      "geometry": {"coordinates": [-97.14164076150789,33.209967443286644],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Physical_Education_South_Entrance_1","entrance_accessible": "true","entrance_id": "PEB_E1"},
-      "geometry": {"coordinates": [-97.15311542843344,33.21075835733653],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Physical_Education_North_Entrance_1","entrance_accessible": "true","entrance_id": "PEB_E2"},
-      "geometry": {"coordinates": [-97.15298126757716,33.211395210323374],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Physics_Machine_Shop_North_Entrance_1","entrance_accessible": "false","entrance_id": "PHYSM_E1"},
-      "geometry": {"coordinates": [-97.14217121358077,33.21339730878577],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Phi_kappa_Sigma_Entrance_1","entrance_accessible": "false","entrance_id": "PKS_E1"},
-      "geometry": {"coordinates": [-97.1425195529425,33.2079447389613],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Pohl_South_Entrance_1","entrance_accessible": "true","entrance_id": "POHL_E1"},
-      "geometry": {"coordinates": [-97.15380388685341,33.21174199225872],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Sullivant_North_Entrance_1","entrance_accessible": "true","entrance_id": "POLI_E1"},
-      "geometry": {"coordinates": [-97.15170462531161,33.20624121462866],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Rawlins_East_Entrance_1","entrance_accessible": "true","entrance_id": "RAWL_E1"},
-      "geometry": {"coordinates": [-97.1521998596196,33.20758104014516],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Rawlins_West_Entrance","entrance_accessible": "true","entrance_id": "RAWL_E2"},
-      "geometry": {"coordinates": [-97.1523358066509,33.20768575311456],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Student_Athtlete_Academic_Entrance","entrance_accessible": "false","entrance_id": "SAAC_E1"},
-      "geometry": {"coordinates": [-97.16301658045278,33.19958039162489],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Sigma_Chi_Entrance_1","entrance_accessible": "false","entrance_id": "SC_E1"},
-      "geometry": {"coordinates": [-97.14414296419467,33.207255022917536],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Santa_Fe_East_Entrance_1","entrance_accessible": "true","entrance_id": "SFE_E1"},
-      "geometry": {"coordinates": [-97.15638451435001,33.21042003983551],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Santa_Fe_North_Entrance_1","entrance_accessible": "false","entrance_id": "SFE_E2"},
-      "geometry": {"coordinates": [-97.15649652789124,33.21056402431624],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Sigma_Nu_Entrance_1","entrance_accessible": "false","entrance_id": "SN_E1"},
-      "geometry": {"coordinates": [-97.1431422282223,33.207955354471935],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Sigma_Phi_Epsilon_Entrance_1","entrance_accessible": "false","entrance_id": "SPE_E1"},
-      "geometry": {"coordinates": [-97.14419649767761,33.20795462873447],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Speech_North_Entrance_1","entrance_accessible": "true","entrance_id": "SPHS_E1"},
-      "geometry": {"coordinates": [-97.14196248815246,33.21243101409104],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Speech_South_Entrance_1","entrance_accessible": "false","entrance_id": "SPHS_E2"},
-      "geometry": {"coordinates": [-97.14196820993207,33.212020300989565],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Support_South_Entrance_1","entrance_accessible": "false","entrance_id": "SSB_E1"},
-      "geometry": {"coordinates": [-97.15146576861876,33.20504072892146],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Theta_Chi_Entrance_1","entrance_accessible": "false","entrance_id": "TC_E1"},
-      "geometry": {"coordinates": [-97.14375936966591,33.2079515007004],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Waranch_Entrance_1","entrance_accessible": "false","entrance_id": "TENN_E1"},
-      "geometry": {"coordinates": [-97.1602080789157,33.19931823960424],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Traditions_South_Entrance_1","entrance_accessible": "true","entrance_id": "TRAD_E1"},
-      "geometry": {"coordinates": [-97.15579135173498,33.2103045964698],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Traditions_East_Entrance_1","entrance_accessible": "false","entrance_id": "TRAD_E2"},
-      "geometry": {"coordinates": [-97.15568188395603,33.2105039597911],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Track_Soccer_Complex_Entrance_1","entrance_accessible": "false","entrance_id": "TSC_E1"},
-      "geometry": {"coordinates": [-97.15953408071012,33.19673506739777],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "University_Services_East_Entrance_1","entrance_accessible": "false","entrance_id": "USB_E1"},
-      "geometry": {"coordinates": [-97.15864611017966,33.209843975371655],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Victory_Hall_West_Entrance_1","entrance_accessible": "true","entrance_id": "VICT_E1"},
-      "geometry": {"coordinates": [-97.15843011856697,33.202182634438515],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Victory_Hall_East_Entrance_1","entrance_accessible": "true","entrance_id": "VICT_E2"},
-      "geometry": {"coordinates": [-97.1577041410485,33.202178042918035],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "West_Hall_West_Entrance_1","entrance_accessible": "true","entrance_id": "WEST_E1"},
-      "geometry": {"coordinates": [-97.15533143694762,33.211741043198785],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Risk_Management_North_Entrance_1","entrance_accessible": "false","entrance_id": "WGHT_E1"},
-      "geometry": {"coordinates": [-97.15658439215929,33.208401196141224],"type": "Point"}
-    },
-    {
-      "type": "Feature",
-      "properties": {"entrance_name": "Zeta_Tau_Alpha_Entrance_1","entrance_accessible": "false","entrance_id": "ZTA_E1"},
-      "geometry": {"coordinates": [-97.1423828781376,33.21024636029482],"type": "Point"}
-    }
-  ]
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14874232297987,
+                    33.210046534036636
+                ]
+            },
+            "properties": {
+                "entrance_name": "Willis_East_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "WILLIS_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14827370013765,
+                    33.210379623813125
+                ]
+            },
+            "properties": {
+                "entrance_name": "EESC_West_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "EESC_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14832750064222,
+                    33.21022585150847
+                ]
+            },
+            "properties": {
+                "entrance_name": "EESC_West_Entrance_2",
+                "entrance_accessible": "true",
+                "entrance_id": "EESC_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1479376900435,
+                    33.210162861146756
+                ]
+            },
+            "properties": {
+                "entrance_name": "EESC_South_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "EESC_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14879486613367,
+                    33.21130265016156
+                ]
+            },
+            "properties": {
+                "entrance_name": "Hurley_North_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "HURLEY_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14873876236422,
+                    33.211070782392795
+                ]
+            },
+            "properties": {
+                "entrance_name": "Hurley_South_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "HURLEY_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14794285120031,
+                    33.21087809473616
+                ]
+            },
+            "properties": {
+                "entrance_name": "Union_West_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "UNION_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14662539901349,
+                    33.210877748838826
+                ]
+            },
+            "properties": {
+                "entrance_name": "Union_East_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "UNION_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14755231631467,
+                    33.20997516833137
+                ]
+            },
+            "properties": {
+                "entrance_name": "Union_South_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "UNION_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14658120313787,
+                    33.2102617131238
+                ]
+            },
+            "properties": {
+                "entrance_name": "Matthews_Hall_North_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "MATT_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14648156870516,
+                    33.21009998842986
+                ]
+            },
+            "properties": {
+                "entrance_name": "Matthews_Hall_East_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "MATT_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14648632597246,
+                    33.20967548810856
+                ]
+            },
+            "properties": {
+                "entrance_name": "Matthew_Hall_East_Entrance_2",
+                "entrance_accessible": "false",
+                "entrance_id": "MATT_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14671696288686,
+                    33.2095073005584
+                ]
+            },
+            "properties": {
+                "entrance_name": "Matthew_Hall_South_Entrance_1",
+                "entrance_id": "MATT_E4",
+                "entrance_accessible": "false"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14794453911767,
+                    33.210742131945366
+                ]
+            },
+            "properties": {
+                "entrance_name": "Union_West_Entrance_2",
+                "entrance_accessible": "false",
+                "entrance_id": "UNION_E4"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14770292247225,
+                    33.2110851759042
+                ]
+            },
+            "properties": {
+                "entrance_name": "Union_West_Entrance_3",
+                "entrance_accessible": "false",
+                "entrance_id": "UNION_E5"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1474695198413,
+                    33.211303951554925
+                ]
+            },
+            "properties": {
+                "entrance_name": "Union_North_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "UNION_E6"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14672611495823,
+                    33.211185817756686
+                ]
+            },
+            "properties": {
+                "entrance_name": "Union_East_Entrance_2",
+                "entrance_accessible": "false",
+                "entrance_id": "UNION_E7"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14674868303679,
+                    33.21174150501021
+                ]
+            },
+            "properties": {
+                "entrance_name": "Sage_South_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "SAGE_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14690984321817,
+                    33.212110100500894
+                ]
+            },
+            "properties": {
+                "entrance_name": "Sage_West_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "SAGE_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14673653923175,
+                    33.21247200371705
+                ]
+            },
+            "properties": {
+                "entrance_name": "Sage_North_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "SAGE_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14657709154663,
+                    33.21210668832015
+                ]
+            },
+            "properties": {
+                "entrance_name": "Sage_East_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "SAGE_E4"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1461279122921,
+                    33.21224656946691
+                ]
+            },
+            "properties": {
+                "entrance_name": "RTFP_West_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "RTFP_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14612626461397,
+                    33.21196866953085
+                ]
+            },
+            "properties": {
+                "entrance_name": "RTFP_West_Entrance_2",
+                "entrance_accessible": "false",
+                "entrance_id": "RTFP_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14543219364586,
+                    33.21170855738545
+                ]
+            },
+            "properties": {
+                "entrance_name": "RTFP_South_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "RTFP_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14504710166463,
+                    33.21127392185379
+                ]
+            },
+            "properties": {
+                "entrance_name": "Matthews_Annex_West_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "MHAX_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14595252956617,
+                    33.209865342634785
+                ]
+            },
+            "properties": {
+                "entrance_name": "Wooten_West_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "WOOT_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14539479344892,
+                    33.20986212136354
+                ]
+            },
+            "properties": {
+                "entrance_name": "Wooten_East_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "WOOT_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14681097841427,
+                    33.208399252481414
+                ]
+            },
+            "properties": {
+                "entrance_name": "Eagle_Landing_South_Entrance",
+                "entrance_accessible": "true",
+                "entrance_id": "EAGL_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14716049300044,
+                    33.20897254655408
+                ]
+            },
+            "properties": {
+                "entrance_name": "BLB_East_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "BLB_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1482419677796,
+                    33.20905791444474
+                ]
+            },
+            "properties": {
+                "entrance_name": "BLB_West_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "BLB_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14766109522118,
+                    33.208625621997015
+                ]
+            },
+            "properties": {
+                "entrance_name": "BLB_South_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "BLB_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14415983989458,
+                    33.208836594892546
+                ]
+            },
+            "properties": {
+                "entrance_name": "Greek_Center_West_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "GLC_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14381454463465,
+                    33.208835337606814
+                ]
+            },
+            "properties": {
+                "entrance_name": "Greek_Center_East_1",
+                "entrance_accessible": "true",
+                "entrance_id": "GLC_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14736911593394,
+                    33.2078343843049
+                ]
+            },
+            "properties": {
+                "entrance_name": "Kerr_North_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "KERR_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14737871188288,
+                    33.207594093289046
+                ]
+            },
+            "properties": {
+                "entrance_name": "Kerr_South_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "KERR_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14658089568132,
+                    33.207727425109695
+                ]
+            },
+            "properties": {
+                "entrance_name": "Welcome_Center_North_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "WCTR_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1461741718802,
+                    33.20706821930165
+                ]
+            },
+            "properties": {
+                "entrance_name": "Joe_Green_East_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "JOEG_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14635911093835,
+                    33.20706972122447
+                ]
+            },
+            "properties": {
+                "entrance_name": "Joe_Green_West_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "JOEG_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14823247104228,
+                    33.212130382914296
+                ]
+            },
+            "properties": {
+                "entrance_name": "Sycamore_West_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "SYMR_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14812825145773,
+                    33.21183254550898
+                ]
+            },
+            "properties": {
+                "entrance_name": "Sycamore_West_Entrance_2",
+                "entrance_accessible": "true",
+                "entrance_id": "SYMR_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14812960490049,
+                    33.21242901839153
+                ]
+            },
+            "properties": {
+                "entrance_name": "Sycamore_North_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "SYMR_E4"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1480704119084,
+                    33.21242846761483
+                ]
+            },
+            "properties": {
+                "entrance_name": "Sycamore_North_Entrance_2",
+                "entrance_accessible": "false",
+                "entrance_id": "SYMR_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14870739430708,
+                    33.21193860489211
+                ]
+            },
+            "properties": {
+                "entrance_name": "LIFE_East_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "LIFE_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14878446298131,
+                    33.21216294005478
+                ]
+            },
+            "properties": {
+                "entrance_name": "LIFE_East_Entrance_2",
+                "entrance_accessible": "false",
+                "entrance_id": "LIFE_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1483811363004,
+                    33.21307144879714
+                ]
+            },
+            "properties": {
+                "entrance_name": "GAB_West_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "GAB_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14791827363172,
+                    33.21301662679535
+                ]
+            },
+            "properties": {
+                "entrance_name": "GAB_East_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "GAB_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14791243866638,
+                    33.213277561051825
+                ]
+            },
+            "properties": {
+                "entrance_name": "GAB_East_Entrance_2",
+                "entrance_accessible": "false",
+                "entrance_id": "GAB_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14838515495842,
+                    33.21328249529833
+                ]
+            },
+            "properties": {
+                "entrance_name": "GAB_West_Entrance_2",
+                "entrance_accessible": "false",
+                "entrance_id": "GAB_E4"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14896578446724,
+                    33.21350558291945
+                ]
+            },
+            "properties": {
+                "entrance_name": "Marquis_North_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "MARQ_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14891302328927,
+                    33.21289519374547
+                ]
+            },
+            "properties": {
+                "entrance_name": "Marquis_South_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "MARQ_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14878801148453,
+                    33.21318276934342
+                ]
+            },
+            "properties": {
+                "entrance_name": "Marquis_East_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "MARQ_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14958146280627,
+                    33.213480624747845
+                ]
+            },
+            "properties": {
+                "entrance_name": "Terrill_North_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "TERR_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14959147617168,
+                    33.21286764126263
+                ]
+            },
+            "properties": {
+                "entrance_name": "Terril_South_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "TERR_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14950961194168,
+                    33.21328669034007
+                ]
+            },
+            "properties": {
+                "entrance_name": "Terril_East_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "TERR_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14951213862346,
+                    33.21311233755472
+                ]
+            },
+            "properties": {
+                "entrance_name": "Terril_East_Entrance_2",
+                "entrance_accessible": "false",
+                "entrance_id": "TERR_E4"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14648943259044,
+                    33.2130627096594
+                ]
+            },
+            "properties": {
+                "entrance_name": "Physics_East_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "PHYS_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14682867376182,
+                    33.21320642715824
+                ]
+            },
+            "properties": {
+                "entrance_name": "Physics_West_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "PHYS_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14688318894218,
+                    33.213523230964555
+                ]
+            },
+            "properties": {
+                "entrance_name": "Curry_West_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "CURY_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14648649275816,
+                    33.21352553737982
+                ]
+            },
+            "properties": {
+                "entrance_name": "Curry_East_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "CURY_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14556701403207,
+                    33.213449672824865
+                ]
+            },
+            "properties": {
+                "entrance_name": "Art_North_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "ART_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14472739768395,
+                    33.21309123501159
+                ]
+            },
+            "properties": {
+                "entrance_name": "Art_East_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "ART_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14516359239126,
+                    33.21327749612719
+                ]
+            },
+            "properties": {
+                "entrance_name": "Art_North_Entrance_2",
+                "entrance_accessible": "false",
+                "entrance_id": "ART_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1451688934915,
+                    33.2129469138431
+                ]
+            },
+            "properties": {
+                "entrance_name": "Art_South_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "ART_E4"
+            },
+            "id": 62
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14573334150276,
+                    33.21324207482108
+                ]
+            },
+            "properties": {
+                "entrance_name": "Art_West_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "ART_E5"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14574042275841,
+                    33.212973144817795
+                ]
+            },
+            "properties": {
+                "entrance_name": "Art_West_Entrance_2",
+                "entrance_accessible": "false",
+                "entrance_id": "ART_E6"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1451724912875,
+                    33.212788252397274
+                ]
+            },
+            "properties": {
+                "entrance_name": "Art_South_Entrance_2",
+                "entrance_accessible": "true",
+                "entrance_id": "ART_E7"
+            },
+            "id": 65
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14551350038693,
+                    33.21280260588132
+                ]
+            },
+            "properties": {
+                "entrance_name": "Art_South_Entrance_3",
+                "entrance_accessible": "false",
+                "entrance_id": "ART_E8"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14645374834181,
+                    33.21404126368887
+                ]
+            },
+            "properties": {
+                "entrance_name": "Language_East_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "LANG_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14666602552799,
+                    33.213807764452156
+                ]
+            },
+            "properties": {
+                "entrance_name": "Language_South_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "LANG_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14684701372516,
+                    33.21404929002455
+                ]
+            },
+            "properties": {
+                "entrance_name": "Language_West_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "LANG_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1475151946776,
+                    33.21385915978597
+                ]
+            },
+            "properties": {
+                "entrance_name": "Auditorium_South_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "AUDB_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14714923203059,
+                    33.213747673050634
+                ]
+            },
+            "properties": {
+                "entrance_name": "Auditorium_East_Entrance_2",
+                "entrance_accessible": "false",
+                "entrance_id": "AUDB_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14729963637359,
+                    33.214226277251456
+                ]
+            },
+            "properties": {
+                "entrance_name": "Auditorium_North_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "AUDB_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14703884039386,
+                    33.21411599265063
+                ]
+            },
+            "properties": {
+                "entrance_name": "Auditorium_East_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "AUDB_E4"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1481954301739,
+                    33.21431969918355
+                ]
+            },
+            "properties": {
+                "entrance_name": "Hickory_West_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "HKRY_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14803114926818,
+                    33.21445314475773
+                ]
+            },
+            "properties": {
+                "entrance_name": "Hickory_North_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "HKRY_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14764211208669,
+                    33.214273363769095
+                ]
+            },
+            "properties": {
+                "entrance_name": "Hickory_East_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "HKRY_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14803245896834,
+                    33.21402241015542
+                ]
+            },
+            "properties": {
+                "entrance_name": "Hickory_South_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "HKRY_E4"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1503668031392,
+                    33.21048109949146
+                ]
+            },
+            "properties": {
+                "entrance_name": "Music_Building_West_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "MUSI_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1504298332237,
+                    33.210110010765135
+                ]
+            },
+            "properties": {
+                "entrance_name": "Music_Building_West_Entrance_2",
+                "entrance_accessible": "true",
+                "entrance_id": "MUSI_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14986905472095,
+                    33.210565650247545
+                ]
+            },
+            "properties": {
+                "entrance_name": "Music_Building_East_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "MUSI_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1499561319574,
+                    33.210278674231816
+                ]
+            },
+            "properties": {
+                "entrance_name": "Music_Building_East_Entrance_2",
+                "entrance_accessible": "true",
+                "entrance_id": "MUSI_E4"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15010079751966,
+                    33.21086245800498
+                ]
+            },
+            "properties": {
+                "entrance_name": "Music_Builduin_West_Entrance_2",
+                "entrance_accessible": "false",
+                "entrance_id": "MUSI_E5"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14976941081433,
+                    33.20991385603918
+                ]
+            },
+            "properties": {
+                "entrance_name": "Music_Annex_North_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "MUSA_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15000517353953,
+                    33.20976250715812
+                ]
+            },
+            "properties": {
+                "entrance_name": "Music_Annex_North_Entrance_2",
+                "entrance_accessible": "false",
+                "entrance_id": "MUSA_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14966867583213,
+                    33.20977792898702
+                ]
+            },
+            "properties": {
+                "entrance_name": "Music_Annex_East_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "MUSA_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14989586536763,
+                    33.209567403009416
+                ]
+            },
+            "properties": {
+                "entrance_name": "Music_Annex_South_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "MUSA_E4"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14942170344318,
+                    33.20919648268736
+                ]
+            },
+            "properties": {
+                "entrance_name": "Crumley_North_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "CRUM_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14934316128347,
+                    33.20884016404702
+                ]
+            },
+            "properties": {
+                "entrance_name": "Crumley_South_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "CRUM_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1510158172811,
+                    33.209688608246054
+                ]
+            },
+            "properties": {
+                "entrance_name": "Music_PS_North_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "MPS_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15137943838941,
+                    33.20967303160931
+                ]
+            },
+            "properties": {
+                "entrance_name": "Music_PS_South_Entrance",
+                "entrance_accessible": "false",
+                "entrance_id": "MPS_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15101872625101,
+                    33.210139356499454
+                ]
+            },
+            "properties": {
+                "entrance_name": "Music_PN_South_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "MPN_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1513947683747,
+                    33.210160446732615
+                ]
+            },
+            "properties": {
+                "entrance_name": "Music_PN_North_Entrance",
+                "entrance_accessible": "false",
+                "entrance_id": "MPN_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15091466599864,
+                    33.211024470129445
+                ]
+            },
+            "properties": {
+                "entrance_name": "Chilton_East_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "CHIL_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15098922416482,
+                    33.211352171182256
+                ]
+            },
+            "properties": {
+                "entrance_name": "Chilton_North_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "CHIL_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1515658073166,
+                    33.211222421690806
+                ]
+            },
+            "properties": {
+                "entrance_name": "Chilton_West_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "CHIL_E4"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15162544505303,
+                    33.21125132537996
+                ]
+            },
+            "properties": {
+                "entrance_name": "Chilton_West_Entrance_2",
+                "entrance_accessible": "true",
+                "entrance_id": "CHIL_E5"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15127072445186,
+                    33.212502183040456
+                ]
+            },
+            "properties": {
+                "entrance_name": "McConnell_North_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "MCON_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15172323377357,
+                    33.21239333848709
+                ]
+            },
+            "properties": {
+                "entrance_name": "McConnell_South_Entrance_2",
+                "entrance_accessible": "true",
+                "entrance_id": "MCON_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15119530623204,
+                    33.21236599588448
+                ]
+            },
+            "properties": {
+                "entrance_name": "McConnell_South_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "MCON_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15024352270828,
+                    33.21179017073439
+                ]
+            },
+            "properties": {
+                "entrance_name": "Bruce_South_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "BRUC_E1"
+            },
+            "id": 178
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15003632735689,
+                    33.21227266116706
+                ]
+            },
+            "properties": {
+                "entrance_name": "Bruce_East_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "BRUC_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15003632735615,
+                    33.211985911968725
+                ]
+            },
+            "properties": {
+                "entrance_name": "Bruce_East_Entrance_2",
+                "entrance_accessible": "false",
+                "entrance_id": "BRUC_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15015834789574,
+                    33.214232225196724
+                ]
+            },
+            "properties": {
+                "entrance_name": "Chemistry_North_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "CHEM_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15011985445767,
+                    33.21393737281912
+                ]
+            },
+            "properties": {
+                "entrance_name": "Chemistry_South_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "CHEM_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15029093640202,
+                    33.2139430981386
+                ]
+            },
+            "properties": {
+                "entrance_name": "Chemistry_South_Entrance_2",
+                "entrance_accessible": "true",
+                "entrance_id": "CHEM_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14960660862572,
+                    33.214220774701744
+                ]
+            },
+            "properties": {
+                "entrance_name": "Chemistry_North_Entrance_2",
+                "entrance_accessible": "false",
+                "entrance_id": "CHEM_E4"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14863999564064,
+                    33.21391160903502
+                ]
+            },
+            "properties": {
+                "entrance_name": "Science_Research_East_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "SRB_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14867848907767,
+                    33.214146346068276
+                ]
+            },
+            "properties": {
+                "entrance_name": "Science_Research_East_Entrance_2",
+                "entrance_accessible": "false",
+                "entrance_id": "SRB_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15340043479986,
+                    33.25482838479208
+                ]
+            },
+            "properties": {
+                "entrance_name": "Discovery_North_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "DISC_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15340043480035,
+                    33.253199085262395
+                ]
+            },
+            "properties": {
+                "entrance_name": "Discovery_South_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "DISC_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15212611399122,
+                    33.253987829446984
+                ]
+            },
+            "properties": {
+                "entrance_name": "Discovery_East_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "DISC_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15325081376302,
+                    33.25390031507065
+                ]
+            },
+            "properties": {
+                "entrance_name": "Discovery_West_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "DISC_E4"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15292603414939,
+                    33.25423025401719
+                ]
+            },
+            "properties": {
+                "entrance_name": "Discover_South_Entrance_2",
+                "entrance_accessible": "false",
+                "entrance_id": "DISC_E5"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15143588984432,
+                    33.208078710196716
+                ]
+            },
+            "properties": {
+                "entrance_name": "Clark_Hall_North_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "CLAR_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15150306271647,
+                    33.20791298420161
+                ]
+            },
+            "properties": {
+                "entrance_name": "Clark_Hall_South_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "CLAR_E2"
+            },
+            "id": 193
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15147768336355,
+                    33.207556916076214
+                ]
+            },
+            "properties": {
+                "entrance_name": "Clark_Hall_South_Entrance_2",
+                "entrance_accessible": "true",
+                "entrance_id": "CLAR_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15015699661198,
+                    33.20753707391434
+                ]
+            },
+            "properties": {
+                "entrance_name": "Mean_Greens_North_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "MEAN_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15010236913011,
+                    33.207900594555426
+                ]
+            },
+            "properties": {
+                "entrance_name": "Maple_South_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "MAPL_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1500281971445,
+                    33.20806533250499
+                ]
+            },
+            "properties": {
+                "entrance_name": "Maple_North_Entrances",
+                "entrance_accessible": "true",
+                "entrance_id": "MAPL_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15173845951713,
+                    33.20691701140778
+                ]
+            },
+            "properties": {
+                "entrance_name": "Honors_South_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "HNRS_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1517384595174,
+                    33.20707525291911
+                ]
+            },
+            "properties": {
+                "entrance_name": "Honors_North_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "HNRS_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15118467528997,
+                    33.20697756476375
+                ]
+            },
+            "properties": {
+                "entrance_name": "Honors_East_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "HNRS_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1521998596196,
+                    33.20758104014516
+                ]
+            },
+            "properties": {
+                "entrance_name": "Rawlins_East_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "RAWL_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1523358066509,
+                    33.20768575311456
+                ]
+            },
+            "properties": {
+                "entrance_name": "Rawlins_West_Entrance",
+                "entrance_accessible": "true",
+                "entrance_id": "RAWL_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15345544973947,
+                    33.207223377951394
+                ]
+            },
+            "properties": {
+                "entrance_name": "Alumni_Center_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "ALUM_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1537149269205,
+                    33.20751409317255
+                ]
+            },
+            "properties": {
+                "entrance_name": "Gateway_South_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "GATE_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15366447984962,
+                    33.20754014196547
+                ]
+            },
+            "properties": {
+                "entrance_name": "Gateway_East_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "GATE_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15439864606957,
+                    33.20750601157124
+                ]
+            },
+            "properties": {
+                "entrance_name": "Gatewat_South_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "GATE_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15379329451311,
+                    33.20978711825653
+                ]
+            },
+            "properties": {
+                "entrance_name": "Ken_Bahnsen_South_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "MGYM_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15262468284338,
+                    33.2096264255848
+                ]
+            },
+            "properties": {
+                "entrance_name": "Bain_South_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "BAIN_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15234223893599,
+                    33.20962819795116
+                ]
+            },
+            "properties": {
+                "entrance_name": "Bain_South_Entrance_2",
+                "entrance_accessible": "false",
+                "entrance_id": "BAIN_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15311542843344,
+                    33.21075835733653
+                ]
+            },
+            "properties": {
+                "entrance_name": "Physical_Education_South_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "PEB_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15298126757716,
+                    33.211395210323374
+                ]
+            },
+            "properties": {
+                "entrance_name": "Physical_Education_North_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "PEB_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15241284998632,
+                    33.21254602399139
+                ]
+            },
+            "properties": {
+                "entrance_name": "Chestnut_North_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "CHNT_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15255407194049,
+                    33.211877277987796
+                ]
+            },
+            "properties": {
+                "entrance_name": "Chestnut_South_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "CHNT_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1527553132248,
+                    33.212407785428766
+                ]
+            },
+            "properties": {
+                "entrance_name": "Chestnut_West_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "CHNT_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15380388685341,
+                    33.21174199225872
+                ]
+            },
+            "properties": {
+                "entrance_name": "Pohl_South_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "POHL_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15419492283382,
+                    33.21318630352137
+                ]
+            },
+            "properties": {
+                "entrance_name": "Legends_South_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "LGNS_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15430173797847,
+                    33.21332064016845
+                ]
+            },
+            "properties": {
+                "entrance_name": "Legends_North_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "LGNS_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15489438974697,
+                    33.213068686766064
+                ]
+            },
+            "properties": {
+                "entrance_name": "Lofts_West_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "NTL_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15533143694762,
+                    33.211741043198785
+                ]
+            },
+            "properties": {
+                "entrance_name": "West_Hall_West_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "WEST_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15579135173498,
+                    33.2103045964698
+                ]
+            },
+            "properties": {
+                "entrance_name": "Traditions_South_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "TRAD_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15568188395603,
+                    33.2105039597911
+                ]
+            },
+            "properties": {
+                "entrance_name": "Traditions_East_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "TRAD_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15638451435001,
+                    33.21042003983551
+                ]
+            },
+            "properties": {
+                "entrance_name": "Santa_Fe_East_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "SFE_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15649652789124,
+                    33.21056402431624
+                ]
+            },
+            "properties": {
+                "entrance_name": "Santa_Fe_North_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "SFE_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15658439215929,
+                    33.208401196141224
+                ]
+            },
+            "properties": {
+                "entrance_name": "Risk_Management_North_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "WGHT_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15655026625195,
+                    33.20813799268896
+                ]
+            },
+            "properties": {
+                "entrance_name": "Track_And_Field_North_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "ATH2_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15645830312819,
+                    33.207630934337004
+                ]
+            },
+            "properties": {
+                "entrance_name": "Air_Force_ROTC_East_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "ATH1_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15565935190449,
+                    33.20648814364701
+                ]
+            },
+            "properties": {
+                "entrance_name": "Performing_Arts_East_Entrance",
+                "entrance_accessible": "true",
+                "entrance_id": "PACX_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1554139029311,
+                    33.20644419495541
+                ]
+            },
+            "properties": {
+                "entrance_name": "Murchison_Arts_West_Entrance",
+                "entrance_accessible": "true",
+                "entrance_id": "PAC_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15500891212453,
+                    33.206615882299175
+                ]
+            },
+            "properties": {
+                "entrance_name": "Murchison_Arts_North_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "PAC_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15293130397808,
+                    33.20627983041609
+                ]
+            },
+            "properties": {
+                "entrance_name": "Mozart_West_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "MOZA_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15170462531161,
+                    33.20624121462866
+                ]
+            },
+            "properties": {
+                "entrance_name": "Sullivant_North_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "POLI_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15146576861876,
+                    33.20504072892146
+                ]
+            },
+            "properties": {
+                "entrance_name": "Support_South_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "SSB_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15113118829096,
+                    33.21404594364162
+                ]
+            },
+            "properties": {
+                "entrance_name": "Enviromental_East_Entrance",
+                "entrance_accessible": "true",
+                "entrance_id": "ENVSCI_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15173578772516,
+                    33.214104590096724
+                ]
+            },
+            "properties": {
+                "entrance_name": "Enviromental_West_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "ENVSCI_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1513907992727,
+                    33.21385175204135
+                ]
+            },
+            "properties": {
+                "entrance_name": "Enviromental_South_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "ENVSCI_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15864611017966,
+                    33.209843975371655
+                ]
+            },
+            "properties": {
+                "entrance_name": "University_Services_East_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "USB_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14307003720359,
+                    33.213378595357284
+                ]
+            },
+            "properties": {
+                "entrance_name": "Arts_Annex_North_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "ARTX_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14308094129319,
+                    33.21277109738732
+                ]
+            },
+            "properties": {
+                "entrance_name": "Arts_Annex_South_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "ARTX_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14323312530163,
+                    33.21308269731844
+                ]
+            },
+            "properties": {
+                "entrance_name": "Arts_Annex_West_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "ARTX_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14217121358077,
+                    33.21339730878577
+                ]
+            },
+            "properties": {
+                "entrance_name": "Physics_Machine_Shop_North_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "PHYSM_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14196248815246,
+                    33.21243101409104
+                ]
+            },
+            "properties": {
+                "entrance_name": "Speech_North_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "SPHS_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14157636236476,
+                    33.212304165798756
+                ]
+            },
+            "properties": {
+                "entrance_name": "Dance_Theatre_East_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "DATH_E1"
+            },
+            "id": 242
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14157338614797,
+                    33.21210391330935
+                ]
+            },
+            "properties": {
+                "entrance_name": "Dance_Theatre_East_Entrance_2",
+                "entrance_accessible": "false",
+                "entrance_id": "DATH_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14174994609576,
+                    33.211985771027685
+                ]
+            },
+            "properties": {
+                "entrance_name": "Dance_Theatre_West_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "DATH_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14196820993207,
+                    33.212020300989565
+                ]
+            },
+            "properties": {
+                "entrance_name": "Speech_South_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "SPHS_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14164076150789,
+                    33.209967443286644
+                ]
+            },
+            "properties": {
+                "entrance_name": "Pi_Beta_Phi_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "PBP_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14184062027886,
+                    33.2102526576341
+                ]
+            },
+            "properties": {
+                "entrance_name": "Alpha_Phi_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "APE_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14210484509805,
+                    33.21023768673851
+                ]
+            },
+            "properties": {
+                "entrance_name": "Alpha_Delta_Pi_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "ADP_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1423828781376,
+                    33.21024636029482
+                ]
+            },
+            "properties": {
+                "entrance_name": "Zeta_Tau_Alpha_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "ZTA_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14261282228829,
+                    33.20997712815924
+                ]
+            },
+            "properties": {
+                "entrance_name": "Kappa_Kappa_Gamma_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "KKG_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14262347299253,
+                    33.20971351943227
+                ]
+            },
+            "properties": {
+                "entrance_name": "Delta_Gamma_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "DG_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14239980702092,
+                    33.209419125585256
+                ]
+            },
+            "properties": {
+                "entrance_name": "Kappa_Delta_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "KD_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1425195529425,
+                    33.2079447389613
+                ]
+            },
+            "properties": {
+                "entrance_name": "Phi_kappa_Sigma_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "PKS_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14284908663643,
+                    33.20792235860327
+                ]
+            },
+            "properties": {
+                "entrance_name": "Delta_Sigma_Phi_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "DSP_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1431422282223,
+                    33.207955354471935
+                ]
+            },
+            "properties": {
+                "entrance_name": "Sigma_Nu_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "SN_E1"
+            },
+            "id": 255
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1434529063673,
+                    33.207937802045436
+                ]
+            },
+            "properties": {
+                "entrance_name": "Kappa_Sigma_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "KS_E1"
+            },
+            "id": 256
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14375936966591,
+                    33.2079515007004
+                ]
+            },
+            "properties": {
+                "entrance_name": "Theta_Chi_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "TC_E1"
+            },
+            "id": 257
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14419649767761,
+                    33.20795462873447
+                ]
+            },
+            "properties": {
+                "entrance_name": "Sigma_Phi_Epsilon_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "SPE_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14414296419467,
+                    33.207255022917536
+                ]
+            },
+            "properties": {
+                "entrance_name": "Sigma_Chi_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "SC_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14419202866029,
+                    33.20698613196306
+                ]
+            },
+            "properties": {
+                "entrance_name": "Alpha_Tau_Omega_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "ATO_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14602278020843,
+                    33.21078558237012
+                ]
+            },
+            "properties": {
+                "entrance_name": "Baptist_Student_Ministry_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "BSM_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14847583596088,
+                    33.211286723170446
+                ]
+            },
+            "properties": {
+                "entrance_name": "Hurley_North_Entrance_2",
+                "entrance_accessible": "false",
+                "entrance_id": "HURLEY_E3"
+            },
+            "id": 262
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1489270303387,
+                    33.20803547717733
+                ]
+            },
+            "properties": {
+                "entrance_name": "Methodist_Student_North_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "MSC_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1602080789157,
+                    33.19931823960424
+                ]
+            },
+            "properties": {
+                "entrance_name": "Waranch_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "TENN_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.16175767413586,
+                    33.19904666025273
+                ]
+            },
+            "properties": {
+                "entrance_name": "Building_C_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "BUILDC_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.16275034614462,
+                    33.19903382870707
+                ]
+            },
+            "properties": {
+                "entrance_name": "Mean_Green_Olympic_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "MGOSC_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.16220587543287,
+                    33.199188285013946
+                ]
+            },
+            "properties": {
+                "entrance_name": "Ernie_Kuehne_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "EKBPF_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.16207660329603,
+                    33.1996736970239
+                ]
+            },
+            "properties": {
+                "entrance_name": "Building_B_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "BUILDB_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.16301658045278,
+                    33.19958039162489
+                ]
+            },
+            "properties": {
+                "entrance_name": "Student_Athtlete_Academic_Entrance",
+                "entrance_accessible": "false",
+                "entrance_id": "SAAC_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15953408071012,
+                    33.19673506739777
+                ]
+            },
+            "properties": {
+                "entrance_name": "Track_Soccer_Complex_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "TSC_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.16190468523715,
+                    33.20114840803731
+                ]
+            },
+            "properties": {
+                "entrance_name": "Building_P_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "BUILDP_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15949958430349,
+                    33.20236491385792
+                ]
+            },
+            "properties": {
+                "entrance_name": "Lovelace_McNatt_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "LMNF_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15884046857806,
+                    33.20271252255603
+                ]
+            },
+            "properties": {
+                "entrance_name": "Athletic_Center_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "ATHC_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15926344717604,
+                    33.20272223808375
+                ]
+            },
+            "properties": {
+                "entrance_name": "Athletic_Center_Entrance_2",
+                "entrance_accessible": "false",
+                "entrance_id": "ATHC_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15843011856697,
+                    33.202182634438515
+                ]
+            },
+            "properties": {
+                "entrance_name": "Victory_Hall_West_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "VICT_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1577041410485,
+                    33.202178042918035
+                ]
+            },
+            "properties": {
+                "entrance_name": "Victory_Hall_East_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "VICT_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15802527122874,
+                    33.20384520698633
+                ]
+            },
+            "properties": {
+                "entrance_name": "DATCU_East_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "DATCU_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.16014368590967,
+                    33.204157334239014
+                ]
+            },
+            "properties": {
+                "entrance_name": "DATCU_West_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "DATCU_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15984270109846,
+                    33.203000686172714
+                ]
+            },
+            "properties": {
+                "entrance_name": "DATCU_South_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "DATCU_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15835578340253,
+                    33.20545268480474
+                ]
+            },
+            "properties": {
+                "entrance_name": "Alumni_Pavilion_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "ALUMP_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1537698042288,
+                    33.209004745805615
+                ]
+            },
+            "properties": {
+                "entrance_name": "Coliseum_North_Entrance_1",
+                "entrance_accessible": "true",
+                "entrance_id": "COL_E1"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.1536348049789,
+                    33.20835815443223
+                ]
+            },
+            "properties": {
+                "entrance_name": "Coliseum_East_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "COL_E2"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15483164245022,
+                    33.208363776423965
+                ]
+            },
+            "properties": {
+                "entrance_name": "Coliseum_West_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "COL_E3"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.15482323032927,
+                    33.20899231746107
+                ]
+            },
+            "properties": {
+                "entrance_name": "Coliseum_West_Entrance_2",
+                "entrance_accessible": "false",
+                "entrance_id": "COL_E4"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    -97.14511222353558,
+                    33.215932908475665
+                ]
+            },
+            "properties": {
+                "entrance_name": "Oak_Annex_West_Entrance_1",
+                "entrance_accessible": "false",
+                "entrance_id": "OAKX_E1"
+            }
+        }
+    ]
 }
