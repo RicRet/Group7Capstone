@@ -30,3 +30,11 @@ CREATE TABLE parking_lots (
     description VARCHAR(60),
     location GEOGRAPHY(POLYGON, 4326)
 );
+-- Entrances table
+CREATE TABLE IF NOT EXISTS entrances (
+    entrance_pk SERIAL PRIMARY KEY,
+    entrance_id VARCHAR(60) UNIQUE,
+    entrance_name VARCHAR(120),
+    entrance_accessible BOOLEAN DEFAULT false,
+    location GEOGRAPHY(POINT, 4326)
+);
