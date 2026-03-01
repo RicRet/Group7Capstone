@@ -60,3 +60,36 @@ export async function parkingLotsByBbox([minLon, minLat, maxLon, maxLat]) {
   await jsonSet(k, fc, TTL.gis);
   return fc;
 }
+export async function entrancesByBbox([minLon, minLat, maxLon, maxLat]) {
+  const norm = normalizeBbox([minLon, minLat, maxLon, maxLat]);
+  const k = keys.gis.entrancesBbox(hashBbox(norm));
+  const cached = await jsonGet(k);
+  if (cached) return cached;
+
+  const rows = await query(
+    `SELECT entrance_id,
+            entrance_name,
+            entrance_accessible,
+            ST_AsGeoJSON(location::geometry)::json AS geometry
+       FROM gis.entrances
+      WHERE ST_Intersects(
+        location::geometry,
+        ST_MakeEnvelope($1,$2,$3,$4,4326)
+      )`,
+    norm
+  );
+
+  const features = rows.map(r => ({
+    type: 'Feature',
+    geometry: r.geometry,
+    properties: {
+      entrance_id: r.entrance_id,
+      entrance_name: r.entrance_name,
+      entrance_accessible: r.entrance_accessible
+    }
+  }));
+
+  const fc = { type: 'FeatureCollection', features };
+  await jsonSet(k, fc, TTL.gis);
+  return fc;
+}

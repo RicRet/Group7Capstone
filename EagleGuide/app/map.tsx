@@ -2,6 +2,7 @@ import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
+    Image,
     Keyboard,
     KeyboardAvoidingView,
     Platform,
@@ -15,12 +16,17 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import MapView, { Marker, Polygon, Region } from 'react-native-maps';
 import Addroute from './addroute';
 import Homepage from './homepage';
+import { EntranceFeature, fetchEntrances } from "./lib/api/entrances";
 import { fetchParkingLots, ParkingLotFeature } from './lib/api/parkingLots';
-  
+
+const entranceIcon = require("../assets/images/Entrance_Icon.png");
+const accessibleEntranceIcon = require("../assets/images/Accessible_Entrance_Icon.png");
+
 const MapScreen = () => {
     const [showMenu, setShowMenu] = useState(false);
     const [currentSheet, setCurrentSheet] = useState('home');
     const [parkingLots, setParkingLots] = useState<ParkingLotFeature[]>([]);
+    const [entrances, setEntrances] = useState<EntranceFeature[]>([]);
     const requestSeq = useRef(0);
 
     const router = useRouter();
@@ -83,7 +89,27 @@ const MapScreen = () => {
             cancelled = true;
         };
     }, [bbox]);
+    useEffect(() => {
+    const seq = ++requestSeq.current;
+    let cancelled = false;
 
+    async function loadEntrances() {
+        try {
+            console.log("BBOX:", bbox);
+            console.log("REGION:", region);
+        const data = await fetchEntrances(bbox);
+        if (!cancelled && seq === requestSeq.current) {
+            setEntrances(data.features || []);
+        }
+        } catch {
+        // keep last successful
+        }
+    }
+
+    loadEntrances();
+    return () => { cancelled = true; };
+    }, [bbox]);
+console.log("Entrances:", entrances.length);
     const toPolygon = (feature: ParkingLotFeature) => {
         const coords = feature.geometry?.coordinates?.[0] || [];
         return coords.map(([lon, lat]) => ({ latitude: lat, longitude: lon }));
@@ -157,6 +183,25 @@ const MapScreen = () => {
                                                     tappable
                                                 />
                                             );
+                                        })}
+                                        {entrances.map((e) => {
+                                            const [lon, lat] = e.geometry.coordinates;
+                                            const icon = e.properties.entrance_accessible
+                                            ? accessibleEntranceIcon
+                                            : entranceIcon;
+
+                                        return (
+                                        <Marker
+                                        key={e.properties.entrance_id}
+                                        coordinate={{ latitude: lat, longitude: lon }}
+                                        title={e.properties.entrance_name}
+                                        description={e.properties.entrance_accessible ? "Accessible entrance" : "Entrance"}
+                                        tracksViewChanges={false}
+                                        anchor={{ x: 0.5, y: 0.5 }}
+                                        >
+                                        <Image source={icon} style={{ width: 26, height: 26 }} />
+                                        </Marker>
+                                        );
                                         })}
                     </MapView>
 
