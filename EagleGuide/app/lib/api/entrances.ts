@@ -1,30 +1,22 @@
-import { http } from "../http";
-import type { Bbox } from "./parkingLots";
+import axios from "axios";
 
-export type EntranceFeature = {
-  type: "Feature";
-  geometry: {
-    type: "Point";
-    coordinates: [number, number]; // [lon, lat]
-  };
-  properties: {
-    entrance_id: string;
-    entrance_name: string;
-    entrance_accessible: boolean;
-  };
-};
+const entrancesBase =
+  process.env.EXPO_PUBLIC_ENTRANCES_API_BASE_URL ??
+  process.env.EXPO_PUBLIC_API_BASE_URL;
 
-export type EntranceFeatureCollection = {
-  type: "FeatureCollection";
-  features: EntranceFeature[];
-};
-
-export async function fetchEntrances(bbox: Bbox): Promise<EntranceFeatureCollection> {
-  try {
-    const resp = await http.get("/gis/entrances", { params: bbox });
-    return resp.data;
-  } catch (err: any) {
-    console.log("ENTRANCES ERROR:", err?.response?.status, err?.response?.data);
-    throw err;
-  }
+const entrancesHttp = axios.create({
+  baseURL: `${entrancesBase}/v1`,
+  // IMPORTANT: since we removed requireSession locally for entrances,
+  // we do NOT need cookies:
+  withCredentials: false,
+});
+console.log("ENTRANCES BASE:", entrancesBase);
+export async function fetchEntrances(params: {
+  minLon: number;
+  minLat: number;
+  maxLon: number;
+  maxLat: number;
+}) {
+  const res = await entrancesHttp.get("/gis/entrances", { params });
+  return res.data;
 }

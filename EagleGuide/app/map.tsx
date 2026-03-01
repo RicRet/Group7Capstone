@@ -1,5 +1,6 @@
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useRouter } from 'expo-router';
+import type { Feature, Point } from "geojson";
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
     Image,
@@ -16,7 +17,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import MapView, { Marker, Polygon, Region } from 'react-native-maps';
 import Addroute from './addroute';
 import Homepage from './homepage';
-import { EntranceFeature, fetchEntrances } from "./lib/api/entrances";
+import { fetchEntrances } from "./lib/api/entrances";
 import { fetchParkingLots, ParkingLotFeature } from './lib/api/parkingLots';
 
 const entranceIcon = require("../assets/images/Entrance_Icon.png");
@@ -26,8 +27,9 @@ const MapScreen = () => {
     const [showMenu, setShowMenu] = useState(false);
     const [currentSheet, setCurrentSheet] = useState('home');
     const [parkingLots, setParkingLots] = useState<ParkingLotFeature[]>([]);
-    const [entrances, setEntrances] = useState<EntranceFeature[]>([]);
-    const requestSeq = useRef(0);
+    const [entrances, setEntrances] = useState<Feature<Point>[]>([]);
+    const parkingReqSeq = useRef(0);
+    const entrancesReqSeq = useRef(0);
 
     const router = useRouter();
 
@@ -70,13 +72,13 @@ const MapScreen = () => {
     }, [region]);
 
     useEffect(() => {
-        const seq = ++requestSeq.current; // prevent stale responses from overriding newer ones
+        const seq = ++parkingReqSeq.current; // prevent stale responses from overriding newer ones
         let cancelled = false;
 
         async function loadLots() {
             try {
                 const data = await fetchParkingLots(bbox);
-                if (!cancelled && seq === requestSeq.current) {
+                if (!cancelled && seq === parkingReqSeq.current) {
                     setParkingLots(data.features || []);
                 }
             } catch {
@@ -89,26 +91,24 @@ const MapScreen = () => {
             cancelled = true;
         };
     }, [bbox]);
-    useEffect(() => {
-    const seq = ++requestSeq.current;
-    let cancelled = false;
+ useEffect(() => {
+  const seq = ++entrancesReqSeq.current;
+  let cancelled = false;
 
-    async function loadEntrances() {
-        try {
-            console.log("BBOX:", bbox);
-            console.log("REGION:", region);
-        const data = await fetchEntrances(bbox);
-        if (!cancelled && seq === requestSeq.current) {
-            setEntrances(data.features || []);
-        }
-        } catch {
-        // keep last successful
-        }
+  async function loadEntrances() {
+    try {
+      const data = await fetchEntrances(bbox);
+      if (!cancelled && seq === entrancesReqSeq.current) {
+        setEntrances(data.features || []);
+      }
+    } catch (err) {
+      console.log("Entrances load error:", err);
     }
+  }
 
-    loadEntrances();
-    return () => { cancelled = true; };
-    }, [bbox]);
+  loadEntrances();
+  return () => { cancelled = true; };
+}, [bbox]);
 console.log("Entrances:", entrances.length);
     const toPolygon = (feature: ParkingLotFeature) => {
         const coords = feature.geometry?.coordinates?.[0] || [];
