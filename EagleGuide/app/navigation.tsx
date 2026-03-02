@@ -12,7 +12,7 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
-import MapView, { Marker, Polyline, PROVIDER_GOOGLE, Region } from "react-native-maps";
+import MapView, { Marker, Polyline, PROVIDER_GOOGLE, Region, Polygon } from "react-native-maps";
 import Addroute from "./addroute";
 import Editroute from "./editroute";
 import { SavedRoute } from "./lib/api/addroutev2";
@@ -23,11 +23,16 @@ import {
   type Profile,
   type RouteStep
 } from "./lib/api/directions";
-import { searchLocation, type GeocodeResult } from "./lib/api/geocoding";
+import { searchBuildings, type Building } from './lib/api/navbuildings';
 import { useTheme } from "./Theme";
 
 
-
+type BuildingSearchResult = {
+  id: string;
+  label: string;
+  feature?: any; // optional now
+  coordinates: { latitude: number; longitude: number };
+};
 
 const formatDuration = (seconds: number) => {
   const min = Math.floor(seconds / 60);
@@ -44,7 +49,7 @@ const formatDistance = (meters: number) => {
 
 export default function NavigationScreen() {
   const [showAddRoute, setShowAddRoute] = useState(false);
-const [editingRoute, setEditingRoute] = useState<SavedRoute | null>(null);
+  const [editingRoute, setEditingRoute] = useState<SavedRoute | null>(null);
 
   const router = useRouter();
   const { theme, isDark } = useTheme();
@@ -53,16 +58,16 @@ const [editingRoute, setEditingRoute] = useState<SavedRoute | null>(null);
   const [origin, setOrigin] = useState<Coordinates | null>(null);
   const [destination, setDestination] = useState<Coordinates | null>(null);
   const [routeCoords, setRouteCoords] = useState<Coordinates[] | null>(null);
-  
+
   const [steps, setSteps] = useState<RouteStep[]>([]);
-  const [summary, setSummary] = useState<{distance: number, duration: number} | null>(null);
-  
+  const [summary, setSummary] = useState<{ distance: number, duration: number } | null>(null);
+
   const [profile, setProfile] = useState<Profile>("foot-walking");
   const [loading, setLoading] = useState(false);
   const [orsKeyStatus, setOrsKeyStatus] = useState<string>("unknown");
   const [snappedPins, setSnappedPins] = useState<{ origin?: Coordinates; destination?: Coordinates }>({});
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<GeocodeResult[]>([]);
+  const [searchResults, setSearchResults] = useState<BuildingSearchResult[]>([]);
   const [searching, setSearching] = useState(false);
 
   const initialRegion: Region = useMemo(
@@ -138,9 +143,9 @@ const [editingRoute, setEditingRoute] = useState<SavedRoute | null>(null);
       const snappedOrigin = await snapToRoad(origin, profile);
       const snappedDestination = await snapToRoad(destination, profile);
       setSnappedPins({ origin: snappedOrigin, destination: snappedDestination });
-      
+
       const routeData = await getRouteFromORS(snappedOrigin, snappedDestination, profile);
-      
+
       if (!routeData || routeData.coordinates.length < 2) {
         Alert.alert("No route returned", "Using straight line between pins.");
         drawStraightLine();
@@ -167,23 +172,42 @@ const [editingRoute, setEditingRoute] = useState<SavedRoute | null>(null);
     }
   };
 
+  function getPolygonCenter(coordinates: number[][][]) {
+    const points = coordinates[0]; // first ring of polygon
+    let sumLat = 0;
+    let sumLng = 0;
+
+    for (const [lng, lat] of points) {
+      sumLat += lat;
+      sumLng += lng;
+    }
+
+    return {
+      latitude: sumLat / points.length,
+      longitude: sumLng / points.length,
+    };
+  }
+
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
     setSearching(true);
     try {
-      const results = await searchLocation(searchQuery);
-      setSearchResults(results);
-    } catch {
-      Alert.alert("Search failed", "Unable to find locations.");
+      const results: Building[] = await searchBuildings(searchQuery);
+      setSearchResults(
+        results.map((b: Building) => ({
+          id: b.name,
+          label: b.name,
+          coordinates: { latitude: b.lat, longitude: b.lon },
+        }))
+      );
     } finally {
       setSearching(false);
     }
   };
 
-  const selectSearchResult = (result: GeocodeResult) => {
+
+  const selectSearchResult = (result: BuildingSearchResult) => {
     setDestination(result.coordinates);
-    setSearchResults([]);
-    setSearchQuery(result.label);
     mapRef.current?.animateCamera({ center: result.coordinates, zoom: 16 });
   };
 
@@ -214,6 +238,14 @@ const [editingRoute, setEditingRoute] = useState<SavedRoute | null>(null);
         {!routeCoords && origin && destination && (
           <Polyline coordinates={[origin, destination]} strokeColor={theme.border} strokeWidth={2} />
         )}
+
+        {searchResults.length > 0 && searchResults.map((b, i) => (
+          <Marker
+            key={b.id}
+            coordinate={b.coordinates}
+            title={b.label}
+          />
+        ))}
       </MapView>
 
       <View style={[styles.controls, { backgroundColor: theme.header, maxHeight: '60%' }]}>
@@ -230,19 +262,19 @@ const [editingRoute, setEditingRoute] = useState<SavedRoute | null>(null);
         {searching && <ActivityIndicator style={{ marginTop: 6 }} />}
 
         {searchResults.length > 0 && (
-           <View style={{maxHeight: 200}}>
+          <View style={{ maxHeight: 200 }}>
             <FlatList
-                data={searchResults}
-                keyExtractor={(item) => item.id}
-                style={styles.searchResults}
-                renderItem={({ item }) => (
+              data={searchResults}
+              keyExtractor={(item) => item.id}
+              style={styles.searchResults}
+              renderItem={({ item }) => (
                 <TouchableOpacity
-                    style={[styles.searchItem, { borderBottomColor: theme.border }]}
-                    onPress={() => selectSearchResult(item)}
+                  style={[styles.searchItem, { borderBottomColor: theme.border }]}
+                  onPress={() => selectSearchResult(item)}
                 >
-                    <Text style={[styles.searchText, { color: theme.text }]}>{item.label}</Text>
+                  <Text style={[styles.searchText, { color: theme.text }]}>{item.label}</Text>
                 </TouchableOpacity>
-                )}
+              )}
             />
           </View>
         )}
@@ -281,27 +313,27 @@ const [editingRoute, setEditingRoute] = useState<SavedRoute | null>(null);
         </View>
 
         <View style={styles.row}>
-            <TouchableOpacity style={[styles.button, { backgroundColor: theme.button, flex: 1, marginRight: 5 }]} onPress={fetchRoute} disabled={loading}>
+          <TouchableOpacity style={[styles.button, { backgroundColor: theme.button, flex: 1, marginRight: 5 }]} onPress={fetchRoute} disabled={loading}>
             {loading ? <ActivityIndicator color="#fff" /> : <Text style={[styles.buttonText, { color: "#fff" }]}>Find Route</Text>}
-            </TouchableOpacity>
-            <TouchableOpacity
-             style={[styles.button, { backgroundColor: theme.button }]}
-             onPress={() => setShowAddRoute(true)}
-         >
-           <Text style={[styles.buttonText, { color: theme.text }]}> View Route</Text>
-           </TouchableOpacity>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: theme.button }]}
+            onPress={() => setShowAddRoute(true)}
+          >
+            <Text style={[styles.buttonText, { color: theme.text }]}> View Route</Text>
+          </TouchableOpacity>
 
-            <TouchableOpacity style={[styles.button, { backgroundColor: theme.button }]} onPress={() => router.back()}>
-                <Text style={[styles.buttonText, { color: theme.text }]}>Back</Text>
-            </TouchableOpacity>
+          <TouchableOpacity style={[styles.button, { backgroundColor: theme.button }]} onPress={() => router.back()}>
+            <Text style={[styles.buttonText, { color: theme.text }]}>Back</Text>
+          </TouchableOpacity>
         </View>
-        
+
         {summary && (
-             <View style={{marginTop: 10, marginBottom: 10}}>
-                 <Text style={{color: theme.text, fontWeight: 'bold'}}>
-                     Total: {formatDistance(summary.distance)} • {formatDuration(summary.duration)}
-                 </Text>
-             </View>
+          <View style={{ marginTop: 10, marginBottom: 10 }}>
+            <Text style={{ color: theme.text, fontWeight: 'bold' }}>
+              Total: {formatDistance(summary.distance)} • {formatDuration(summary.duration)}
+            </Text>
+          </View>
         )}
 
         {steps.length > 0 && (
@@ -311,48 +343,48 @@ const [editingRoute, setEditingRoute] = useState<SavedRoute | null>(null);
             style={[styles.stepsList, { backgroundColor: theme.box }]}
             renderItem={({ item, index }) => (
               <View style={[styles.stepItem, { borderBottomColor: theme.border }]}>
-                 <View style={{flex: 1}}>
-                    <Text style={[styles.stepText, { color: theme.text }]}>
-                      {index + 1}. {item.instruction}
-                    </Text>
-                    <Text style={[styles.stepSubText, { color: theme.lighttext }]}>
-                        {formatDistance(item.distance)}
-                    </Text>
-                 </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.stepText, { color: theme.text }]}>
+                    {index + 1}. {item.instruction}
+                  </Text>
+                  <Text style={[styles.stepSubText, { color: theme.lighttext }]}>
+                    {formatDistance(item.distance)}
+                  </Text>
+                </View>
               </View>
             )}
           />
         )}
-        
+
       </View>
       {/*addroute and editroute overlay */}
-{showAddRoute && !editingRoute && (
-  <View style={styles.overlay}>
-    <Addroute
-      onClose={() => setShowAddRoute(false)}
-      onEdit={(route) => setEditingRoute(route)}
-      onNavigate={(data) => {
-        setOrigin({
-          latitude: data.originLat,
-          longitude: data.originLon,
-        });
-        setDestination({
-          latitude: data.destLat,
-          longitude: data.destLon,
-        });
-        setShowAddRoute(false);
-      }}
-    />
-  </View>
-)}
-{editingRoute && (
-  <View style={styles.overlay}>
-    <Editroute
-      route={editingRoute}
-      onClose={() => setEditingRoute(null)}
-    />
-  </View>
-)}
+      {showAddRoute && !editingRoute && (
+        <View style={styles.overlay}>
+          <Addroute
+            onClose={() => setShowAddRoute(false)}
+            onEdit={(route) => setEditingRoute(route)}
+            onNavigate={(data) => {
+              setOrigin({
+                latitude: data.originLat,
+                longitude: data.originLon,
+              });
+              setDestination({
+                latitude: data.destLat,
+                longitude: data.destLon,
+              });
+              setShowAddRoute(false);
+            }}
+          />
+        </View>
+      )}
+      {editingRoute && (
+        <View style={styles.overlay}>
+          <Editroute
+            route={editingRoute}
+            onClose={() => setEditingRoute(null)}
+          />
+        </View>
+      )}
 
     </View>
   );
@@ -366,7 +398,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: 16,
-    paddingBottom: 30, 
+    paddingBottom: 30,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     shadowColor: "#000",
@@ -410,37 +442,37 @@ const styles = StyleSheet.create({
   },
   buttonText: { fontWeight: "600" },
   hint: { fontSize: 12, marginTop: 4 },
-  
+
   stepsList: {
-      marginTop: 5,
-      borderRadius: 8,
-      flexGrow: 0,
+    marginTop: 5,
+    borderRadius: 8,
+    flexGrow: 0,
   },
   stepItem: {
-      flexDirection: 'row',
-      padding: 12,
-      borderBottomWidth: 1,
-      alignItems: 'flex-start' // Aligns text to top
+    flexDirection: 'row',
+    padding: 12,
+    borderBottomWidth: 1,
+    alignItems: 'flex-start' // Aligns text to top
   },
   stepText: {
-      fontSize: 14,
-      fontWeight: '500',
-      marginBottom: 4
+    fontSize: 14,
+    fontWeight: '500',
+    marginBottom: 4
   },
   stepSubText: {
-      fontSize: 12,
+    fontSize: 12,
   },
   overlay: {
-  position: "absolute",
-  left: 0,
-  right: 0,
-  bottom: 0,
-  height: "90%",
-  backgroundColor: "#3f3f3f",
-  borderTopLeftRadius: 18,
-  borderTopRightRadius: 18,
-  overflow: "hidden",
-  zIndex: 100,
-},
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: "90%",
+    backgroundColor: "#3f3f3f",
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
+    overflow: "hidden",
+    zIndex: 100,
+  },
 
 });
