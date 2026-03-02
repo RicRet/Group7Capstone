@@ -1,16 +1,11 @@
-import { http } from '../http';
+import { http } from "../http";
 
-export type Bbox = {
-  minLon: number;
-  minLat: number;
-  maxLon: number;
-  maxLat: number;
-};
+export type Bbox = { minLon: number; minLat: number; maxLon: number; maxLat: number };
 
 export type BuildingFeature = {
-  type: 'Feature';
+  type: "Feature";
   geometry: {
-    type: 'Polygon';
+    type: "Polygon";
     coordinates: number[][][];
   };
   properties: {
@@ -23,12 +18,14 @@ export type BuildingFeature = {
 };
 
 export type BuildingFeatureCollection = {
-  type: 'FeatureCollection';
+  type: "FeatureCollection";
   features: BuildingFeature[];
 };
 
-export async function fetchBuildings(bbox: Bbox): Promise<BuildingFeatureCollection> {
-  const resp = await http.get<BuildingFeatureCollection>('/gis/buildings', {
+export async function fetchBuildings(
+  bbox: Bbox
+): Promise<BuildingFeatureCollection> {
+  const resp = await http.get<BuildingFeatureCollection>("/gis/buildings", {
     params: bbox,
   });
   return resp.data;
