@@ -17,11 +17,15 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import MapView, { Marker, Polygon, Region } from 'react-native-maps';
 import Addroute from './addroute';
 import Homepage from './homepage';
+import { fetchBicycleParking } from "./lib/api/bicycleParking";
 import { BuildingFeature, fetchBuildings } from "./lib/api/buildings";
+import { fetchEmergencyPhones } from "./lib/api/emergencyPhones";
 import { fetchEntrances } from "./lib/api/entrances";
 import { fetchParkingLots, ParkingLotFeature } from './lib/api/parkingLots';
 const entranceIcon = require("../assets/images/Entrance_Icon.png");
 const accessibleEntranceIcon = require("../assets/images/Accessible_Entrance_Icon.png");
+const bicycleIcon = require("../assets/images/Bicycle_Icon.png");
+const emergencyPhoneIcon = require("../assets/images/Emergency_Phone_Icon.png");
 
 const MapScreen = () => {
     const [showMenu, setShowMenu] = useState(false);
@@ -29,6 +33,10 @@ const MapScreen = () => {
     const [parkingLots, setParkingLots] = useState<ParkingLotFeature[]>([]);
     const [entrances, setEntrances] = useState<Feature<Point>[]>([]);
     const [buildings, setBuildings] = useState<BuildingFeature[]>([]);
+    const [bicycleParking, setBicycleParking] = useState<Feature<Point>[]>([]);
+    const [emergencyPhones, setEmergencyPhones] = useState<Feature<Point>[]>([]);
+    const bicycleReqSeq = useRef(0);
+    const emergencyReqSeq = useRef(0);
     const parkingReqSeq = useRef(0);
     const buildingsReqSeq = useRef(0);
     const entrancesReqSeq = useRef(0);
@@ -127,8 +135,44 @@ const MapScreen = () => {
             //used for debugging
         }
     }
-
     loadEntrances();
+    return () => { cancelled = true; };
+    }, [bbox]);
+    useEffect(() => {
+    const seq = ++bicycleReqSeq.current;
+    let cancelled = false;
+
+    async function loadBicycleParking() {
+    try {
+        const data = await fetchBicycleParking(bbox);
+        if (!cancelled && seq === bicycleReqSeq.current) {
+            setBicycleParking(data.features || []);
+        }
+        } catch {
+        // keep last successful render
+        }
+    }
+
+    loadBicycleParking();
+    return () => { cancelled = true; };
+    }, [bbox]);
+
+    useEffect(() => {
+    const seq = ++emergencyReqSeq.current;
+    let cancelled = false;
+
+    async function loadEmergencyPhones() {
+        try {
+        const data = await fetchEmergencyPhones(bbox);
+        if (!cancelled && seq === emergencyReqSeq.current) {
+            setEmergencyPhones(data.features || []);
+        }
+        } catch {
+        // keep last successful render
+        }
+    }
+
+    loadEmergencyPhones();
     return () => { cancelled = true; };
     }, [bbox]);
 
@@ -234,18 +278,18 @@ const fillColor = (fill?: string | null) => {
                                             );
                                         })}
                                         {buildings.map((b) => {
-                                        const coords = toBuildingPolygon(b);
-                                        if (!coords.length) return null;
-                                        return (
-                                        <Polygon
-                                        key={`bldg-${b.properties.building_id}`}
-                                        coordinates={coords}
-                                        strokeColor="#222"
-                                        strokeWidth={1}
-                                        fillColor={fillColor(b.properties.fill)}
-                                        tappable
-                                        />
-                                        );
+                                            const coords = toBuildingPolygon(b);
+                                            if (!coords.length) return null;
+                                            return (
+                                                <Polygon
+                                                    key={`bldg-${b.properties.building_id}`}
+                                                    coordinates={coords}
+                                                    strokeColor="#222"
+                                                    strokeWidth={1}
+                                                    fillColor={fillColor(b.properties.fill)}
+                                                    tappable
+                                                />
+                                            );
                                         })}
                                         {entrances.map((e) => {
                                             const [lon, lat] = e.geometry.coordinates;
@@ -253,19 +297,48 @@ const fillColor = (fill?: string | null) => {
                                             ? accessibleEntranceIcon
                                             : entranceIcon;
 
-                                        return (
-                                        <Marker
-                                        key={e.properties.entrance_id}
-                                        coordinate={{ latitude: lat, longitude: lon }}
-                                        title={e.properties.entrance_name}
-                                        description={e.properties.entrance_accessible ? "Accessible entrance" : "Entrance"}
-                                        tracksViewChanges={false}
-                                        anchor={{ x: 0.5, y: 0.5 }}
-                                        >
-                                        <Image source={icon} style={{ width: 26, height: 26 }} />
-                                        </Marker>
-                                        );
+                                                return (
+                                                <Marker
+                                                key={e.properties.entrance_id}
+                                                coordinate={{ latitude: lat, longitude: lon }}
+                                                title={e.properties.entrance_name}
+                                                description={e.properties.entrance_accessible ? "Accessible entrance" : "Entrance"}
+                                                tracksViewChanges={false}
+                                                anchor={{ x: 0.5, y: 0.5 }}
+                                                >
+                                                <Image source={icon} style={{ width: 26, height: 26 }} />
+                                                </Marker>
+                                                );
+                                                })}
+                                        {bicycleParking.map((b) => {
+                                            const [lon, lat] = b.geometry.coordinates;
+                                            return (
+                                                <Marker
+                                            key={`bike-${b.properties.fid ?? b.properties.bicycle_pk}`}
+                                            coordinate={{ latitude: lat, longitude: lon }}
+                                            title="Bicycle Parking"
+                                            tracksViewChanges={false}
+                                            anchor={{ x: 0.5, y: 0.5 }}
+                                            >
+                                            <Image source={bicycleIcon} style={{ width: 24, height: 24 }} />
+                                            </Marker>
+                                            );
                                         })}
+
+                                        {emergencyPhones.map((p) => {
+                                            const [lon, lat] = p.geometry.coordinates;
+                                            return (
+                                            <Marker
+                                            key={`phone-${p.properties.objectid ?? p.properties.phone_pk}`}
+                                            coordinate={{ latitude: lat, longitude: lon }}
+                                            title="Emergency Phone"
+                                            tracksViewChanges={false}
+                                            anchor={{ x: 0.5, y: 0.5 }}
+                                            >
+                                            <Image source={emergencyPhoneIcon} style={{ width: 24, height: 24 }} />
+                                            </Marker>
+                                        );
+                                    })}
                     </MapView>
 
                     {/* Floating menu button */}
