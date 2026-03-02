@@ -1,6 +1,11 @@
-import { http } from "../http";
+import axios from "axios";
 
-export type Bbox = { minLon: number; minLat: number; maxLon: number; maxLat: number };
+export type Bbox = {
+  minLon: number;
+  minLat: number;
+  maxLon: number;
+  maxLat: number;
+};
 
 export type BuildingFeature = {
   type: "Feature";
@@ -22,11 +27,21 @@ export type BuildingFeatureCollection = {
   features: BuildingFeature[];
 };
 
+const API_BASE =
+  process.env.EXPO_PUBLIC_ENTRANCES_API_BASE_URL ||
+  process.env.EXPO_PUBLIC_API_BASE_URL ||
+  "";
+
+const api = axios.create({
+  baseURL: `${API_BASE}/v1`,
+});
+
 export async function fetchBuildings(
   bbox: Bbox
 ): Promise<BuildingFeatureCollection> {
-  const resp = await http.get<BuildingFeatureCollection>("/gis/buildings", {
+  const resp = await api.get<BuildingFeatureCollection>("/gis/buildings", {
     params: bbox,
   });
+
   return resp.data;
 }
