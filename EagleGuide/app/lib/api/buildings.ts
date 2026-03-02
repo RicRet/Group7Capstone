@@ -1,18 +1,35 @@
-import { http } from '../http';
+import { http } from "../http";
 
-export type Building = {
-    name: string;
-    lat: number;
-    lon: number;
+export type Bbox = {
+  minLon: number;
+  minLat: number;
+  maxLon: number;
+  maxLat: number;
 };
 
-export async function fetchBuildings(): Promise<Building[]> {
-    const resp = await http.get<Building[]>('/buildings');
-    return resp.data;
-}
+export type BuildingFeature = {
+  type: "Feature";
+  geometry: {
+    type: "Polygon";
+    coordinates: number[][][];
+  };
+  properties: {
+    building_id: number;
+    name: string;
+    description: string | null;
+    type: string | null;
+    fill: string | null;
+  };
+};
 
-export async function searchBuildings(query: string): Promise<Building[]> {
-    const all = await fetchBuildings();
-    const lower = query.toLowerCase();
-    return all.filter((b) => b.name.toLowerCase().includes(lower));
-}
+export type BuildingFeatureCollection = {
+  type: "FeatureCollection";
+  features: BuildingFeature[];
+};
+
+export async function fetchBuildings(bbox: Bbox): Promise<BuildingFeatureCollection> {
+  const resp = await http.get<BuildingFeatureCollection>("/gis/buildings", {
+    params: bbox,
+  });
+  return resp.data;
+} 
