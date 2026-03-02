@@ -17,9 +17,9 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import MapView, { Marker, Polygon, Region } from 'react-native-maps';
 import Addroute from './addroute';
 import Homepage from './homepage';
+import { BuildingFeature, fetchBuildings } from "./lib/api/buildings";
 import { fetchEntrances } from "./lib/api/entrances";
 import { fetchParkingLots, ParkingLotFeature } from './lib/api/parkingLots';
-
 const entranceIcon = require("../assets/images/Entrance_Icon.png");
 const accessibleEntranceIcon = require("../assets/images/Accessible_Entrance_Icon.png");
 
@@ -28,7 +28,9 @@ const MapScreen = () => {
     const [currentSheet, setCurrentSheet] = useState('home');
     const [parkingLots, setParkingLots] = useState<ParkingLotFeature[]>([]);
     const [entrances, setEntrances] = useState<Feature<Point>[]>([]);
+    const [buildings, setBuildings] = useState<BuildingFeature[]>([]);
     const parkingReqSeq = useRef(0);
+    const buildingsReqSeq = useRef(0);
     const entrancesReqSeq = useRef(0);
 
     const router = useRouter();
@@ -92,6 +94,26 @@ const MapScreen = () => {
         };
     }, [bbox]);
  useEffect(() => {
+  const seq = ++buildingsReqSeq.current; // prevent stale responses
+  let cancelled = false;
+
+  async function loadBuildings() {
+    try {
+      const data = await fetchBuildings(bbox);
+      if (!cancelled && seq === buildingsReqSeq.current) {
+        setBuildings(data.features || []);
+      }
+    } catch {
+      // keep last successful render
+    }
+  }
+
+  loadBuildings();
+  return () => {
+    cancelled = true;
+  };
+}, [bbox]);   
+ useEffect(() => {
   const seq = ++entrancesReqSeq.current;
   let cancelled = false;
 
@@ -114,6 +136,10 @@ console.log("Entrances:", entrances.length);
         const coords = feature.geometry?.coordinates?.[0] || [];
         return coords.map(([lon, lat]) => ({ latitude: lat, longitude: lon }));
     };
+const toBuildingPolygon = (feature: BuildingFeature) => {
+  const coords = feature.geometry?.coordinates?.[0] || [];
+  return coords.map(([lon, lat]) => ({ latitude: lat, longitude: lon }));
+};
 
     const fillColor = (fill?: string | null) => {
         if (!fill) return 'rgba(0, 122, 255, 0.25)';
@@ -183,6 +209,20 @@ console.log("Entrances:", entrances.length);
                                                     tappable
                                                 />
                                             );
+                                        })}
+                                        {buildings.map((b) => {
+                                        const coords = toBuildingPolygon(b);
+                                        if (!coords.length) return null;
+                                        return (
+                                        <Polygon
+                                        key={`bldg-${b.properties.building_id}`}
+                                        coordinates={coords}
+                                        strokeColor="#222"
+                                        strokeWidth={1}
+                                        fillColor={fillColor(b.properties.fill)}
+                                        tappable
+                                        />
+                                        );
                                         })}
                                         {entrances.map((e) => {
                                             const [lon, lat] = e.geometry.coordinates;
