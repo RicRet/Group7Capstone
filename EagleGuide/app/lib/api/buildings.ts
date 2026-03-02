@@ -32,4 +32,4 @@ export async function fetchBuildings(bbox: Bbox): Promise<BuildingFeatureCollect
     params: bbox,
   });
   return resp.data;
-}
+} 

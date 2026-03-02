@@ -1,24 +1,28 @@
--- db/entrancesdataload.sql
--- Run with psql. Reads db/entrances.geojson from disk (no copy/paste).
-\
-set ON_ERROR_STOP on \
-set geojson_path 'db/entrances.geojson' BEGIN;
--- Optional: wipe and reload clean (uncomment if desired)
--- TRUNCATE TABLE gis.entrances RESTART IDENTITY;
-DROP TABLE IF EXISTS tmp_entrances_lines;
-CREATE TEMP TABLE tmp_entrances_lines (line text);
--- Load the geojson file line-by-line into temp table (works for multi-line JSON)
-\ copy tmp_entrances_lines(line)
-FROM :'geojson_path' WITH (FORMAT text);
+-- db/entrancesdataload.sql (paste-style like parkinglotdataload.sql)
+-- PostGIS required
+CREATE EXTENSION IF NOT EXISTS postgis;
+-- Put entrances in the same place your GIS tables live
+CREATE SCHEMA IF NOT EXISTS gis;
+SET search_path TO gis,
+    public;
+DROP TABLE IF EXISTS entrances;
+CREATE TABLE entrances (
+    entrance_pk SERIAL PRIMARY KEY,
+    entrance_id VARCHAR(60) UNIQUE,
+    entrance_name VARCHAR(120),
+    entrance_accessible BOOLEAN DEFAULT false,
+    location GEOGRAPHY(POINT, 4326) NOT NULL
+);
+CREATE INDEX entrances_location_gix ON entrances USING GIST (location);
 WITH fc AS (
-    SELECT string_agg(line, E'\n')::jsonb AS j
-    FROM tmp_entrances_lines
+    -- Paste the *entire* FeatureCollection JSON here
+    SELECT $$ PASTE_ENTRANCES_GEOJSON_HERE $$::jsonb AS j
 ),
 feat AS (
     SELECT jsonb_array_elements(j->'features') AS f
     FROM fc
 )
-INSERT INTO gis.entrances (
+INSERT INTO entrances (
         entrance_id,
         entrance_name,
         entrance_accessible,
@@ -27,16 +31,12 @@ INSERT INTO gis.entrances (
 SELECT f->'properties'->>'entrance_id' AS entrance_id,
     f->'properties'->>'entrance_name' AS entrance_name,
     CASE
-        WHEN lower(
-            coalesce(f->'properties'->>'entrance_accessible', 'false')
-        ) IN ('true', 't', '1', 'yes', 'y') THEN true
+        WHEN lower(f->'properties'->>'entrance_accessible') = 'true' THEN true
         ELSE false
     END AS entrance_accessible,
-    ST_SetSRID(ST_GeomFromGeoJSON(f->>'geometry'), 4326)::geography AS location
-FROM feat
-WHERE (f->'geometry'->>'type') = 'Point' ON CONFLICT (entrance_id) DO
+    ST_SetSRID(ST_GeomFromGeoJSON(f->>'geometry'), 4326)::geography
+FROM feat ON CONFLICT (entrance_id) DO
 UPDATE
 SET entrance_name = EXCLUDED.entrance_name,
     entrance_accessible = EXCLUDED.entrance_accessible,
     location = EXCLUDED.location;
-COMMIT;
