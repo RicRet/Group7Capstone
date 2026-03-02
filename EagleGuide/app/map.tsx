@@ -93,63 +93,86 @@ const MapScreen = () => {
             cancelled = true;
         };
     }, [bbox]);
- useEffect(() => {
-  const seq = ++buildingsReqSeq.current; // prevent stale responses
-  let cancelled = false;
+    useEffect(() => {
+    const seq = ++buildingsReqSeq.current; // prevent stale responses
+    let cancelled = false;
 
-  async function loadBuildings() {
-    try {
-      const data = await fetchBuildings(bbox);
-      if (!cancelled && seq === buildingsReqSeq.current) {
-        setBuildings(data.features || []);
-      }
-    } catch {
-      // keep last successful render
-    }
-  }
-
-  loadBuildings();
-  return () => {
-    cancelled = true;
-  };
-}, [bbox]);   
- useEffect(() => {
-  const seq = ++entrancesReqSeq.current;
-  let cancelled = false;
-
-  async function loadEntrances() {
-    try {
-      const data = await fetchEntrances(bbox);
-      if (!cancelled && seq === entrancesReqSeq.current) {
-        setEntrances(data.features || []);
-      }
-    } catch (err) {
-      console.log("Entrances load error:", err);
-    }
-  }
-
-  loadEntrances();
-  return () => { cancelled = true; };
-}, [bbox]);
-console.log("Entrances:", entrances.length);
-    const toPolygon = (feature: ParkingLotFeature) => {
-        const coords = feature.geometry?.coordinates?.[0] || [];
-        return coords.map(([lon, lat]) => ({ latitude: lat, longitude: lon }));
-    };
-const toBuildingPolygon = (feature: BuildingFeature) => {
-  const coords = feature.geometry?.coordinates?.[0] || [];
-  return coords.map(([lon, lat]) => ({ latitude: lat, longitude: lon }));
-};
-
-    const fillColor = (fill?: string | null) => {
-        if (!fill) return 'rgba(0, 122, 255, 0.25)';
-        const match = /rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/i.exec(fill);
-        if (match) {
-            const [r, g, b] = match.slice(1).map(Number);
-            return `rgba(${r}, ${g}, ${b}, 0.3)`;
+    async function loadBuildings() {
+        try {
+        const data = await fetchBuildings(bbox);
+        if (!cancelled && seq === buildingsReqSeq.current) {
+            setBuildings(data.features || []);
         }
-        return 'rgba(0, 122, 255, 0.25)';
+        } catch {
+        // keep last successful render
+        }
+    }
+
+    loadBuildings();
+    return () => {
+        cancelled = true;
     };
+    }, [bbox]);   
+    useEffect(() => {
+    const seq = ++entrancesReqSeq.current;
+    let cancelled = false;
+
+    async function loadEntrances() {
+        try {
+        const data = await fetchEntrances(bbox);
+        if (!cancelled && seq === entrancesReqSeq.current) {
+            setEntrances(data.features || []);
+        }
+        } catch (err) {
+        console.log("Entrances load error:", err);
+        }
+    }
+
+    loadEntrances();
+    return () => { cancelled = true; };
+    }, [bbox]);
+    console.log("Entrances:", entrances.length);
+        const toPolygon = (feature: ParkingLotFeature) => {
+            const coords = feature.geometry?.coordinates?.[0] || [];
+            return coords.map(([lon, lat]) => ({ latitude: lat, longitude: lon }));
+        };
+    const toBuildingPolygon = (feature: BuildingFeature) => {
+    const coords = feature.geometry?.coordinates?.[0] || [];
+    return coords.map(([lon, lat]) => ({ latitude: lat, longitude: lon }));
+    };
+
+const fillColor = (fill?: string | null) => {
+  if (!fill) return "rgba(0, 122, 255, 0.25)";
+
+  const s = fill.trim();
+
+  // If it's already rgba(...) just return it (or normalize alpha if you want)
+  const rgbaMatch = /^rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([0-9.]+)\s*\)$/i.exec(s);
+  if (rgbaMatch) return s;
+
+  // rgb(r,g,b)
+  const rgbMatch = /^rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/i.exec(s);
+  if (rgbMatch) {
+    const [r, g, b] = rgbMatch.slice(1).map(Number);
+    return `rgba(${r}, ${g}, ${b}, 0.3)`;
+  }
+
+  // hex #RRGGBB or #RGB
+  const hexMatch = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(s);
+  if (hexMatch) {
+    let hex = hexMatch[1];
+    if (hex.length === 3) {
+      hex = hex.split("").map(ch => ch + ch).join("");
+    }
+    const r = parseInt(hex.slice(0, 2), 16);
+    const g = parseInt(hex.slice(2, 4), 16);
+    const b = parseInt(hex.slice(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, 0.3)`;
+  }
+
+  // If they stored "blue" or something weird, fall back
+  return "rgba(0, 122, 255, 0.25)";
+};
 
     // dark map style
     const darkStyle = [
