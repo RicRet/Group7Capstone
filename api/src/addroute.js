@@ -5,9 +5,9 @@ const router = express.Router();
 
 //Function to inserst routes into db
 router.post('/userroute', async (req, res) => {
-const { userid, prevb, newb, prevblon, prevblat, newblon, newblat, accessible, length, duration } = req.body;
-    
-   if (!userid || !prevb || !newb ||  prevblat == null || prevblon == null ||newblat == null ||newblon == null || accessible == null) {
+  const { userid, prevb, newb, prevblon, prevblat, newblon, newblat, accessible, length, duration } = req.body;
+
+  if (!userid || !prevb || !newb || prevblat == null || prevblon == null || newblat == null || newblon == null || accessible == null) {
     return res.json({ message: 'Needs all options selected' });
   }
 
@@ -16,7 +16,7 @@ const { userid, prevb, newb, prevblon, prevblat, newblon, newblat, accessible, l
       `INSERT INTO users.user_saved_route (user_id,name,start_geom,end_geom,is_accessible,length_m,duration_s) 
       VALUES ($1,$2,ST_SetSRID(ST_Point($3, $4), 4326),ST_SetSRID(ST_Point($5, $6), 4326),$7,$8,$9
       ) RETURNING saved_route_id;`,
-      [userid, `Route from ${prevb} to ${newb}`, prevblon,  prevblat, newblon, newblat, accessible,length || null, duration || null]
+      [userid, `Route from ${prevb} to ${newb}`, prevblon, prevblat, newblon, newblat, accessible, length || null, duration || null]
     );
 
 
@@ -92,7 +92,7 @@ router.put('/userroute/:id', async (req, res) => {
       is_accessible = COALESCE($6, is_accessible),length_m = COALESCE($7, length_m),duration_s = COALESCE($8, duration_s)
       WHERE saved_route_id = $9
       RETURNING saved_route_id;`,
-      [name || null,start_lon || null,start_lat || null,end_lon || null,end_lat || null,accessible,length || null,duration || null,id]
+      [name || null, start_lon || null, start_lat || null, end_lon || null, end_lat || null, accessible, length || null, duration || null, id]
     );
 
     if (result.length === 0) {
@@ -106,6 +106,25 @@ router.put('/userroute/:id', async (req, res) => {
 
   } catch (err) {
     console.error('Edit error', err);
+    res.status(500).json({ message: 'Database error' });
+  }
+});
+
+//gets buildings names and coordinates
+router.get('/buildings', async (req, res) => {
+  try {
+    const result = await query(
+      `SELECT 
+  name,
+  ST_X(ST_Centroid(location::geometry)) AS lon,
+  ST_Y(ST_Centroid(location::geometry)) AS lat
+FROM gis.buildings
+ORDER BY name;`
+    );
+
+    res.json(result);
+  } catch (err) {
+    console.error('Get buildings error', err);
     res.status(500).json({ message: 'Database error' });
   }
 });
