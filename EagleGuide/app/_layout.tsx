@@ -16,6 +16,7 @@ export default function RootLayout() {
         <Stack.Screen name="editroute" options={{ headerShown: false }} />
         <Stack.Screen name="friends" options={{ headerShown: false }} />
         <Stack.Screen name="Login" options={{ headerShown: false }} />
+        <Stack.Screen name="SignupEmail" options={{ headerShown: false }} />
         <Stack.Screen name="Signup" options={{ headerShown: false }} />
         <Stack.Screen name="Settings" options={{ headerShown: false }} />
         <Stack.Screen name="test" options={{ headerShown: false, presentation: "modal" }} />

@@ -1,19 +1,26 @@
-import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useEffect, useMemo, useState } from 'react';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { signUp } from "./lib/api/signup";
+import { useSession } from "./lib/session";
 import { useTheme } from "./Theme";
 
 const Signup = () => {
     const router = useRouter();
     const { theme } = useTheme();
+  const { login: loginWithSession } = useSession();
+  const params = useLocalSearchParams<{ email?: string }>();
     // user inputs
     const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
+  const emailFromParams = useMemo(() => typeof params.email === 'string' ? params.email : '', [params.email]);
+  const [email, setEmail] = useState(emailFromParams);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     // will set error message just in case
     const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
     // whether password meets requirements
     const [requirements, setRequirements] = useState({
         minLength: false,
@@ -34,29 +41,71 @@ const Signup = () => {
         });
     }, [password, confirmPassword]);
 
+    useEffect(() => {
+      // if user lands here without email from step 1, send them back
+      if (!emailFromParams) router.replace('/SignupEmail');
+      else setEmail(emailFromParams);
+    }, [emailFromParams, router]);
+
     // when all password requirements met
     const allRequirementsMet = Object.values(requirements).every(req => req);
+    const formComplete = username.trim().length > 0 && email.trim().length > 0 && allRequirementsMet;
 
     const handleSignUp = async () => {
-            if (username && email && password && allRequirementsMet) {
-        try {
-            const response = await signUp({ username, email, password });
-                setMessage('You are signed up! Login to continue.');
-                console.log('Signup successful:', response);
-        }
-        catch (error) {
-            // if for some reason sign up fails
-            setMessage('Sign up failed. Please try again.');
-        }
-        } else {
-            // if there is no user or pass or email or does not need password requirements
-            setMessage('Sign up failed. Please try again. Else error');
-        }
-    }
+      setMessage('');
+      if (!formComplete) {
+        setMessage('Please fill out all required fields.');
+        return;
+      }
+      setLoading(true);
+      try {
+        const trimmedFirst = firstName.trim();
+        const trimmedLast = lastName.trim();
+        const response = await signUp({
+          username: username.trim(),
+          email: email.trim().toLowerCase(),
+          password,
+          firstName: trimmedFirst || undefined,
+          lastName: trimmedLast || undefined
+        });
+        await loginWithSession(username.trim(), password);
+        setMessage(response.message || 'Account created. Logging you in...');
+        router.replace('/map');
+      }
+      catch (error: any) {
+        const apiError = error?.message;
+        setMessage(apiError || 'Sign up failed. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
+    <KeyboardAvoidingView
+      style={[styles.container, { backgroundColor: theme.background }]}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={80}
+    >
+      <ScrollView
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
       <Text style={[styles.title, { color: theme.text }]}>Sign Up</Text>
+      <Text style={[styles.subtitle, { color: theme.lighttext }]}>Step 2 of 2 — account details</Text>
+
+      <View style={styles.rowHeader}>
+        <Text style={[styles.emailLabel, { color: theme.lighttext }]}>Email</Text>
+        <Text style={[styles.changeEmail, { color: theme.green }]} onPress={() => router.replace('/SignupEmail')}>Change</Text>
+      </View>
+      <TextInput
+        style={[
+          styles.input,
+          { backgroundColor: theme.inputBackground, borderColor: theme.border, color: theme.text, opacity: 0.6 }
+        ]}
+        value={email}
+        editable={false}
+      />
 
       <TextInput
         style={[
@@ -67,6 +116,7 @@ const Signup = () => {
         placeholderTextColor={theme.lighttext}
         value={username}
         onChangeText={setUsername}
+        autoCapitalize="none"
       />
 
       <TextInput
@@ -74,10 +124,23 @@ const Signup = () => {
           styles.input,
           { backgroundColor: theme.inputBackground, borderColor: theme.border, color: theme.text }
         ]}
-        placeholder="Email"
+        placeholder="First name (optional)"
         placeholderTextColor={theme.lighttext}
-        value={email}
-        onChangeText={setEmail}
+        value={firstName}
+        onChangeText={setFirstName}
+        autoCapitalize="words"
+      />
+
+      <TextInput
+        style={[
+          styles.input,
+          { backgroundColor: theme.inputBackground, borderColor: theme.border, color: theme.text }
+        ]}
+        placeholder="Last name (optional)"
+        placeholderTextColor={theme.lighttext}
+        value={lastName}
+        onChangeText={setLastName}
+        autoCapitalize="words"
       />
 
       <TextInput
@@ -132,12 +195,14 @@ const Signup = () => {
       <TouchableOpacity
         style={[
           styles.button,
-          { backgroundColor: allRequirementsMet ? theme.green : theme.disabled }
+          { backgroundColor: formComplete ? theme.green : theme.disabled }
         ]}
         onPress={handleSignUp}
-        disabled={!allRequirementsMet}
+        disabled={!formComplete || loading}
       >
-        <Text style={[styles.buttonText, { color: theme.text }]}>Sign Up</Text>
+        {loading ? <ActivityIndicator color={theme.text} /> : (
+          <Text style={[styles.buttonText, { color: theme.text }]}>Create Account</Text>
+        )}
       </TouchableOpacity>
 
       <Text
@@ -146,7 +211,8 @@ const Signup = () => {
       >
         Have an account? Login
       </Text>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -169,15 +235,25 @@ const RequirementItem = ({ met, text, theme }: any) => (
 
 const styles = StyleSheet.create({
   container: { 
-    flex: 1, 
-    justifyContent: 'center', 
-    padding: 10 
+    flex: 1
+  },
+  content: {
+    padding: 16,
+    paddingBottom: 40,
+    alignItems: 'stretch'
   },
   title: { 
     fontSize: 40, 
     fontWeight: 'bold', 
     textAlign: 'center', 
     marginBottom: 40 
+  },
+  subtitle: {
+    textAlign: 'center',
+    fontSize: 16,
+    marginTop: -20,
+    marginBottom: 10,
+    fontWeight: '500'
   },
   input: {
     borderWidth: 1,
@@ -226,6 +302,20 @@ const styles = StyleSheet.create({
     borderRadius: 3, 
     marginRight: 8 
   },
+  rowHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 10
+  },
+  emailLabel: {
+    fontSize: 14,
+    fontWeight: '600'
+  },
+  changeEmail: {
+    fontSize: 14,
+    fontWeight: '600'
+  }
 });
 
 export default Signup;
