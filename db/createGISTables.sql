@@ -3,12 +3,13 @@ CREATE SCHEMA IF NOT EXISTS gis;
 SET search_path TO gis,
     public;
 -- Buildings table
-CREATE TABLE buildings (
+CREATE TABLE gis.buildings (
     building_id SERIAL PRIMARY KEY,
-    name VARCHAR(60),
-    description VARCHAR(60),
-    type VARCHAR(30),
-    location GEOGRAPHY(POINT, 4326)
+    name VARCHAR(120),
+    description VARCHAR(255),
+    type VARCHAR(60),
+    fill VARCHAR(30),
+    location GEOGRAPHY(MULTIPOLYGON, 4326)
 );
 -- Paths table
 CREATE TABLE paths (

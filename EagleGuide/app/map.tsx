@@ -1,7 +1,9 @@
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useRouter } from 'expo-router';
+import type { Feature, Point } from "geojson";
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
+    Image,
     Keyboard,
     KeyboardAvoidingView,
     Platform,
@@ -15,13 +17,21 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import MapView, { Marker, Polygon, Region } from 'react-native-maps';
 import Addroute from './addroute';
 import Homepage from './homepage';
+import { BuildingFeature, fetchBuildings } from "./lib/api/buildings";
+import { fetchEntrances } from "./lib/api/entrances";
 import { fetchParkingLots, ParkingLotFeature } from './lib/api/parkingLots';
-  
+const entranceIcon = require("../assets/images/Entrance_Icon.png");
+const accessibleEntranceIcon = require("../assets/images/Accessible_Entrance_Icon.png");
+
 const MapScreen = () => {
     const [showMenu, setShowMenu] = useState(false);
     const [currentSheet, setCurrentSheet] = useState('home');
     const [parkingLots, setParkingLots] = useState<ParkingLotFeature[]>([]);
-    const requestSeq = useRef(0);
+    const [entrances, setEntrances] = useState<Feature<Point>[]>([]);
+    const [buildings, setBuildings] = useState<BuildingFeature[]>([]);
+    const parkingReqSeq = useRef(0);
+    const buildingsReqSeq = useRef(0);
+    const entrancesReqSeq = useRef(0);
 
     const router = useRouter();
 
@@ -64,13 +74,13 @@ const MapScreen = () => {
     }, [region]);
 
     useEffect(() => {
-        const seq = ++requestSeq.current; // prevent stale responses from overriding newer ones
+        const seq = ++parkingReqSeq.current; // prevent stale responses from overriding newer ones
         let cancelled = false;
 
         async function loadLots() {
             try {
                 const data = await fetchParkingLots(bbox);
-                if (!cancelled && seq === requestSeq.current) {
+                if (!cancelled && seq === parkingReqSeq.current) {
                     setParkingLots(data.features || []);
                 }
             } catch {
@@ -83,21 +93,86 @@ const MapScreen = () => {
             cancelled = true;
         };
     }, [bbox]);
+    useEffect(() => {
+    const seq = ++buildingsReqSeq.current; // prevent stale responses
+    let cancelled = false;
 
-    const toPolygon = (feature: ParkingLotFeature) => {
-        const coords = feature.geometry?.coordinates?.[0] || [];
-        return coords.map(([lon, lat]) => ({ latitude: lat, longitude: lon }));
-    };
-
-    const fillColor = (fill?: string | null) => {
-        if (!fill) return 'rgba(0, 122, 255, 0.25)';
-        const match = /rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/i.exec(fill);
-        if (match) {
-            const [r, g, b] = match.slice(1).map(Number);
-            return `rgba(${r}, ${g}, ${b}, 0.3)`;
+    async function loadBuildings() {
+        try {
+        const data = await fetchBuildings(bbox);
+        if (!cancelled && seq === buildingsReqSeq.current) {
+            setBuildings(data.features || []);
         }
-        return 'rgba(0, 122, 255, 0.25)';
+        } catch {
+        // keep last successful render
+        }
+    }
+
+    loadBuildings();
+    return () => {
+        cancelled = true;
     };
+    }, [bbox]);   
+    useEffect(() => {
+    const seq = ++entrancesReqSeq.current;
+    let cancelled = false;
+
+    async function loadEntrances() {
+        try {
+        const data = await fetchEntrances(bbox);
+        if (!cancelled && seq === entrancesReqSeq.current) {
+            setEntrances(data.features || []);
+        }
+        } catch (err) {
+            //used for debugging
+        }
+    }
+
+    loadEntrances();
+    return () => { cancelled = true; };
+    }, [bbox]);
+
+        const toPolygon = (feature: ParkingLotFeature) => {
+            const coords = feature.geometry?.coordinates?.[0] || [];
+            return coords.map(([lon, lat]) => ({ latitude: lat, longitude: lon }));
+        };
+    const toBuildingPolygon = (feature: BuildingFeature) => {
+    const coords = feature.geometry?.coordinates?.[0] || [];
+    return coords.map(([lon, lat]) => ({ latitude: lat, longitude: lon }));
+    };
+
+const fillColor = (fill?: string | null) => {
+  if (!fill) return "rgba(0, 122, 255, 0.25)";
+
+  const s = fill.trim();
+
+  // If it's already rgba(...) just return it (or normalize alpha if you want)
+  const rgbaMatch = /^rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([0-9.]+)\s*\)$/i.exec(s);
+  if (rgbaMatch) return s;
+
+  // rgb(r,g,b)
+  const rgbMatch = /^rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/i.exec(s);
+  if (rgbMatch) {
+    const [r, g, b] = rgbMatch.slice(1).map(Number);
+    return `rgba(${r}, ${g}, ${b}, 0.3)`;
+  }
+
+  // hex #RRGGBB or #RGB
+  const hexMatch = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(s);
+  if (hexMatch) {
+    let hex = hexMatch[1];
+    if (hex.length === 3) {
+      hex = hex.split("").map(ch => ch + ch).join("");
+    }
+    const r = parseInt(hex.slice(0, 2), 16);
+    const g = parseInt(hex.slice(2, 4), 16);
+    const b = parseInt(hex.slice(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, 0.3)`;
+  }
+
+  // If they stored "blue" or something weird, fall back
+  return "rgba(0, 122, 255, 0.25)";
+};
 
     // dark map style
     const darkStyle = [
@@ -157,6 +232,39 @@ const MapScreen = () => {
                                                     tappable
                                                 />
                                             );
+                                        })}
+                                        {buildings.map((b) => {
+                                        const coords = toBuildingPolygon(b);
+                                        if (!coords.length) return null;
+                                        return (
+                                        <Polygon
+                                        key={`bldg-${b.properties.building_id}`}
+                                        coordinates={coords}
+                                        strokeColor="#222"
+                                        strokeWidth={1}
+                                        fillColor={fillColor(b.properties.fill)}
+                                        tappable
+                                        />
+                                        );
+                                        })}
+                                        {entrances.map((e) => {
+                                            const [lon, lat] = e.geometry.coordinates;
+                                            const icon = e.properties.entrance_accessible
+                                            ? accessibleEntranceIcon
+                                            : entranceIcon;
+
+                                        return (
+                                        <Marker
+                                        key={e.properties.entrance_id}
+                                        coordinate={{ latitude: lat, longitude: lon }}
+                                        title={e.properties.entrance_name}
+                                        description={e.properties.entrance_accessible ? "Accessible entrance" : "Entrance"}
+                                        tracksViewChanges={false}
+                                        anchor={{ x: 0.5, y: 0.5 }}
+                                        >
+                                        <Image source={icon} style={{ width: 26, height: 26 }} />
+                                        </Marker>
+                                        );
                                         })}
                     </MapView>
 
