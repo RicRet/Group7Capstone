@@ -1,12 +1,11 @@
 import Constants from "expo-constants";
-import * as Linking from "expo-linking";
 import * as Location from "expo-location";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Platform, Share, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import MapView, { Marker, Polyline, PROVIDER_GOOGLE, Region } from "react-native-maps";
 import { getRouteFromORS, snapToRoad, type Coordinates, type Profile } from "./lib/api/directions";
-import { createShareLocation, fetchShareLocation } from "./lib/api/shareLocation";
+import { fetchShareLocation } from "./lib/api/shareLocation";
 import { useSession } from "./lib/session";
 
 export default function ShareNavigationScreen() {
@@ -19,7 +18,6 @@ export default function ShareNavigationScreen() {
   const [routeCoords, setRouteCoords] = useState<Coordinates[] | null>(null);
   const [profile, setProfile] = useState<Profile>("foot-walking");
   const [loading, setLoading] = useState(false);
-  const [shareLoading, setShareLoading] = useState(false);
   const [orsKeyStatus, setOrsKeyStatus] = useState<string>("unknown");
   const [routeSample, setRouteSample] = useState<string>("");
   const [snappedPins, setSnappedPins] = useState<{ origin?: Coordinates; destination?: Coordinates }>({});
@@ -59,7 +57,6 @@ export default function ShareNavigationScreen() {
     const raw = params.shareId;
     const id = Array.isArray(raw) ? raw[0] : raw;
     if (!id) return;
-    setShareLoading(true);
     fetchShareLocation(id)
       .then((data) => {
         setDestination({ latitude: data.latitude, longitude: data.longitude });
@@ -68,8 +65,7 @@ export default function ShareNavigationScreen() {
       })
       .catch((err: any) => {
         Alert.alert("Shared location unavailable", (err?.message || "Not found or expired").slice(0, 200));
-      })
-      .finally(() => setShareLoading(false));
+      });
   }, [params.shareId]);
 
   useEffect(() => {
@@ -148,23 +144,17 @@ export default function ShareNavigationScreen() {
     }
   };
 
-  const shareCurrentDestination = async () => {
+  const shareCurrentDestination = () => {
     if (!destination) return Alert.alert("Set a destination first");
     if (!token) return Alert.alert("Login required", "Please log in to share.");
-    setShareLoading(true);
-    try {
-      const res = await createShareLocation({
-        latitude: destination.latitude,
-        longitude: destination.longitude,
+    router.push({
+      pathname: "/share-with-friends" as any,
+      params: {
+        lat: String(destination.latitude),
+        lng: String(destination.longitude),
         label: "Pinned destination",
-      });
-      const url = Linking.createURL("/share-navigation", { queryParams: { shareId: res.shareId } });
-      await Share.share({ title: "Meet me here", message: `Meet me here: ${url}` });
-    } catch (err: any) {
-      Alert.alert("Could not create share", (err?.message || "Please try again").slice(0, 200));
-    } finally {
-      setShareLoading(false);
-    }
+      },
+    });
   };
 
   const darkStyle = [
@@ -232,11 +222,11 @@ export default function ShareNavigationScreen() {
           {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Find Route</Text>}
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.button, styles.secondary]}
+          style={[styles.button, styles.secondary, !destination && { opacity: 0.5 }]}
           onPress={shareCurrentDestination}
-          disabled={shareLoading || !destination}
+          disabled={!destination}
         >
-          {shareLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Share Destination</Text>}
+          <Text style={styles.buttonText}>Share Destination</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.button, styles.secondary]} onPress={() => router.back()}>
           <Text style={styles.buttonText}>Back</Text>

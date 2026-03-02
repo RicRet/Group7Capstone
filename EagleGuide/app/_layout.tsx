@@ -19,6 +19,8 @@ export default function RootLayout() {
         <Stack.Screen name="SignupEmail" options={{ headerShown: false }} />
         <Stack.Screen name="Signup" options={{ headerShown: false }} />
         <Stack.Screen name="Settings" options={{ headerShown: false }} />
+        <Stack.Screen name="share-navigation" options={{ headerShown: false }} />
+        <Stack.Screen name="share-with-friends" options={{ headerShown: false }} />
         <Stack.Screen name="test" options={{ headerShown: false, presentation: "modal" }} />
         </Stack>
       </SessionProvider>
