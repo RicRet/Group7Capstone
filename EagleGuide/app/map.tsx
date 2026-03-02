@@ -124,14 +124,14 @@ const MapScreen = () => {
             setEntrances(data.features || []);
         }
         } catch (err) {
-        console.log("Entrances load error:", err);
+            //used for debugging
         }
     }
 
     loadEntrances();
     return () => { cancelled = true; };
     }, [bbox]);
-    console.log("Entrances:", entrances.length);
+
         const toPolygon = (feature: ParkingLotFeature) => {
             const coords = feature.geometry?.coordinates?.[0] || [];
             return coords.map(([lon, lat]) => ({ latitude: lat, longitude: lon }));
