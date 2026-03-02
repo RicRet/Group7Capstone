@@ -23,15 +23,14 @@ import {
   type Profile,
   type RouteStep
 } from "./lib/api/directions";
-import { searchLocation, type GeocodeResult } from "./lib/api/geocoding";
-import { searchBuildings, type Building } from './lib/api/buildings';
+import { searchBuildings, type Building } from './lib/api/navbuildings';
 import { useTheme } from "./Theme";
 
 
 type BuildingSearchResult = {
   id: string;
   label: string;
-  feature: any; // GeoJSON feature
+  feature?: any; // optional now
   coordinates: { latitude: number; longitude: number };
 };
 
@@ -68,7 +67,7 @@ export default function NavigationScreen() {
   const [orsKeyStatus, setOrsKeyStatus] = useState<string>("unknown");
   const [snappedPins, setSnappedPins] = useState<{ origin?: Coordinates; destination?: Coordinates }>({});
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<GeocodeResult[]>([]);
+  const [searchResults, setSearchResults] = useState<BuildingSearchResult[]>([]);
   const [searching, setSearching] = useState(false);
 
   const initialRegion: Region = useMemo(
@@ -207,7 +206,7 @@ export default function NavigationScreen() {
   };
 
 
-  const selectSearchResult = (result: GeocodeResult) => {
+  const selectSearchResult = (result: BuildingSearchResult) => {
     setDestination(result.coordinates);
     mapRef.current?.animateCamera({ center: result.coordinates, zoom: 16 });
   };
