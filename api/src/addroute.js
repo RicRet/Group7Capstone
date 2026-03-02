@@ -110,6 +110,25 @@ router.put('/userroute/:id', async (req, res) => {
   }
 });
 
+//gets buildings names and coordinates
+router.get('/buildings', async (req, res) => {
+  try {
+    const result = await query(
+      `SELECT 
+  name,
+  ST_X(ST_Centroid(location::geometry)) AS lon,
+  ST_Y(ST_Centroid(location::geometry)) AS lat
+FROM gis.buildings
+ORDER BY name;`
+    );
+
+    res.json(result);
+  } catch (err) {
+    console.error('Get buildings error', err);
+    res.status(500).json({ message: 'Database error' });
+  }
+});
+
 
 
 
