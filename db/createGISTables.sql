@@ -39,3 +39,15 @@ CREATE TABLE IF NOT EXISTS entrances (
     entrance_accessible BOOLEAN DEFAULT false,
     location GEOGRAPHY(POINT, 4326)
 );
+-- Bicycle parking table
+CREATE TABLE IF NOT EXISTS bicycle_parking (
+    bicycle_pk SERIAL PRIMARY KEY,
+    fid INTEGER UNIQUE,
+    location GEOGRAPHY(POINT, 4326)
+);
+-- Emergency phones table
+CREATE TABLE IF NOT EXISTS emergency_phones (
+    phone_pk SERIAL PRIMARY KEY,
+    objectid INTEGER UNIQUE,
+    location GEOGRAPHY(POINT, 4326)
+);
