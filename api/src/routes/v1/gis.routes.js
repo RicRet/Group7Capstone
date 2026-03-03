@@ -6,7 +6,7 @@ import { bboxQuery } from '../../validations/gis.schema.js';
 
 const r = Router();
 
-r.get('/buildings',requireSession. validate(bboxQuery), async (req, res) => {
+r.get('/buildings',requireSession,validate(bboxQuery), async (req, res) => {
   const { minLon, minLat, maxLon, maxLat } = req.query;
   const data = await buildingsByBbox([+minLon, +minLat, +maxLon, +maxLat]);
   res.json(data);
