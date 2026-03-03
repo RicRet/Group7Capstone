@@ -24,14 +24,16 @@ import {
   type RouteStep
 } from "./lib/api/directions";
 import { searchBuildings, type Building } from './lib/api/navbuildings';
+import { KeyboardAvoidingView, Platform } from "react-native";
 import { useTheme } from "./Theme";
 
 
 type BuildingSearchResult = {
   id: string;
   label: string;
-  feature?: any; // optional now
   coordinates: { latitude: number; longitude: number };
+  type?: string | null;
+  description?: string | null;
 };
 
 const formatDuration = (seconds: number) => {
@@ -193,13 +195,16 @@ export default function NavigationScreen() {
     setSearching(true);
     try {
       const results: Building[] = await searchBuildings(searchQuery);
-      setSearchResults(
-        results.map((b: Building) => ({
-          id: b.name,
-          label: b.name,
-          coordinates: { latitude: b.lat, longitude: b.lon },
-        }))
-      );
+
+      const mappedResults: BuildingSearchResult[] = results.map((b) => ({
+        id: b.name,
+        label: b.name,
+        coordinates: { latitude: b.lat, longitude: b.lon },
+        type: (b as any).type ?? null,
+        description: (b as any).description ?? null,
+      }));
+
+      setSearchResults(mappedResults);
     } finally {
       setSearching(false);
     }
@@ -208,6 +213,11 @@ export default function NavigationScreen() {
 
   const selectSearchResult = (result: BuildingSearchResult) => {
     setDestination(result.coordinates);
+    setRouteCoords(null);
+    setSteps([]);
+    setSummary(null);
+    setSearchQuery("");
+    setSearchResults([]);
     mapRef.current?.animateCamera({ center: result.coordinates, zoom: 16 });
   };
 
@@ -219,174 +229,194 @@ export default function NavigationScreen() {
   ];
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <MapView
-        ref={mapRef}
-        provider={PROVIDER_GOOGLE}
-        customMapStyle={isDark ? darkStyle : []}
-        style={StyleSheet.absoluteFillObject}
-        initialRegion={initialRegion}
-        showsUserLocation
-        showsCompass
-        onLongPress={handleLongPress}
-      >
-        {origin && <Marker coordinate={origin} title="Origin" pinColor={theme.background} />}
-        {destination && <Marker coordinate={destination} title="Destination" pinColor={theme.red} />}
-        {routeCoords && routeCoords.length > 1 && (
-          <Polyline coordinates={routeCoords} strokeColor={theme.background} strokeWidth={4} />
-        )}
-        {!routeCoords && origin && destination && (
-          <Polyline coordinates={[origin, destination]} strokeColor={theme.border} strokeWidth={2} />
-        )}
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <View style={[styles.container, { backgroundColor: theme.background }]}>
+        <MapView
+          ref={mapRef}
+          provider={PROVIDER_GOOGLE}
+          customMapStyle={isDark ? darkStyle : []}
+          style={StyleSheet.absoluteFillObject}
+          initialRegion={initialRegion}
+          showsUserLocation
+          showsCompass
+          onLongPress={handleLongPress}
+        >
+          {origin && <Marker coordinate={origin} title="Origin" pinColor={theme.background} />}
+          {destination && <Marker coordinate={destination} title="Destination" pinColor={theme.red} />}
+          {routeCoords && routeCoords.length > 1 && (
+            <Polyline coordinates={routeCoords} strokeColor={theme.background} strokeWidth={4} />
+          )}
+          {!routeCoords && origin && destination && (
+            <Polyline coordinates={[origin, destination]} strokeColor={theme.border} strokeWidth={2} />
+          )}
 
-        {searchResults.length > 0 && searchResults.map((b, i) => (
-          <Marker
-            key={b.id}
-            coordinate={b.coordinates}
-            title={b.label}
+          {searchResults.length > 0 && searchResults.map((b, i) => (
+            <Marker
+              key={b.id}
+              coordinate={b.coordinates}
+              title={b.label}
+            />
+          ))}
+        </MapView>
+
+        <View style={[styles.controls, { backgroundColor: theme.header, maxHeight: '60%' }]}>
+          <TextInput
+            style={[styles.searchInput, { backgroundColor: theme.button, color: theme.text }]}
+            placeholder="Search for a place or address"
+            placeholderTextColor={theme.lighttext}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            onSubmitEditing={handleSearch}
+            returnKeyType="search"
           />
-        ))}
-      </MapView>
 
-      <View style={[styles.controls, { backgroundColor: theme.header, maxHeight: '60%' }]}>
-        <TextInput
-          style={[styles.searchInput, { backgroundColor: theme.button, color: theme.text }]}
-          placeholder="Search for a place or address"
-          placeholderTextColor={theme.lighttext}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          onSubmitEditing={handleSearch}
-          returnKeyType="search"
-        />
+          {searching && <ActivityIndicator style={{ marginTop: 6 }} />}
 
-        {searching && <ActivityIndicator style={{ marginTop: 6 }} />}
+          {searchResults.length > 0 && (
+            <View style={{ maxHeight: 200 }}>
+              <FlatList
+                data={searchResults}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={[styles.searchItem, { borderBottomColor: theme.border }]}
+                    onPress={() => selectSearchResult(item)}
+                  >
+                    <View style={{ paddingVertical: 8 }}>
+                      <Text style={{ fontSize: 16, fontWeight: "600", color: theme.text }}>
+                        {item.label}
+                      </Text>
 
-        {searchResults.length > 0 && (
-          <View style={{ maxHeight: 200 }}>
+                      {item.type && (
+                        <Text style={{ fontSize: 13, color: "#2E86FF" }}>
+                          {item.type}
+                        </Text>
+                      )}
+
+                      {item.description && (
+                        <Text style={{ fontSize: 12, color: "#666", marginTop: 2 }}>
+                          {item.description}
+                        </Text>
+                      )}
+                    </View>
+                  </TouchableOpacity>
+                )}
+              />
+            </View>
+          )}
+
+          <View style={styles.row}>
+            <TouchableOpacity style={[styles.button, { backgroundColor: theme.button }]} onPress={swapPins}>
+              <Text style={[styles.buttonText, { color: theme.text }]}>Swap</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.button, { backgroundColor: theme.button }]} onPress={clearAll}>
+              <Text style={[styles.buttonText, { color: theme.text }]}>Clear</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.row}>
+            <TouchableOpacity
+              style={[
+                styles.modeButton,
+                { backgroundColor: theme.button },
+                profile === "foot-walking" && { borderWidth: 1, borderColor: theme.text }
+              ]}
+              onPress={() => setProfile("foot-walking")}
+            >
+              <Text style={[styles.buttonText, { color: theme.text }]}>Walk</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.modeButton,
+                { backgroundColor: theme.button },
+                profile === "driving-car" && { borderWidth: 1, borderColor: theme.text }
+              ]}
+              onPress={() => setProfile("driving-car")}
+            >
+              <Text style={[styles.buttonText, { color: theme.text }]}>Drive</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.row}>
+            <TouchableOpacity style={[styles.button, { backgroundColor: theme.button, flex: 1, marginRight: 5 }]} onPress={fetchRoute} disabled={loading}>
+              {loading ? <ActivityIndicator color="#fff" /> : <Text style={[styles.buttonText, { color: "#fff" }]}>Find Route</Text>}
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, { backgroundColor: theme.button }]}
+              onPress={() => setShowAddRoute(true)}
+            >
+              <Text style={[styles.buttonText, { color: theme.text }]}> View Route</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={[styles.button, { backgroundColor: theme.button }]} onPress={() => router.back()}>
+              <Text style={[styles.buttonText, { color: theme.text }]}>Back</Text>
+            </TouchableOpacity>
+          </View>
+
+          {summary && (
+            <View style={{ marginTop: 10, marginBottom: 10 }}>
+              <Text style={{ color: theme.text, fontWeight: 'bold' }}>
+                Total: {formatDistance(summary.distance)} • {formatDuration(summary.duration)}
+              </Text>
+            </View>
+          )}
+
+          {steps.length > 0 && (
             <FlatList
-              data={searchResults}
-              keyExtractor={(item) => item.id}
-              style={styles.searchResults}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={[styles.searchItem, { borderBottomColor: theme.border }]}
-                  onPress={() => selectSearchResult(item)}
-                >
-                  <Text style={[styles.searchText, { color: theme.text }]}>{item.label}</Text>
-                </TouchableOpacity>
+              data={steps}
+              keyExtractor={(_, index) => index.toString()}
+              style={[styles.stepsList, { backgroundColor: theme.box }]}
+              renderItem={({ item, index }) => (
+                <View style={[styles.stepItem, { borderBottomColor: theme.border }]}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={[styles.stepText, { color: theme.text }]}>
+                      {index + 1}. {item.instruction}
+                    </Text>
+                    <Text style={[styles.stepSubText, { color: theme.lighttext }]}>
+                      {formatDistance(item.distance)}
+                    </Text>
+                  </View>
+                </View>
               )}
+            />
+          )}
+
+        </View>
+        {/*addroute and editroute overlay */}
+        {showAddRoute && !editingRoute && (
+          <View style={styles.overlay}>
+            <Addroute
+              onClose={() => setShowAddRoute(false)}
+              onEdit={(route) => setEditingRoute(route)}
+              onNavigate={(data) => {
+                setOrigin({
+                  latitude: data.originLat,
+                  longitude: data.originLon,
+                });
+                setDestination({
+                  latitude: data.destLat,
+                  longitude: data.destLon,
+                });
+                setShowAddRoute(false);
+              }}
+            />
+          </View>
+        )}
+        {editingRoute && (
+          <View style={styles.overlay}>
+            <Editroute
+              route={editingRoute}
+              onClose={() => setEditingRoute(null)}
             />
           </View>
         )}
 
-        <View style={styles.row}>
-          <TouchableOpacity style={[styles.button, { backgroundColor: theme.button }]} onPress={swapPins}>
-            <Text style={[styles.buttonText, { color: theme.text }]}>Swap</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.button, { backgroundColor: theme.button }]} onPress={clearAll}>
-            <Text style={[styles.buttonText, { color: theme.text }]}>Clear</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.row}>
-          <TouchableOpacity
-            style={[
-              styles.modeButton,
-              { backgroundColor: theme.button },
-              profile === "foot-walking" && { borderWidth: 1, borderColor: theme.text }
-            ]}
-            onPress={() => setProfile("foot-walking")}
-          >
-            <Text style={[styles.buttonText, { color: theme.text }]}>Walk</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              styles.modeButton,
-              { backgroundColor: theme.button },
-              profile === "driving-car" && { borderWidth: 1, borderColor: theme.text }
-            ]}
-            onPress={() => setProfile("driving-car")}
-          >
-            <Text style={[styles.buttonText, { color: theme.text }]}>Drive</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.row}>
-          <TouchableOpacity style={[styles.button, { backgroundColor: theme.button, flex: 1, marginRight: 5 }]} onPress={fetchRoute} disabled={loading}>
-            {loading ? <ActivityIndicator color="#fff" /> : <Text style={[styles.buttonText, { color: "#fff" }]}>Find Route</Text>}
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: theme.button }]}
-            onPress={() => setShowAddRoute(true)}
-          >
-            <Text style={[styles.buttonText, { color: theme.text }]}> View Route</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={[styles.button, { backgroundColor: theme.button }]} onPress={() => router.back()}>
-            <Text style={[styles.buttonText, { color: theme.text }]}>Back</Text>
-          </TouchableOpacity>
-        </View>
-
-        {summary && (
-          <View style={{ marginTop: 10, marginBottom: 10 }}>
-            <Text style={{ color: theme.text, fontWeight: 'bold' }}>
-              Total: {formatDistance(summary.distance)} • {formatDuration(summary.duration)}
-            </Text>
-          </View>
-        )}
-
-        {steps.length > 0 && (
-          <FlatList
-            data={steps}
-            keyExtractor={(_, index) => index.toString()}
-            style={[styles.stepsList, { backgroundColor: theme.box }]}
-            renderItem={({ item, index }) => (
-              <View style={[styles.stepItem, { borderBottomColor: theme.border }]}>
-                <View style={{ flex: 1 }}>
-                  <Text style={[styles.stepText, { color: theme.text }]}>
-                    {index + 1}. {item.instruction}
-                  </Text>
-                  <Text style={[styles.stepSubText, { color: theme.lighttext }]}>
-                    {formatDistance(item.distance)}
-                  </Text>
-                </View>
-              </View>
-            )}
-          />
-        )}
-
       </View>
-      {/*addroute and editroute overlay */}
-      {showAddRoute && !editingRoute && (
-        <View style={styles.overlay}>
-          <Addroute
-            onClose={() => setShowAddRoute(false)}
-            onEdit={(route) => setEditingRoute(route)}
-            onNavigate={(data) => {
-              setOrigin({
-                latitude: data.originLat,
-                longitude: data.originLon,
-              });
-              setDestination({
-                latitude: data.destLat,
-                longitude: data.destLon,
-              });
-              setShowAddRoute(false);
-            }}
-          />
-        </View>
-      )}
-      {editingRoute && (
-        <View style={styles.overlay}>
-          <Editroute
-            route={editingRoute}
-            onClose={() => setEditingRoute(null)}
-          />
-        </View>
-      )}
-
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
