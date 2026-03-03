@@ -209,6 +209,11 @@ export default function NavigationScreen() {
 
   const selectSearchResult = (result: BuildingSearchResult) => {
     setDestination(result.coordinates);
+    setRouteCoords(null);
+    setSteps([]);
+    setSummary(null);
+    setSearchQuery("");
+    setSearchResults([]);
     mapRef.current?.animateCamera({ center: result.coordinates, zoom: 16 });
   };
 
