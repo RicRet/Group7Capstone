@@ -1,8 +1,8 @@
-import { useRouter } from 'expo-router';
+ import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { addRoute, deleteRoute, getRoutes, SavedRoute } from './lib/api/addroutev2';
+import { addRoute, Building, deleteRoute, getBuildings, getRoutes, SavedRoute } from './lib/api/addroutev2';
 import { useTheme } from "./Theme";
 //props for functions
 type AddrouteProps = {
@@ -19,7 +19,7 @@ type AddrouteProps = {
 
 
 export default function Addroute({ onClose, onEdit, onNavigate }: AddrouteProps) {
-
+const [buildings, setBuildings] = useState<Building[]>([]);
   const router = useRouter();
   const { theme } = useTheme();
 const [savedRoutes, setSavedRoutes] = useState<SavedRoute[]>([]);
@@ -37,6 +37,25 @@ const loadSavedR = async () => {
 
 useEffect(() => {
   loadSavedR();
+
+  const loadBuildings = async () => {
+    try {
+      const data = await getBuildings();
+      setBuildings(data);
+
+      const formatted = data.map((b) => ({
+        label: b.name,
+        value: b.name,
+      }));
+
+      setItems1(formatted);
+      setItems2(formatted);
+    } catch {
+      Alert.alert("Error", "Could not load buildings");
+    }
+  };
+
+  loadBuildings();
 }, []);
 
  //For dropdown 1
@@ -90,37 +109,42 @@ const mockCoords = {
 type MockCoordKey = keyof typeof mockCoords;
 
 // add route function
-const addr = async (prevb: string | null,newb: string | null,type: string | null,accessibility: number | null,userid: string) => {
+const addr = async (
+  prevb: string | null,
+  newb: string | null,
+  type: string | null,
+  accessibility: number | null,
+  userid: string
+) => {
   if (!prevb || !newb || !type || accessibility == null) {
     return Alert.alert("Enter all options");
   }
 
-   if (prevb === newb) {
+  if (prevb === newb) {
     return Alert.alert("Invalid Route", "Start and end buildings cannot be the same.");
   }
 
   try {
-    //matches buildings to coordinates
-    const startKey = prevb.replace(/\s/g, "") as MockCoordKey;
-    const endKey = newb.replace(/\s/g, "") as MockCoordKey;
+    const start = buildings.find(b => b.name === prevb);
+    const end = buildings.find(b => b.name === newb);
 
-    const start = mockCoords[startKey];
-    const end = mockCoords[endKey];
+    if (!start || !end) {
+      return Alert.alert("Error", "Building coordinates not found");
+    }
 
-   
+    const res = await addRoute({
+      userid,
+      prevb,
+      newb,
+      prevblon: start.lon,
+      prevblat: start.lat,
+      newblon: end.lon,
+      newblat: end.lat,
+      accessible: accessibility,
+      length: null,
+      duration: null,
+    });
 
-   const res = await addRoute({
-  userid,
-  prevb,
-  newb,
-  prevblon: start.lon,
-  prevblat: start.lat,
-  newblon: end.lon,
-  newblat: end.lat,
-  accessible: accessibility,
-  length: null,
-  duration: null,
-});
     Alert.alert("Success", res.message);
     await loadSavedR();
   } catch (err) {
