@@ -17,11 +17,11 @@ export type UpdateProfileRequest = {
 };
 
 export async function getProfile(): Promise<ProfileResponse> {
-  const res = await http.get<ProfileResponse>('/v1/users/me');
+  const res = await http.get<ProfileResponse>('/users/me');
   return res.data;
 }
 
 export async function updateProfile(fields: UpdateProfileRequest): Promise<ProfileResponse> {
-  const res = await http.patch<ProfileResponse>('/v1/users/me', fields);
+  const res = await http.patch<ProfileResponse>('/users/me', fields);
   return res.data;
 }
