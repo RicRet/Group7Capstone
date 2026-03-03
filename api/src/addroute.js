@@ -110,37 +110,25 @@ router.put('/userroute/:id', async (req, res) => {
   }
 });
 
+//gets buildings names and coordinates
 router.get('/buildings', async (req, res) => {
   try {
-    const result = await query(`
-      SELECT 
-        building_id,
-        name,
-        description,
-        type,
-        ST_AsGeoJSON(location) AS geojson
-      FROM gis.buildings
-      ORDER BY name;
-    `);
+    const result = await query(
+      `SELECT 
+  name,
+  ST_X(ST_Centroid(location::geometry)) AS lon,
+  ST_Y(ST_Centroid(location::geometry)) AS lat
+FROM gis.buildings
+ORDER BY name;`
+    );
 
-    const features = result.rows.map(r => ({
-      type: "Feature",
-      geometry: JSON.parse(r.geojson),
-      properties: {
-        building_id: r.building_id,
-        name: r.name,
-        description: r.description,
-        type: r.type,
-        fill: null,
-      }
-    }));
-
-    res.json({ type: "FeatureCollection", features });
+    res.json(result);
   } catch (err) {
-    console.error(err);
+    console.error('Get buildings error', err);
     res.status(500).json({ message: 'Database error' });
   }
 });
+
 
 
 
