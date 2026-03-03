@@ -31,8 +31,9 @@ import { useTheme } from "./Theme";
 type BuildingSearchResult = {
   id: string;
   label: string;
-  feature?: any; // optional now
   coordinates: { latitude: number; longitude: number };
+  type?: string | null;
+  description?: string | null;
 };
 
 const formatDuration = (seconds: number) => {
@@ -194,13 +195,16 @@ export default function NavigationScreen() {
     setSearching(true);
     try {
       const results: Building[] = await searchBuildings(searchQuery);
-      setSearchResults(
-        results.map((b: Building) => ({
-          id: b.name,
-          label: b.name,
-          coordinates: { latitude: b.lat, longitude: b.lon },
-        }))
-      );
+
+      const mappedResults: BuildingSearchResult[] = results.map((b) => ({
+        id: b.name,
+        label: b.name,
+        coordinates: { latitude: b.lat, longitude: b.lon },
+        type: (b as any).type ?? null,
+        description: (b as any).description ?? null,
+      }));
+
+      setSearchResults(mappedResults);
     } finally {
       setSearching(false);
     }
@@ -276,13 +280,28 @@ export default function NavigationScreen() {
               <FlatList
                 data={searchResults}
                 keyExtractor={(item) => item.id}
-                style={styles.searchResults}
                 renderItem={({ item }) => (
                   <TouchableOpacity
                     style={[styles.searchItem, { borderBottomColor: theme.border }]}
                     onPress={() => selectSearchResult(item)}
                   >
-                    <Text style={[styles.searchText, { color: theme.text }]}>{item.label}</Text>
+                    <View style={{ paddingVertical: 8 }}>
+                      <Text style={{ fontSize: 16, fontWeight: "600", color: theme.text }}>
+                        {item.label}
+                      </Text>
+
+                      {item.type && (
+                        <Text style={{ fontSize: 13, color: "#2E86FF" }}>
+                          {item.type}
+                        </Text>
+                      )}
+
+                      {item.description && (
+                        <Text style={{ fontSize: 12, color: "#666", marginTop: 2 }}>
+                          {item.description}
+                        </Text>
+                      )}
+                    </View>
                   </TouchableOpacity>
                 )}
               />
