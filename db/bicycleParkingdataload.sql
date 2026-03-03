@@ -10,8 +10,8 @@ CREATE TABLE bicycle_parking (
 );
 CREATE INDEX bicycle_parking_location_gix ON bicycle_parking USING GIST (location);
 WITH fc AS (
-    -- Paste the *entire* FeatureCollection JSON here
-    SELECT $$ PASTE_BICYCLE_PARKING_GEOJSON_HERE $$::jsonb AS j
+    SELECT $$ --Paste geojson here and delete comment before running
+        $$::jsonb AS j
 ),
 feat AS (
     SELECT jsonb_array_elements(j->'features') AS f
