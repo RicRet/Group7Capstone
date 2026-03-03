@@ -114,7 +114,7 @@ router.get('/buildings', async (req, res) => {
   try {
     const result = await query(`
       SELECT 
-        id AS building_id,
+        building_id,
         name,
         description,
         type,
