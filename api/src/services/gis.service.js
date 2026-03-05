@@ -107,3 +107,69 @@ export async function entrancesByBbox([minLon, minLat, maxLon, maxLat]) {
   await jsonSet(k, fc, TTL.gis);
   return fc;
 }
+
+export async function bicycleParkingByBbox([minLon, minLat, maxLon, maxLat]) {
+  const norm = normalizeBbox([minLon, minLat, maxLon, maxLat]);
+  const k = keys.gis.bicycleParkingBbox(hashBbox(norm));
+  const cached = await jsonGet(k);
+  if (cached) return cached;
+
+  const rows = await query(
+    `SELECT
+        bicycle_pk,
+        fid,
+        ST_AsGeoJSON(location::geometry)::json AS geometry
+     FROM gis.bicycle_parking
+     WHERE ST_Intersects(
+       location::geometry,
+       ST_MakeEnvelope($1,$2,$3,$4,4326)
+     )`,
+    norm
+  );
+
+  const features = rows.map(r => ({
+    type: 'Feature',
+    geometry: r.geometry,
+    properties: {
+      bicycle_pk: r.bicycle_pk,
+      fid: r.fid
+    }
+  }));
+
+  const fc = { type: 'FeatureCollection', features };
+  await jsonSet(k, fc, TTL.gis);
+  return fc;
+}
+
+export async function emergencyPhonesByBbox([minLon, minLat, maxLon, maxLat]) {
+  const norm = normalizeBbox([minLon, minLat, maxLon, maxLat]);
+  const k = keys.gis.emergencyPhonesBbox(hashBbox(norm));
+  const cached = await jsonGet(k);
+  if (cached) return cached;
+
+  const rows = await query(
+    `SELECT
+        phone_pk,
+        objectid,
+        ST_AsGeoJSON(location::geometry)::json AS geometry
+     FROM gis.emergency_phones
+     WHERE ST_Intersects(
+       location::geometry,
+       ST_MakeEnvelope($1,$2,$3,$4,4326)
+     )`,
+    norm
+  );
+
+  const features = rows.map(r => ({
+    type: 'Feature',
+    geometry: r.geometry,
+    properties: {
+      phone_pk: r.phone_pk,
+      objectid: r.objectid
+    }
+  }));
+
+  const fc = { type: 'FeatureCollection', features };
+  await jsonSet(k, fc, TTL.gis);
+  return fc;
+}

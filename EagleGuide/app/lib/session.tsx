@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { login as apiLogin, LoginResponse } from "./api/login";
+import { updateProfile as apiUpdateProfile, UpdateProfileRequest } from "./api/profile";
 import { http, setAuthToken } from "./http";
 
 // Lightweight storage abstraction (web: localStorage, native: in-memory)
@@ -33,7 +34,7 @@ const Storage = {
   }
 };
 
-export type SessionUser = { id: string; username?: string; firstName?: string | null; lastName?: string | null; avatarUrl?: string | null; roles: string[] };
+export type SessionUser = { id: string; username?: string; firstName?: string | null; lastName?: string | null; avatarUrl?: string | null; email?: string | null; roles: string[] };
 export type SessionState = {
   token?: string;
   user?: SessionUser;
@@ -44,6 +45,7 @@ export type SessionContextValue = SessionState & {
   login: (username: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshMe: () => Promise<void>;
+  updateProfile: (fields: UpdateProfileRequest) => Promise<void>;
 };
 
 const SessionContext = createContext<SessionContextValue | undefined>(undefined);
@@ -62,8 +64,8 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         setToken(t);
         setAuthToken(t);
         try {
-          const res = await http.get<{ userId: string; username?: string; firstName?: string | null; lastName?: string | null; avatarUrl?: string | null; roles: string[] }>("/v1/users/me");
-          setUser({ id: String(res.data.userId), username: res.data.username, firstName: res.data.firstName, lastName: res.data.lastName, avatarUrl: res.data.avatarUrl, roles: res.data.roles || [] });
+          const res = await http.get<{ userId: string; username?: string; firstName?: string | null; lastName?: string | null; avatarUrl?: string | null; email?: string | null; roles: string[] }>("/v1/users/me");
+          setUser({ id: String(res.data.userId), username: res.data.username, firstName: res.data.firstName, lastName: res.data.lastName, avatarUrl: res.data.avatarUrl, email: res.data.email, roles: res.data.roles || [] });
         } catch {
           // token invalid; clear
           await Storage.removeItem(TOKEN_KEY);
@@ -85,9 +87,21 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
   const refreshMe = useCallback(async () => {
     if (!token) return;
-    const res = await http.get<{ userId: string; username?: string; firstName?: string | null; lastName?: string | null; avatarUrl?: string | null; roles: string[] }>("/v1/users/me");
-    setUser({ id: String(res.data.userId), username: res.data.username, firstName: res.data.firstName, lastName: res.data.lastName, avatarUrl: res.data.avatarUrl, roles: res.data.roles || [] });
+    const res = await http.get<{ userId: string; username?: string; firstName?: string | null; lastName?: string | null; avatarUrl?: string | null; email?: string | null; roles: string[] }>("/v1/users/me");
+    setUser({ id: String(res.data.userId), username: res.data.username, firstName: res.data.firstName, lastName: res.data.lastName, avatarUrl: res.data.avatarUrl, email: res.data.email, roles: res.data.roles || [] });
   }, [token]);
+
+  const updateProfile = useCallback(async (fields: UpdateProfileRequest) => {
+    const updated = await apiUpdateProfile(fields);
+    setUser((prev) => prev ? {
+      ...prev,
+      username: updated.username ?? prev.username,
+      firstName: updated.firstName ?? prev.firstName,
+      lastName: updated.lastName ?? prev.lastName,
+      avatarUrl: updated.avatarUrl ?? prev.avatarUrl,
+      email: updated.email ?? prev.email,
+    } : prev);
+  }, []);
 
   const logout = useCallback(async () => {
     try {
@@ -99,7 +113,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     setAuthToken(undefined);
   }, []);
 
-  const value = useMemo<SessionContextValue>(() => ({ token, user, loading, login, logout, refreshMe }), [token, user, loading, login, logout, refreshMe]);
+  const value = useMemo<SessionContextValue>(() => ({ token, user, loading, login, logout, refreshMe, updateProfile }), [token, user, loading, login, logout, refreshMe, updateProfile]);
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 }
 
