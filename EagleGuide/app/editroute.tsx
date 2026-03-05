@@ -1,228 +1,243 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Alert, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { Building, getBuildings, SavedRoute, updateRoute } from './lib/api/addroutev2';
+import { Building, SavedRoute, updateRoute } from './lib/api/addroutev2';
+import { searchBuildings } from './lib/api/navbuildings';
 import { useTheme } from "./Theme";
-
 
 type EditrouteProps = {
   route: SavedRoute;
   onClose: () => void;
 };
 
-
-
 export default function Editroute({ route, onClose }: EditrouteProps) {
-const { theme } = useTheme();
+
+  const { theme } = useTheme();
   const routeId = route.saved_route_id;
 
-  // buildings from API
-  const [buildings, setBuildings] = useState<Building[]>([]);
+  const [startQuery, setStartQuery] = useState("");
+  const [startResults, setStartResults] = useState<Building[]>([]);
+  const [startBuilding, setStartBuilding] = useState<Building | null>(null);
 
-  const [open1, setOpen1] = useState(false);
- const [value1, setValue1] = useState<string | null>('Student Union');
-  const [items1, setItems1] = useState<{label:string,value:string}[]>([]);
-
- 
-  const [open2, setOpen2] = useState(false);
-  const [value2, setValue2] = useState<string | null>('Willis');
-  const [items2, setItems2] = useState<{label:string,value:string}[]>([]);
+  const [endQuery, setEndQuery] = useState("");
+  const [endResults, setEndResults] = useState<Building[]>([]);
+  const [endBuilding, setEndBuilding] = useState<Building | null>(null);
 
   const [open4, setOpen4] = useState(false);
- const [value4, setValue4] = useState<number | null>(route.is_accessible ?? 1);
+  const [value4, setValue4] = useState<number | null>(route.is_accessible ?? 1);
   const [items4, setItems4] = useState([
     { label: 'Yes', value: 1 },
     { label: 'No', value: 0 },
   ]);
 
-  //Name of current Route
   const [name, setName] = useState(route.name);
- 
-
-  // sets up name to be currently selected values
-useEffect(() => {
-  if (value1 && value2) {
-    setName(`Route from ${value1} to ${value2}`);
-  }
-}, [value1, value2]);
-
-
-  //loads buildings
-useEffect(() => {
-  const loadBuildings = async () => {
-    try {
-      const data = await getBuildings();
-
-      setBuildings(data);
-
-      const formatted = data.map((b) => ({
-        label: b.name,
-        value: b.name,
-      }));
-
-      setItems1(formatted);
-      setItems2(formatted);
-
-    } catch (err) {
-      console.error(err);
-      Alert.alert("Error", "Could not load buildings");
+//start building search
+  const runStartSearch = useCallback(async (q: string) => {
+    setStartQuery(q);
+    setStartBuilding(null);
+    if (!q.trim()) {
+      setStartResults([]);
+      return;
     }
-  };
+    try {
+      setStartResults(await searchBuildings(q));
+    } catch {
+      setStartResults([]);
+    }
+  }, []);
+//end building search
+  const runEndSearch = useCallback(async (q: string) => {
+    setEndQuery(q);
+    setEndBuilding(null);
+    if (!q.trim()) {
+      setEndResults([]);
+      return;
+    }
+    try {
+      setEndResults(await searchBuildings(q));
+    } catch {
+      setEndResults([]);
+    }
+  }, []);
 
-  loadBuildings();
-}, []);
+  useEffect(() => {
+    if (startBuilding && endBuilding) {
+      setName(`Route from ${startBuilding.name} to ${endBuilding.name}`);
+    }
+  }, [startBuilding, endBuilding]);
 
-
-  
   const saveRoute = async () => {
-    if (!value1 || !value2 || value4 == null) {
+
+    if (!startBuilding || !endBuilding || value4 == null) {
       return Alert.alert('Error', 'Please select start, end, and accessibility');
     }
 
-    if (value1 === value2) {
-    return Alert.alert("Invalid Route", "Start and end buildings cannot be the same.");
-  }
+    if (startBuilding.name === endBuilding.name) {
+      return Alert.alert("Invalid Route", "Start and end buildings cannot be the same.");
+    }
 
     try {
-    //matches buildings to coordinates
-      const start = buildings.find(b => b.name === value1);
-      const end = buildings.find(b => b.name === value2);
-
-      if (!start || !end) {
-        return Alert.alert("Error", "Building coordinates not found");
-      }
 
       await updateRoute({
         id: routeId,
         name,
-        start_lon: start.lon,
-        start_lat: start.lat,
-        end_lon: end.lon,
-        end_lat: end.lat,
+        start_lon: startBuilding.lon,
+        start_lat: startBuilding.lat,
+        end_lon: endBuilding.lon,
+        end_lat: endBuilding.lat,
         accessible: value4,
         length: null,
         duration: null,
       });
+
       Alert.alert('Success', 'Route updated!');
-     
       onClose();
-       } catch (err) {
+
+    } catch (err) {
       console.error(err);
       Alert.alert('Error', 'Could not update route');
     }
-  }; 
-
-      
-  //Stops multiple dropdowns being open at one
-  const onOpen1 = () => { setOpen1(true); setOpen2(false); setOpen4(false); };
-  const onOpen2 = () => { setOpen1(false); setOpen2(true); setOpen4(false); };
-  const onOpen4 = () => { setOpen1(false); setOpen2(false); setOpen4(true); };
+  };
 
   return (
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-  <View style={{ flex: 1, backgroundColor: theme.background }}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={{ flex: 1, backgroundColor: theme.background }}>
 
-          <Text style={[styles.title, { color: theme.text }]}>Edit Route</Text>
+        <Text style={[styles.title, { color: theme.text }]}>Edit Route</Text>
 
-          <TextInput
-            style={[styles.input, { backgroundColor: theme.inputBackground, color: theme.text }]}
-            placeholder="Route Name"
-            placeholderTextColor={theme.lighttext}
-            value={name}
-            onChangeText={setName}
-          />
+        <TextInput
+          style={[styles.input, { backgroundColor: theme.inputBackground, color: theme.text }]}
+          placeholder="Route Name"
+          placeholderTextColor={theme.lighttext}
+          value={name}
+          onChangeText={setName}
+        />
 
-          <Text style={[styles.label, { color: theme.text }]}>Start Building</Text>
-          <DropDownPicker
-            open={open1}
-            value={value1}
-            items={items1}
-            setOpen={setOpen1}
-            setValue={setValue1}
-            setItems={setItems1}
-            onOpen={onOpen1}
-            zIndex={4000}
-            containerStyle={{ marginBottom: 15 }}
-            dropDownContainerStyle={{ backgroundColor: theme.box }}
-            style={{ backgroundColor: theme.inputBackground }}
-            textStyle={{ color: theme.text }}
-          />
+        <Text style={[styles.label, { color: theme.text }]}>Start Building</Text>
 
-          <Text style={[styles.label, { color: theme.text }]}>End Building</Text>
-          <DropDownPicker
-            open={open2}
-            value={value2}
-            items={items2}
-            setOpen={setOpen2}
-            setValue={setValue2}
-            setItems={setItems2}
-            onOpen={onOpen2}
-            zIndex={3000}
-            containerStyle={{ marginBottom: 15 }}
-            dropDownContainerStyle={{ backgroundColor: theme.box }}
-            style={{ backgroundColor: theme.inputBackground }}
-            textStyle={{ color: theme.text }}
-          />
-
-          <Text style={[styles.label, { color: theme.text }]}>Accessibility Needed?</Text>
-          <DropDownPicker
-            open={open4}
-            value={value4}
-            items={items4}
-            setOpen={setOpen4}
-            setValue={setValue4}
-            setItems={setItems4}
-            onOpen={onOpen4}
-            zIndex={1000}
-            containerStyle={{ marginBottom: 25 }}
-            dropDownContainerStyle={{ backgroundColor: theme.box }}
-            style={{ backgroundColor: theme.inputBackground }}
-            textStyle={{ color: theme.text }}
-          />
-
-          <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.green }]} onPress={saveRoute}>
-            <Text style={styles.buttonText}>Save</Text>
-          </TouchableOpacity>
+        <TextInput
+          style={[styles.input, { backgroundColor: theme.inputBackground }]}
+          placeholder="Search building..."
+          placeholderTextColor={theme.lighttext}
+          value={startQuery}
+          onChangeText={runStartSearch}
+        />
+          {/* start building */}
+        {startResults.slice(0,5).map((b) => (
           <TouchableOpacity
-  style={[styles.backButton, { backgroundColor: theme.button }]}
-  onPress={onClose}
->
-  <Text style={[styles.buttonText, { color: theme.text }]}>Back</Text>
-</TouchableOpacity>
-        </View>
-      </TouchableWithoutFeedback>
+            key={b.name}
+            style={styles.result}
+            onPress={() => {
+              setStartBuilding(b);
+              setStartQuery(b.name);
+              setStartResults([]);
+            }}
+          >
+            <Text style={{ color: theme.text }}>{b.name}</Text>
+          </TouchableOpacity>
+        ))}
+
+      
+        <Text style={[styles.label, { color: theme.text }]}>End Building</Text>
+
+        <TextInput
+          style={[styles.input, { backgroundColor: theme.inputBackground }]}
+          placeholder="Search building..."
+          placeholderTextColor={theme.lighttext}
+          value={endQuery}
+          onChangeText={runEndSearch}
+        />
+          {/* end building */}
+        {endResults.slice(0,5).map((b) => (
+          <TouchableOpacity
+            key={b.name}
+            style={styles.result}
+            onPress={() => {
+              setEndBuilding(b);
+              setEndQuery(b.name);
+              setEndResults([]);
+            }}
+          >
+            <Text style={{ color: theme.text }}>{b.name}</Text>
+          </TouchableOpacity>
+        ))}
+
+       
+        <Text style={[styles.label, { color: theme.text }]}>Accessibility Needed?</Text>
+
+        <DropDownPicker
+          open={open4}
+          value={value4}
+          items={items4}
+          setOpen={setOpen4}
+          setValue={setValue4}
+          setItems={setItems4}
+          zIndex={1000}
+          containerStyle={{ marginBottom: 25 }}
+          dropDownContainerStyle={{ backgroundColor: theme.box }}
+          style={{ backgroundColor: theme.inputBackground }}
+          textStyle={{ color: theme.text }}
+        />
+
+        <TouchableOpacity
+          style={[styles.saveButton, { backgroundColor: theme.green }]}
+          onPress={saveRoute}
+        >
+          <Text style={styles.buttonText}>Save</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.backButton, { backgroundColor: theme.button }]}
+          onPress={onClose}
+        >
+          <Text style={[styles.buttonText, { color: theme.text }]}>Back</Text>
+        </TouchableOpacity>
+
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
-  title: { 
-    fontSize: 20, 
-    fontWeight: 'bold', 
-    marginBottom: 20 
+  title:{
+    fontSize:20,
+    fontWeight:'bold',
+    marginBottom:20
   },
-  label: { 
-    marginBottom: 5, 
-    fontWeight: '600' 
+
+  label:{
+    marginBottom:5,
+    fontWeight:'600'
   },
-  input: { 
-    width: '100%', 
-    borderRadius: 8, 
-    padding: 10, 
-    marginBottom: 15 
+
+  input:{
+    width:'100%',
+    borderRadius:8,
+    padding:10,
+    marginBottom:10
   },
-  saveButton: { 
-    paddingVertical: 12, 
-    borderRadius: 8, 
-    alignItems: 'center' 
+
+  result:{
+    padding:10,
+    borderBottomWidth:1,
+    borderColor:"#444"
   },
-  buttonText: { 
-    color: '#fff', 
-    fontWeight: 'bold' 
+
+  saveButton:{
+    paddingVertical:12,
+    borderRadius:8,
+    alignItems:'center'
   },
-  backButton: {
-  paddingVertical: 12,
-  borderRadius: 8,
-  alignItems: 'center',
-  marginTop: 10
-},
+
+  backButton:{
+    paddingVertical:12,
+    borderRadius:8,
+    alignItems:'center',
+    marginTop:10
+  },
+
+  buttonText:{
+    color:'#fff',
+    fontWeight:'bold'
+  }
 });
