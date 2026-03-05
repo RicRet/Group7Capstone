@@ -1,21 +1,23 @@
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { useTheme } from "../app/Theme";
 import { useSession } from "./lib/session";
+import { useAccessibility } from "./Fontsize";
 
 const EditProfile: React.FC = () => {
+  const { scaleFont } = useAccessibility();
   const router = useRouter();
   const { theme } = useTheme();
   const { user, updateProfile } = useSession();
@@ -27,7 +29,6 @@ const EditProfile: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Keep fields in sync if session loads after mount
   useEffect(() => {
     if (user) {
       setUsername(user.username ?? "");
@@ -94,9 +95,9 @@ const EditProfile: React.FC = () => {
     options?: { autoCapitalize?: "none" | "sentences" | "words"; keyboardType?: "default" | "url" }
   ) => (
     <View style={styles.fieldGroup} key={key}>
-      <Text style={[styles.label, { color: theme.lighttext }]}>{label}</Text>
+      <Text style={[styles.label, { color: theme.lighttext, fontSize: scaleFont(12) }]}>{label}</Text>
       <TextInput
-        style={[inputStyle, errors[key] ? { borderColor: theme.red } : {}]}
+        style={[inputStyle, { fontSize: scaleFont(15) }, errors[key] ? { borderColor: theme.red } : {}]}
         value={value}
         onChangeText={(v) => {
           setter(v);
@@ -109,7 +110,7 @@ const EditProfile: React.FC = () => {
         keyboardType={options?.keyboardType ?? "default"}
       />
       {!!errors[key] && (
-        <Text style={[styles.errorText, { color: theme.red }]}>{errors[key]}</Text>
+        <Text style={[styles.errorText, { color: theme.red, fontSize: scaleFont(12) }]}>{errors[key]}</Text>
       )}
     </View>
   );
@@ -122,14 +123,14 @@ const EditProfile: React.FC = () => {
       {/* Header */}
       <View style={[styles.header, { backgroundColor: theme.header }]}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text style={[styles.backButton, { color: theme.green }]}>← Back</Text>
+          <Text style={[styles.backButton, { color: theme.green, fontSize: scaleFont(16) }]}>← Back</Text>
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: theme.text }]}>Edit Profile</Text>
+        <Text style={[styles.headerTitle, { color: theme.text, fontSize: scaleFont(20) }]}>Edit Profile</Text>
         <TouchableOpacity onPress={handleSave} disabled={saving}>
           {saving ? (
             <ActivityIndicator size="small" color={theme.green} />
           ) : (
-            <Text style={[styles.saveButton, { color: theme.green }]}>Save</Text>
+            <Text style={[styles.saveButton, { color: theme.green, fontSize: scaleFont(16) }]}>Save</Text>
           )}
         </TouchableOpacity>
       </View>
@@ -138,9 +139,9 @@ const EditProfile: React.FC = () => {
         {/* Read-only email banner */}
         {!!user?.email && (
           <View style={[styles.emailBanner, { backgroundColor: theme.box, borderColor: theme.border }]}>
-            <Text style={[styles.emailLabel, { color: theme.lighttext }]}>Email</Text>
-            <Text style={[styles.emailValue, { color: theme.text }]}>{user.email}</Text>
-            <Text style={[styles.emailHint, { color: theme.lighttext }]}>
+            <Text style={[styles.emailLabel, { color: theme.lighttext, fontSize: scaleFont(12) }]}>Email</Text>
+            <Text style={[styles.emailValue, { color: theme.text, fontSize: scaleFont(16) }]}>{user.email}</Text>
+            <Text style={[styles.emailHint, { color: theme.lighttext, fontSize: scaleFont(11) }]}>
               Email cannot be changed here
             </Text>
           </View>
@@ -166,7 +167,7 @@ const EditProfile: React.FC = () => {
           {saving ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.saveBtnText}>Save Changes</Text>
+            <Text style={[styles.saveBtnText, { fontSize: scaleFont(16) }]}>Save Changes</Text>
           )}
         </TouchableOpacity>
       </ScrollView>
@@ -185,9 +186,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 50,
   },
-  backButton: { fontSize: 16, fontWeight: "600" },
-  headerTitle: { fontSize: 20, fontWeight: "700" },
-  saveButton: { fontSize: 16, fontWeight: "600" },
+  backButton: { fontWeight: "600" },
+  headerTitle: { fontWeight: "700" },
+  saveButton: { fontWeight: "600" },
   contentContainer: { padding: 16, paddingBottom: 40 },
   emailBanner: {
     borderRadius: 8,
@@ -195,25 +196,24 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 16,
   },
-  emailLabel: { fontSize: 12, fontWeight: "600", marginBottom: 2 },
-  emailValue: { fontSize: 16, fontWeight: "600" },
-  emailHint: { fontSize: 11, marginTop: 4 },
+  emailLabel: { fontWeight: "600", marginBottom: 2 },
+  emailValue: { fontWeight: "600" },
+  emailHint: { marginTop: 4 },
   card: { borderRadius: 10, padding: 16, marginBottom: 24 },
   fieldGroup: { marginBottom: 20 },
-  label: { fontSize: 12, fontWeight: "700", marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.4 },
+  label: { fontWeight: "700", marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.4 },
   input: {
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 14,
     paddingVertical: 12,
-    fontSize: 15,
   },
-  errorText: { fontSize: 12, marginTop: 4 },
+  errorText: { marginTop: 4 },
   saveBtn: {
     borderRadius: 10,
     paddingVertical: 16,
     alignItems: "center",
     justifyContent: "center",
   },
-  saveBtnText: { color: "#fff", fontSize: 16, fontWeight: "700" },
+  saveBtnText: { color: "#fff", fontWeight: "700" },
 });

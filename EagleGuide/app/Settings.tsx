@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Alert,
   ScrollView,
@@ -11,8 +11,8 @@ import {
 } from "react-native";
 import { useTheme } from "../app/Theme";
 import { useSession } from "./lib/session";
+import { useAccessibility } from "./Fontsize";
 import * as Notifications from "expo-notifications";
-import { useEffect } from "react";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -22,18 +22,22 @@ Notifications.setNotificationHandler({
     shouldShowList: true,
   }),
 });
+
 const Settings: React.FC = () => {
   const router = useRouter();
   const { theme, isDark, toggleTheme } = useTheme();
   const { user } = useSession();
+  const { largeTextEnabled, toggleLargeText, scaleFont } = useAccessibility();
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [vibrationEnabled, setVibrationEnabled] = useState(true);
 
-  const handleBackPress = () => {
-    router.replace("/homepage");
-  };
+  useEffect(() => {
+    Notifications.requestPermissionsAsync();
+  }, []);
+
+  const handleBackPress = () => router.replace("/map");
 
   const handleClearCache = () => {
     Alert.alert("Clear Cache", "Are you sure you want to clear app cache?", [
@@ -68,20 +72,16 @@ const Settings: React.FC = () => {
     });
   };
 
-  useEffect(() => {
-    Notifications.requestPermissionsAsync();
-  }, []);
-
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Header */}
       <View style={[styles.header, { backgroundColor: theme.header }]}>
         <TouchableOpacity onPress={handleBackPress}>
-          <Text style={[styles.backButton, { color: theme.green }]}>
+          <Text style={[styles.backButton, { color: theme.green, fontSize: scaleFont(16) }]}>
             ← Back
           </Text>
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: theme.text }]}>
+        <Text style={[styles.headerTitle, { color: theme.text, fontSize: scaleFont(20) }]}>
           Settings
         </Text>
         <View style={{ width: 50 }} />
@@ -90,42 +90,44 @@ const Settings: React.FC = () => {
       <ScrollView contentContainerStyle={styles.contentContainer}>
         {/* Profile */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.green }]}>Profile</Text>
+          <Text style={[styles.sectionTitle, { color: theme.green, fontSize: scaleFont(14) }]}>
+            Profile
+          </Text>
           <TouchableOpacity
             style={[styles.profileCard, { backgroundColor: theme.box, borderColor: theme.border }]}
             onPress={() => router.push("/EditProfile" as any)}
           >
             <View style={styles.profileInfo}>
               <View style={[styles.avatarCircle, { backgroundColor: theme.green }]}>
-                <Text style={styles.avatarInitial}>
+                <Text style={[styles.avatarInitial, { fontSize: scaleFont(20) }]}>
                   {(user?.firstName?.[0] ?? user?.username?.[0] ?? "?").toUpperCase()}
                 </Text>
               </View>
               <View style={styles.profileText}>
-                <Text style={[styles.profileName, { color: theme.text }]}>
+                <Text style={[styles.profileName, { color: theme.text, fontSize: scaleFont(16) }]}>
                   {user?.firstName && user?.lastName
                     ? `${user.firstName} ${user.lastName}`
                     : user?.firstName ?? user?.username ?? "Unknown"}
                 </Text>
                 {!!user?.username && (
-                  <Text style={[styles.profileUsername, { color: theme.lighttext }]}>
+                  <Text style={[styles.profileUsername, { color: theme.lighttext, fontSize: scaleFont(13) }]}>
                     @{user.username}
                   </Text>
                 )}
                 {!!user?.email && (
-                  <Text style={[styles.profileEmail, { color: theme.lighttext }]}>
+                  <Text style={[styles.profileEmail, { color: theme.lighttext, fontSize: scaleFont(12) }]}>
                     {user.email}
                   </Text>
                 )}
               </View>
             </View>
-            <Text style={[styles.arrow, { color: theme.green }]}>›</Text>
+            <Text style={[styles.arrow, { color: theme.green, fontSize: scaleFont(24) }]}>›</Text>
           </TouchableOpacity>
         </View>
 
         {/* Notifications */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.green }]}>
+          <Text style={[styles.sectionTitle, { color: theme.green, fontSize: scaleFont(14) }]}>
             Notifications
           </Text>
 
@@ -154,10 +156,10 @@ const Settings: React.FC = () => {
               style={[styles.settingItem, { backgroundColor: theme.box }]}
             >
               <View>
-                <Text style={[styles.settingLabel, { color: theme.text }]}>
+                <Text style={[styles.settingLabel, { color: theme.text, fontSize: scaleFont(16) }]}>
                   {item.label}
                 </Text>
-                <Text style={[styles.settingDescription, { color: theme.lighttext }]}>
+                <Text style={[styles.settingDescription, { color: theme.lighttext, fontSize: scaleFont(12) }]}>
                   {item.desc}
                 </Text>
               </View>
@@ -170,28 +172,29 @@ const Settings: React.FC = () => {
             </View>
           ))}
 
+          {/* Test Notification */}
           <TouchableOpacity
             style={[styles.buttonItem, { backgroundColor: theme.box }]}
             onPress={sendNotification}
           >
             <View>
-              <Text style={[styles.settingLabel, { color: theme.text }]}>
+              <Text style={[styles.settingLabel, { color: theme.text, fontSize: scaleFont(16) }]}>
                 Send Test Notification
               </Text>
-              <Text style={[styles.settingDescription, { color: theme.lighttext }]}>
+              <Text style={[styles.settingDescription, { color: theme.lighttext, fontSize: scaleFont(12) }]}>
                 Send a sample notification
               </Text>
             </View>
-            <Text style={[styles.arrow, { color: theme.green }]}>›</Text>
+            <Text style={[styles.arrow, { color: theme.green, fontSize: scaleFont(24) }]}>›</Text>
           </TouchableOpacity>
 
-          {/* 🌗 Dark Mode Toggle */}
+          {/* Dark Mode */}
           <View style={[styles.settingItem, { backgroundColor: theme.box }]}>
             <View>
-              <Text style={[styles.settingLabel, { color: theme.text }]}>
+              <Text style={[styles.settingLabel, { color: theme.text, fontSize: scaleFont(16) }]}>
                 Dark Mode
               </Text>
-              <Text style={[styles.settingDescription, { color: theme.lighttext }]}>
+              <Text style={[styles.settingDescription, { color: theme.lighttext, fontSize: scaleFont(12) }]}>
                 Switch between light and dark theme
               </Text>
             </View>
@@ -202,33 +205,51 @@ const Settings: React.FC = () => {
               thumbColor="#fff"
             />
           </View>
+
+          {/* Large Text / Accessibility */}
+          <View style={[styles.settingItem, { backgroundColor: theme.box }]}>
+            <View>
+              <Text style={[styles.settingLabel, { color: theme.text, fontSize: scaleFont(16) }]}>
+                Large Text
+              </Text>
+              <Text style={[styles.settingDescription, { color: theme.lighttext, fontSize: scaleFont(12) }]}>
+                Increase font size for accessibility
+              </Text>
+            </View>
+            <Switch
+              value={largeTextEnabled}
+              onValueChange={toggleLargeText}
+              trackColor={{ false: "#ccc", true: theme.green }}
+              thumbColor="#fff"
+            />
+          </View>
         </View>
 
         {/* App */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.green }]}>App</Text>
+          <Text style={[styles.sectionTitle, { color: theme.green, fontSize: scaleFont(14) }]}>App</Text>
 
           <TouchableOpacity
             style={[styles.buttonItem, { backgroundColor: theme.box }]}
             onPress={handleClearCache}
           >
             <View>
-              <Text style={[styles.settingLabel, { color: theme.text }]}>
+              <Text style={[styles.settingLabel, { color: theme.text, fontSize: scaleFont(16) }]}>
                 Clear Cache
               </Text>
-              <Text style={[styles.settingDescription, { color: theme.lighttext }]}>
+              <Text style={[styles.settingDescription, { color: theme.lighttext, fontSize: scaleFont(12) }]}>
                 Free up storage space
               </Text>
             </View>
-            <Text style={[styles.arrow, { color: theme.green }]}>›</Text>
+            <Text style={[styles.arrow, { color: theme.green, fontSize: scaleFont(24) }]}>›</Text>
           </TouchableOpacity>
 
           <View style={[styles.buttonItem, { backgroundColor: theme.box }]}>
             <View>
-              <Text style={[styles.settingLabel, { color: theme.text }]}>
+              <Text style={[styles.settingLabel, { color: theme.text, fontSize: scaleFont(16) }]}>
                 App Version
               </Text>
-              <Text style={[styles.settingDescription, { color: theme.lighttext }]}>
+              <Text style={[styles.settingDescription, { color: theme.lighttext, fontSize: scaleFont(12) }]}>
                 1.0.0
               </Text>
             </View>
@@ -237,7 +258,7 @@ const Settings: React.FC = () => {
 
         {/* Account */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.green }]}>
+          <Text style={[styles.sectionTitle, { color: theme.green, fontSize: scaleFont(14) }]}>
             Account
           </Text>
 
@@ -248,7 +269,7 @@ const Settings: React.FC = () => {
             ]}
             onPress={handleLogout}
           >
-            <Text style={[styles.logoutText, { color: theme.red }]}>
+            <Text style={[styles.logoutText, { color: theme.red, fontSize: scaleFont(16) }]}>
               Logout
             </Text>
           </TouchableOpacity>

@@ -4,11 +4,12 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { useSession } from "./lib/session";
-
+import { useAccessibility } from './Fontsize';
 
 export default function Home({ onNavigate }: { onNavigate?: (screen: string) => void }) {
     const router = useRouter();
     const { user, loading, refreshMe, logout } = useSession();
+    const { scaleFont } = useAccessibility();
     const [locStatus, setLocStatus] = useState<"unknown" | "denied" | "granted" | "error">("unknown");
     const [coords, setCoords] = useState<Location.LocationObjectCoords | null>(null);
     const [checkingLoc, setCheckingLoc] = useState(false);
@@ -36,11 +37,11 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
     );
 
     const campusCenter = useMemo(() => ({ latitude: 33.2106, longitude: -97.1470 }), []);
-    const campusRadiusM = 1500; // 1.5 km radius around campus center
+    const campusRadiusM = 1500; // 1.5 km radius
 
     useEffect(() => {
         if (!loading) {
-            refreshMe().catch(() => {});
+            refreshMe().catch(() => { });
         }
     }, [loading, refreshMe]);
 
@@ -69,17 +70,14 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
                     if (active) setCheckingLoc(false);
                 }
             };
-
             loadLocation();
-            return () => {
-                active = false;
-            };
+            return () => { active = false; };
         }, [])
     );
 
     const distanceMeters = (a: { latitude: number; longitude: number }, b: { latitude: number; longitude: number }) => {
         const toRad = (x: number) => (x * Math.PI) / 180;
-        const R = 6371000; // meters
+        const R = 6371000;
         const dLat = toRad(b.latitude - a.latitude);
         const dLon = toRad(b.longitude - a.longitude);
         const lat1 = toRad(a.latitude);
@@ -120,28 +118,28 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
                             resizeMode="contain"
                             style={styles.logo}
                         />
-                        <Text style={styles.title}>Eagle Guide</Text>
+                        <Text style={[styles.title, { fontSize: scaleFont(22) }]}>Eagle Guide</Text>
                     </View>
                     <View style={styles.headerActions}>
                         {loading ? (
                             <ActivityIndicator color="#65d159" />
                         ) : user ? (
                             <View style={styles.userPill}>
-                                <Text style={styles.userText}>Hi, {user.username ?? user.id}</Text>
+                                <Text style={[styles.userText, { fontSize: scaleFont(14) }]}>Hi, {user.username ?? user.id}</Text>
                                 <TouchableOpacity onPress={logout} style={styles.logoutBtn}>
-                                    <Text style={styles.logoutText}>Logout</Text>
+                                    <Text style={[styles.logoutText, { fontSize: scaleFont(12) }]}>Logout</Text>
                                 </TouchableOpacity>
                             </View>
                         ) : (
                             <View style={styles.authRow}>
                                 <TouchableOpacity style={styles.authButton} onPress={() => router.push("/Login")}>
-                                    <Text style={styles.authText}>Login</Text>
+                                    <Text style={[styles.authText, { fontSize: scaleFont(14) }]}>Login</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.authButton, styles.authSecondary]}
                                     onPress={() => router.push("/Signup")}
                                 >
-                                    <Text style={styles.authTextLight}>Sign Up</Text>
+                                    <Text style={[styles.authTextLight, { fontSize: scaleFont(14) }]}>Sign Up</Text>
                                 </TouchableOpacity>
                             </View>
                         )}
@@ -156,21 +154,21 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
 
                 <View style={styles.locationCard}>
                     <View style={styles.locationHeader}>
-                        <Text style={styles.sectionTitle}>My Location</Text>
+                        <Text style={[styles.sectionTitle, { fontSize: scaleFont(16) }]}>My Location</Text>
                         {checkingLoc && <ActivityIndicator color="#65d159" size="small" />}
                     </View>
                     {locStatus === "denied" && (
-                        <Text style={styles.locationText}>Location permission is needed to show your position.</Text>
+                        <Text style={[styles.locationText, { fontSize: scaleFont(14) }]}>Location permission is needed to show your position.</Text>
                     )}
                     {locStatus === "error" && (
-                        <Text style={styles.locationText}>Could not read location. Please try again.</Text>
+                        <Text style={[styles.locationText, { fontSize: scaleFont(14) }]}>Could not read location. Please try again.</Text>
                     )}
                     {locStatus === "granted" && coords && (
                         <>
-                            <Text style={[styles.locationBadge, onCampus ? styles.onCampus : styles.offCampus]}>
+                            <Text style={[styles.locationBadge, onCampus ? styles.onCampus : styles.offCampus, { fontSize: scaleFont(14) }]}>
                                 {onCampus ? "On campus" : "Outside campus"}
                             </Text>
-                            {!onCampus && <Text style={styles.locationText}>You appear to be outside the campus area.</Text>}
+                            {!onCampus && <Text style={[styles.locationText, { fontSize: scaleFont(14) }]}>You appear to be outside the campus area.</Text>}
                             <MapView
                                 style={styles.locationMap}
                                 pointerEvents="none"
@@ -193,16 +191,16 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
                                 style={styles.shareBtn}
                                 onPress={shareMyLocation}
                             >
-                                <Text style={styles.shareBtnText}>Share My Location</Text>
+                                <Text style={[styles.shareBtnText, { fontSize: scaleFont(14) }]}>Share My Location</Text>
                             </TouchableOpacity>
                         </>
                     )}
                     {locStatus === "granted" && !coords && !checkingLoc && (
-                        <Text style={styles.locationText}>Locating you…</Text>
+                        <Text style={[styles.locationText, { fontSize: scaleFont(14) }]}>Locating you…</Text>
                     )}
                 </View>
 
-                <Text style={styles.sectionTitle}>Quick Actions</Text>
+                <Text style={[styles.sectionTitle, { fontSize: scaleFont(16) }]}>Quick Actions</Text>
                 <View style={styles.actionsGrid}>
                     {navItems.map((item) => (
                         <TouchableOpacity
@@ -213,21 +211,21 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
                                 onNavigate?.(item.to);
                             }}
                         >
-                            <Text style={styles.cardLabel}>{item.label}</Text>
+                            <Text style={[styles.cardLabel, { fontSize: scaleFont(16) }]}>{item.label}</Text>
                         </TouchableOpacity>
                     ))}
                 </View>
 
                 <View style={styles.legendCard}>
                     <View style={styles.legendHeader}>
-                        <Text style={[styles.sectionTitle, styles.legendTitle]}>Parking Legend</Text>
-                        <Text style={styles.legendNote}>Colors match the lots shown on the map</Text>
+                        <Text style={[styles.sectionTitle, styles.legendTitle, { fontSize: scaleFont(16) }]}>Parking Legend</Text>
+                        <Text style={[styles.legendNote, { fontSize: scaleFont(12) }]}>Colors match the lots shown on the map</Text>
                     </View>
                     <View style={styles.legendGrid}>
                         {legendItems.map((item) => (
                             <View key={item.label} style={styles.legendItem}>
                                 <View style={[styles.legendSwatch, { backgroundColor: item.color }]} />
-                                <Text style={styles.legendLabel}>{item.label}</Text>
+                                <Text style={[styles.legendLabel, { fontSize: scaleFont(14) }]}>{item.label}</Text>
                             </View>
                         ))}
                     </View>
@@ -289,8 +287,8 @@ const styles = StyleSheet.create({
     },
     userText: { color: '#dcdcdcff', fontWeight: '600' },
     hero: {
-      width: '100%',
-      height: 200,
+        width: '100%',
+        height: 200,
     },
     sectionTitle: {
         color: '#65d159',
@@ -391,8 +389,8 @@ const styles = StyleSheet.create({
 });
 
 const mapStyle = [
-  { elementType: 'geometry', stylers: [{ color: '#6b6b6b' }] },
-  { elementType: 'labels.text.fill', stylers: [{ color: '#dcdcdcff' }] },
-  { elementType: 'labels.text.stroke', stylers: [{ color: '#6b6b6b' }] },
-  { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#999999' }] },
+    { elementType: 'geometry', stylers: [{ color: '#6b6b6b' }] },
+    { elementType: 'labels.text.fill', stylers: [{ color: '#dcdcdcff' }] },
+    { elementType: 'labels.text.stroke', stylers: [{ color: '#6b6b6b' }] },
+    { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#999999' }] },
 ];
