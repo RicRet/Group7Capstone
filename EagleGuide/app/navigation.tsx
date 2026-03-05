@@ -3,30 +3,24 @@ import * as Location from "expo-location";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    FlatList,
-    KeyboardAvoidingView, Platform,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  KeyboardAvoidingView, Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
 import MapView, { Marker, Polyline, PROVIDER_GOOGLE, Region } from "react-native-maps";
 import Addroute from "./addroute";
 import Editroute from "./editroute";
 import { SavedRoute } from "./lib/api/addroutev2";
-import {
-    getRouteFromORS,
-    snapToRoad,
-    type Coordinates,
-    type Profile,
-    type RouteStep
-} from "./lib/api/directions";
+import { getRouteFromORS, snapToRoad, type Coordinates, type Profile, type RouteStep } from "./lib/api/directions";
 import { searchBuildings, type Building } from './lib/api/navbuildings';
 import { useTheme } from "./Theme";
-
+import { useAccessibility } from './Fontsize';
 
 type BuildingSearchResult = {
   id: string;
@@ -50,6 +44,7 @@ const formatDistance = (meters: number) => {
 };
 
 export default function NavigationScreen() {
+  const { scaleFont } = useAccessibility(); // <--- get scaleFont
   const [showAddRoute, setShowAddRoute] = useState(false);
   const [editingRoute, setEditingRoute] = useState<SavedRoute | null>(null);
 
@@ -61,7 +56,6 @@ export default function NavigationScreen() {
   const [origin, setOrigin] = useState<Coordinates | null>(null);
   const [destination, setDestination] = useState<Coordinates | null>(null);
   const [routeCoords, setRouteCoords] = useState<Coordinates[] | null>(null);
-
   const [steps, setSteps] = useState<RouteStep[]>([]);
   const [summary, setSummary] = useState<{ distance: number, duration: number } | null>(null);
 
@@ -106,7 +100,7 @@ export default function NavigationScreen() {
           setLoading(true);
           try {
             const snappedOrigin = await snapToRoad(userCoord, "foot-walking");
-            const snappedDest   = await snapToRoad(destCoord, "foot-walking");
+            const snappedDest = await snapToRoad(destCoord, "foot-walking");
             setSnappedPins({ origin: snappedOrigin, destination: snappedDest });
             const routeData = await getRouteFromORS(snappedOrigin, snappedDest, "foot-walking");
             if (routeData && routeData.coordinates.length >= 2) {
@@ -145,15 +139,8 @@ export default function NavigationScreen() {
 
   const handleLongPress = (e: any) => {
     const coord = e.nativeEvent.coordinate as Coordinates;
-    if (!origin) {
-      setOrigin(coord);
-      return;
-    }
-    if (!destination) {
-      setDestination(coord);
-      return;
-    }
-    setDestination(coord);
+    if (!origin) setOrigin(coord);
+    else setDestination(coord);
   };
 
   const swapPins = () => {
@@ -215,42 +202,20 @@ export default function NavigationScreen() {
     }
   };
 
-  function getPolygonCenter(coordinates: number[][][]) {
-    const points = coordinates[0]; // first ring of polygon
-    let sumLat = 0;
-    let sumLng = 0;
-
-    for (const [lng, lat] of points) {
-      sumLat += lat;
-      sumLng += lng;
-    }
-
-    return {
-      latitude: sumLat / points.length,
-      longitude: sumLng / points.length,
-    };
-  }
-
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
     setSearching(true);
     try {
       const results: Building[] = await searchBuildings(searchQuery);
-
-      const mappedResults: BuildingSearchResult[] = results.map((b) => ({
+      setSearchResults(results.map((b) => ({
         id: b.name,
         label: b.name,
         coordinates: { latitude: b.lat, longitude: b.lon },
         type: (b as any).type ?? null,
         description: (b as any).description ?? null,
-      }));
-
-      setSearchResults(mappedResults);
-    } finally {
-      setSearching(false);
-    }
+      })));
+    } finally { setSearching(false); }
   };
-
 
   const selectSearchResult = (result: BuildingSearchResult) => {
     setDestination(result.coordinates);
@@ -293,19 +258,14 @@ export default function NavigationScreen() {
           {!routeCoords && origin && destination && (
             <Polyline coordinates={[origin, destination]} strokeColor={theme.border} strokeWidth={2} />
           )}
-
-          {searchResults.length > 0 && searchResults.map((b, i) => (
-            <Marker
-              key={b.id}
-              coordinate={b.coordinates}
-              title={b.label}
-            />
+          {searchResults.length > 0 && searchResults.map((b) => (
+            <Marker key={b.id} coordinate={b.coordinates} title={b.label} />
           ))}
         </MapView>
 
         <View style={[styles.controls, { backgroundColor: theme.header, maxHeight: '60%' }]}>
           <TextInput
-            style={[styles.searchInput, { backgroundColor: theme.button, color: theme.text }]}
+            style={[styles.searchInput, { backgroundColor: theme.button, color: theme.text, fontSize: scaleFont(14) }]}
             placeholder="Search for a place or address"
             placeholderTextColor={theme.lighttext}
             value={searchQuery}
@@ -313,7 +273,6 @@ export default function NavigationScreen() {
             onSubmitEditing={handleSearch}
             returnKeyType="search"
           />
-
           {searching && <ActivityIndicator style={{ marginTop: 6 }} />}
 
           {searchResults.length > 0 && (
@@ -327,21 +286,11 @@ export default function NavigationScreen() {
                     onPress={() => selectSearchResult(item)}
                   >
                     <View style={{ paddingVertical: 8 }}>
-                      <Text style={{ fontSize: 16, fontWeight: "600", color: theme.text }}>
+                      <Text style={{ fontSize: scaleFont(16), fontWeight: "600", color: theme.text }}>
                         {item.label}
                       </Text>
-
-                      {item.type && (
-                        <Text style={{ fontSize: 13, color: "#2E86FF" }}>
-                          {item.type}
-                        </Text>
-                      )}
-
-                      {item.description && (
-                        <Text style={{ fontSize: 12, color: "#666", marginTop: 2 }}>
-                          {item.description}
-                        </Text>
-                      )}
+                      {item.type && <Text style={{ fontSize: scaleFont(13), color: "#2E86FF" }}>{item.type}</Text>}
+                      {item.description && <Text style={{ fontSize: scaleFont(12), color: "#666", marginTop: 2 }}>{item.description}</Text>}
                     </View>
                   </TouchableOpacity>
                 )}
@@ -351,56 +300,47 @@ export default function NavigationScreen() {
 
           <View style={styles.row}>
             <TouchableOpacity style={[styles.button, { backgroundColor: theme.button }]} onPress={swapPins}>
-              <Text style={[styles.buttonText, { color: theme.text }]}>Swap</Text>
+              <Text style={{ color: theme.text, fontSize: scaleFont(14) }}>Swap</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.button, { backgroundColor: theme.button }]} onPress={clearAll}>
-              <Text style={[styles.buttonText, { color: theme.text }]}>Clear</Text>
+              <Text style={{ color: theme.text, fontSize: scaleFont(14) }}>Clear</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.row}>
             <TouchableOpacity
-              style={[
-                styles.modeButton,
-                { backgroundColor: theme.button },
-                profile === "foot-walking" && { borderWidth: 1, borderColor: theme.text }
-              ]}
+              style={[styles.modeButton, { backgroundColor: theme.button }, profile === "foot-walking" && { borderWidth: 1, borderColor: theme.text }]}
               onPress={() => setProfile("foot-walking")}
             >
-              <Text style={[styles.buttonText, { color: theme.text }]}>Walk</Text>
+              <Text style={{ color: theme.text, fontSize: scaleFont(14) }}>Walk</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[
-                styles.modeButton,
-                { backgroundColor: theme.button },
-                profile === "driving-car" && { borderWidth: 1, borderColor: theme.text }
-              ]}
+              style={[styles.modeButton, { backgroundColor: theme.button }, profile === "driving-car" && { borderWidth: 1, borderColor: theme.text }]}
               onPress={() => setProfile("driving-car")}
             >
-              <Text style={[styles.buttonText, { color: theme.text }]}>Drive</Text>
+              <Text style={{ color: theme.text, fontSize: scaleFont(14) }}>Drive</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.row}>
             <TouchableOpacity style={[styles.button, { backgroundColor: theme.button, flex: 1, marginRight: 5 }]} onPress={fetchRoute} disabled={loading}>
-              {loading ? <ActivityIndicator color="#fff" /> : <Text style={[styles.buttonText, { color: "#fff" }]}>Find Route</Text>}
+              {loading ? <ActivityIndicator color="#fff" /> : <Text style={{ color: "#fff", fontSize: scaleFont(14) }}>Find Route</Text>}
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.button, { backgroundColor: theme.button }]}
               onPress={() => setShowAddRoute(true)}
             >
-              <Text style={[styles.buttonText, { color: theme.text }]}> View Route</Text>
+              <Text style={{ color: theme.text, fontSize: scaleFont(14) }}>View Route</Text>
             </TouchableOpacity>
-
             <TouchableOpacity style={[styles.button, { backgroundColor: theme.button }]} onPress={() => router.back()}>
-              <Text style={[styles.buttonText, { color: theme.text }]}>Back</Text>
+              <Text style={{ color: theme.text, fontSize: scaleFont(14) }}>Back</Text>
             </TouchableOpacity>
           </View>
 
           {summary && (
             <View style={{ marginTop: 10, marginBottom: 10 }}>
-              <Text style={{ color: theme.text, fontWeight: 'bold' }}>
+              <Text style={{ color: theme.text, fontWeight: 'bold', fontSize: scaleFont(14) }}>
                 Total: {formatDistance(summary.distance)} • {formatDuration(summary.duration)}
               </Text>
             </View>
@@ -414,10 +354,10 @@ export default function NavigationScreen() {
               renderItem={({ item, index }) => (
                 <View style={[styles.stepItem, { borderBottomColor: theme.border }]}>
                   <View style={{ flex: 1 }}>
-                    <Text style={[styles.stepText, { color: theme.text }]}>
+                    <Text style={{ color: theme.text, fontSize: scaleFont(14), fontWeight: '500', marginBottom: 4 }}>
                       {index + 1}. {item.instruction}
                     </Text>
-                    <Text style={[styles.stepSubText, { color: theme.lighttext }]}>
+                    <Text style={{ color: theme.lighttext, fontSize: scaleFont(12) }}>
                       {formatDistance(item.distance)}
                     </Text>
                   </View>
@@ -427,32 +367,24 @@ export default function NavigationScreen() {
           )}
 
         </View>
-        {/*addroute and editroute overlay */}
+
         {showAddRoute && !editingRoute && (
           <View style={styles.overlay}>
             <Addroute
               onClose={() => setShowAddRoute(false)}
               onEdit={(route) => setEditingRoute(route)}
               onNavigate={(data) => {
-                setOrigin({
-                  latitude: data.originLat,
-                  longitude: data.originLon,
-                });
-                setDestination({
-                  latitude: data.destLat,
-                  longitude: data.destLon,
-                });
+                setOrigin({ latitude: data.originLat, longitude: data.originLon });
+                setDestination({ latitude: data.destLat, longitude: data.destLon });
                 setShowAddRoute(false);
               }}
             />
           </View>
         )}
+
         {editingRoute && (
           <View style={styles.overlay}>
-            <Editroute
-              route={editingRoute}
-              onClose={() => setEditingRoute(null)}
-            />
+            <Editroute route={editingRoute} onClose={() => setEditingRoute(null)} />
           </View>
         )}
 
