@@ -56,9 +56,6 @@ useFocusEffect(
       contentContainerStyle={{ paddingBottom: 40 }}
       ListHeaderComponent={() => (
         <View style={styles.container}>
-          <Text style={[styles.title, { color: theme.text }]}>
-            Choose current building and then destination:
-          </Text>
 
           <Text style={[styles.SavedRoutesHeader, { color: theme.text }]}>
             Saved Routes
