@@ -1,10 +1,9 @@
-import { useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { addRoute, Building, getBuildings } from "./lib/api/addroutev2";
 import { useTheme } from "./Theme";
-
 export default function AddRouteScreen() {
   const router = useRouter();
   const { theme } = useTheme();
@@ -101,11 +100,14 @@ useEffect(() => {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
+    <>
 
-      <Text style={[styles.title, { color: theme.text }]}>
-        Add New Route
-      </Text>
+      <Stack.Screen options={{ headerShown: false }} />
+
+      <View style={[styles.container, { backgroundColor: theme.background }]}>
+        <Text style={[styles.title, { color: theme.text }]}>
+          Add New Route
+        </Text>
 
       {/*destination buildings*/}
       <View style={styles.row}>
@@ -191,6 +193,7 @@ useEffect(() => {
       </TouchableOpacity>
 
     </View>
+     </>
   );
 }
 

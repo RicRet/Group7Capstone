@@ -6,13 +6,14 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
+  KeyboardAvoidingView, Platform,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View
 } from "react-native";
-import MapView, { Marker, Polyline, PROVIDER_GOOGLE, Region, Polygon } from "react-native-maps";
+import MapView, { Marker, Polyline, PROVIDER_GOOGLE, Region } from "react-native-maps";
 import Addroute from "./addroute";
 import Editroute from "./editroute";
 import { SavedRoute } from "./lib/api/addroutev2";
@@ -24,7 +25,7 @@ import {
   type RouteStep
 } from "./lib/api/directions";
 import { searchBuildings, type Building } from './lib/api/navbuildings';
-import { KeyboardAvoidingView, Platform } from "react-native";
+
 import { useTheme } from "./Theme";
 
 
@@ -92,6 +93,12 @@ export default function NavigationScreen() {
       mapRef.current?.animateCamera({ center: userCoord, zoom: 16 });
     })();
   }, []);
+
+  useEffect(() => {
+  if (origin && destination) {
+    fetchRoute();
+  }
+}, [origin, destination]);
 
   useEffect(() => {
     const extra: any = Constants.expoConfig?.extra || {};
