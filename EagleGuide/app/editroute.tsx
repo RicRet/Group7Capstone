@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Alert, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { SavedRoute, updateRoute } from './lib/api/addroutev2';
+import { Building, SavedRoute, updateRoute } from './lib/api/addroutev2';
 import { useTheme } from "./Theme";
 
 
@@ -17,25 +17,27 @@ export default function Editroute({ route, onClose }: EditrouteProps) {
 const { theme } = useTheme();
   const routeId = route.saved_route_id;
 
+  const [buildings] = useState<Building[]>([
+    { name: "Student Union", lon: -97.1526, lat: 33.2108 },
+    { name: "Willis", lon: -97.1521, lat: 33.2099 },
+    { name: "Parking Garage", lon: -97.1532, lat: 33.2115 },
+    { name: "Discovery Park", lon: -97.1515, lat: 33.2150 },
+  ]);
+
+  const buildingItems = buildings.map((b) => ({
+    label: b.name,
+    value: b.name,
+  }));
+
  
   const [open1, setOpen1] = useState(false);
  const [value1, setValue1] = useState<string | null>('Student Union');
-  const [items1, setItems1] = useState([
-    { label: 'Student Union', value: 'Student Union' },
-    { label: 'Willis', value: 'Willis' },
-    { label: 'Parking Garage', value: 'Parking Garage' },
-     { label: 'Discovery Park', value: 'Discovery Park' },
-  ]);
+  const [items1, setItems1] = useState(buildingItems);
 
  
   const [open2, setOpen2] = useState(false);
   const [value2, setValue2] = useState<string | null>('Willis');
-  const [items2, setItems2] = useState([
-    { label: 'Student Union', value: 'Student Union' },
-    { label: 'Willis', value: 'Willis' },
-    { label: 'Parking Garage', value: 'Parking Garage' },
-     { label: 'Discovery Park', value: 'Discovery Park' },
-  ]);
+  const [items2, setItems2] = useState(buildingItems);
 
   const [open4, setOpen4] = useState(false);
  const [value4, setValue4] = useState<number | null>(route.is_accessible ?? 1);
@@ -57,13 +59,6 @@ useEffect(() => {
 
 
   //place holder coordinates
-  const mockCoords = {
-    StudentUnion: { lon: -97.1477, lat: 33.2109 },
-    Willis: { lon:-97.152, lat: 33.2101 },
-   ParkingGarage: { lon: -97.14476651696336, lat: 33.210964362912854 },
-   DiscoveryPark: { lon: -97.1510, lat: 33.2540 },
-  } as const;
-
   const saveRoute = async () => {
     if (!value1 || !value2 || value4 == null) {
       return Alert.alert('Error', 'Please select start, end, and accessibility');
@@ -75,10 +70,12 @@ useEffect(() => {
 
     try {
     //matches buildings to coordinates
-      const startKey = value1.replace(/\s/g, '') as keyof typeof mockCoords;
-      const endKey = value2.replace(/\s/g, '') as keyof typeof mockCoords;
-      const start = mockCoords[startKey];
-      const end = mockCoords[endKey];
+      const start = buildings.find(b => b.name === value1);
+      const end = buildings.find(b => b.name === value2);
+
+      if (!start || !end) {
+        return Alert.alert("Error", "Building coordinates not found");
+      }
 
       await updateRoute({
         id: routeId,
