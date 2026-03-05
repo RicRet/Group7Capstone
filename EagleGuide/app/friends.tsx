@@ -1,20 +1,22 @@
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    RefreshControl,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { acceptFriend, FriendEdge, FriendRequestResponse, FriendSearchResult, FriendsResponse, getFriends, searchFriends, sendFriendRequest } from "./lib/api/friends";
 import { useSession } from "./lib/session";
+import { useAccessibility } from "./Fontsize";
 
 export default function FriendsScreen() {
+  const { scaleFont } = useAccessibility();
   const router = useRouter();
   const { user, loading: sessionLoading } = useSession();
 
@@ -112,9 +114,9 @@ export default function FriendsScreen() {
     return (
       <View key={edge.userId} style={styles.friendRow}>
         <View style={styles.friendMeta}>
-          <Text style={styles.friendName}>{name}</Text>
-          <Text style={styles.friendSub}>{usernameLine}</Text>
-          <Text style={styles.friendSub}>
+          <Text style={[styles.friendName, { fontSize: scaleFont(16) }]}>{name}</Text>
+          <Text style={[styles.friendSub, { fontSize: scaleFont(12) }]}>{usernameLine}</Text>
+          <Text style={[styles.friendSub, { fontSize: scaleFont(12) }]}>
             {edge.status === "pending" ? `${edge.direction === "incoming" ? "Incoming" : "Sent"} request` : "Friend"}
           </Text>
         </View>
@@ -127,7 +129,7 @@ export default function FriendsScreen() {
             {actionId === edge.userId ? (
               <ActivityIndicator color="#0d0d0d" />
             ) : (
-              <Text style={styles.actionButtonText}>{actionLabel}</Text>
+              <Text style={[styles.actionButtonText, { fontSize: scaleFont(14) }]}>{actionLabel}</Text>
             )}
           </TouchableOpacity>
         ) : null}
@@ -144,32 +146,33 @@ export default function FriendsScreen() {
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.backText}>← Back</Text>
+          <Text style={[styles.backText, { fontSize: scaleFont(16) }]}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{headerTitle}</Text>
+        <Text style={[styles.headerTitle, { fontSize: scaleFont(20) }]}>{headerTitle}</Text>
         <View style={{ width: 50 }} />
       </View>
 
       <ScrollView
         contentContainerStyle={styles.content}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#65d159" />}>
+
         <View style={styles.searchCard}>
-          <Text style={styles.sectionTitle}>Find Friends</Text>
+          <Text style={[styles.sectionTitle, { fontSize: scaleFont(15) }]}>Find Friends</Text>
           <View style={styles.searchRow}>
             <TextInput
               value={searchTerm}
               onChangeText={setSearchTerm}
               placeholder="Search by name or email"
               placeholderTextColor="#777"
-              style={styles.input}
+              style={[styles.input, { fontSize: scaleFont(14) }]}
               autoCapitalize="none"
             />
             <TouchableOpacity style={styles.searchButton} onPress={runSearch} disabled={searching}>
-              {searching ? <ActivityIndicator color="#0d0d0d" /> : <Text style={styles.searchButtonText}>Search</Text>}
+              {searching ? <ActivityIndicator color="#0d0d0d" /> : <Text style={[styles.searchButtonText, { fontSize: scaleFont(14) }]}>Search</Text>}
             </TouchableOpacity>
           </View>
           {results.length === 0 && !!searchTerm.trim() ? (
-            <Text style={styles.emptyText}>No matches yet.</Text>
+            <Text style={[styles.emptyText, { fontSize: scaleFont(12) }]}>No matches yet.</Text>
           ) : (
             results.map((r) => {
               const isPendingOut = r.relationship === "pending_out";
@@ -177,11 +180,9 @@ export default function FriendsScreen() {
               const isAccepted = r.relationship === "accepted";
               let buttonLabel: string | null = null;
               let onPress: (() => void) | undefined;
-              if (isAccepted) {
-                buttonLabel = "Friends";
-              } else if (isPendingOut) {
-                buttonLabel = "Pending";
-              } else if (isPendingIn) {
+              if (isAccepted) buttonLabel = "Friends";
+              else if (isPendingOut) buttonLabel = "Pending";
+              else if (isPendingIn) {
                 buttonLabel = "Accept";
                 onPress = () => handleAccept(r.userId);
               } else {
@@ -193,8 +194,8 @@ export default function FriendsScreen() {
               return (
                 <View key={`search-${r.userId}`} style={styles.friendRow}>
                   <View style={styles.friendMeta}>
-                    <Text style={styles.friendName}>{name}</Text>
-                    <Text style={styles.friendSub}>{usernameLine}</Text>
+                    <Text style={[styles.friendName, { fontSize: scaleFont(16) }]}>{name}</Text>
+                    <Text style={[styles.friendSub, { fontSize: scaleFont(12) }]}>{usernameLine}</Text>
                   </View>
                   <TouchableOpacity
                     style={[styles.actionButton, (isAccepted || isPendingOut) && styles.actionButtonDisabled]}
@@ -204,7 +205,7 @@ export default function FriendsScreen() {
                     {actionId === r.userId ? (
                       <ActivityIndicator color="#0d0d0d" />
                     ) : (
-                      <Text style={styles.actionButtonText}>{buttonLabel}</Text>
+                      <Text style={[styles.actionButtonText, { fontSize: scaleFont(14) }]}>{buttonLabel}</Text>
                     )}
                   </TouchableOpacity>
                 </View>
@@ -214,28 +215,28 @@ export default function FriendsScreen() {
         </View>
 
         <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>Friends</Text>
+          <Text style={[styles.sectionTitle, { fontSize: scaleFont(15) }]}>Friends</Text>
           {loading ? <ActivityIndicator color="#65d159" /> : null}
           {!loading && friends.accepted.length === 0 ? (
-            <Text style={styles.emptyText}>No friends yet.</Text>
+            <Text style={[styles.emptyText, { fontSize: scaleFont(12) }]}>No friends yet.</Text>
           ) : (
             friends.accepted.map((f) => renderFriendRow(f))
           )}
         </View>
 
         <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>Requests</Text>
+          <Text style={[styles.sectionTitle, { fontSize: scaleFont(15) }]}>Requests</Text>
           {!loading && friends.incoming.length === 0 ? (
-            <Text style={styles.emptyText}>No incoming requests.</Text>
+            <Text style={[styles.emptyText, { fontSize: scaleFont(12) }]}>No incoming requests.</Text>
           ) : (
             friends.incoming.map((f) => renderFriendRow(f, "Accept", () => handleAccept(f.userId)))
           )}
         </View>
 
         <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>Sent Requests</Text>
+          <Text style={[styles.sectionTitle, { fontSize: scaleFont(15) }]}>Sent Requests</Text>
           {!loading && friends.outgoing.length === 0 ? (
-            <Text style={styles.emptyText}>No pending requests.</Text>
+            <Text style={[styles.emptyText, { fontSize: scaleFont(12) }]}>No pending requests.</Text>
           ) : (
             friends.outgoing.map((f) => renderFriendRow(f))
           )}
@@ -256,8 +257,8 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     backgroundColor: "#2a2a2a",
   },
-  backText: { color: "#65d159", fontWeight: "700", fontSize: 16 },
-  headerTitle: { color: "#ffffff", fontWeight: "800", fontSize: 20 },
+  backText: { color: "#65d159", fontWeight: "700" },
+  headerTitle: { color: "#ffffff", fontWeight: "800" },
   content: { padding: 16, paddingBottom: 40 },
   searchCard: {
     backgroundColor: "#2a2a2a",
@@ -271,7 +272,7 @@ const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 12,
   },
-  sectionTitle: { color: "#65d159", fontWeight: "700", marginBottom: 8, fontSize: 15 },
+  sectionTitle: { color: "#65d159", fontWeight: "700", marginBottom: 8 },
   searchRow: { flexDirection: "row", alignItems: "center" },
   input: {
     flex: 1,
@@ -302,8 +303,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   friendMeta: { flex: 1 },
-  friendName: { color: "#fff", fontWeight: "700", fontSize: 16 },
-  friendSub: { color: "#b5b5b5", fontSize: 12, marginTop: 2 },
+  friendName: { color: "#fff", fontWeight: "700" },
+  friendSub: { color: "#b5b5b5", marginTop: 2 },
   actionButton: {
     backgroundColor: "#65d159",
     paddingVertical: 8,
