@@ -4,6 +4,7 @@ export const keys = {
   session: (sid) => `sess:${sid}`,
   prefs: (userId) => `prefs:${userId}`,
   user: (userId) => `user:${userId}`,
+  reminders: (userId) => `reminders:${userId}`,
   shareLocation: (shareId) => `share:loc:${shareId}`,
   gis: {
     bbox: (hash) => `gis:buildings:bbox:${hash}`,
