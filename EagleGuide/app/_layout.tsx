@@ -22,6 +22,8 @@ export default function RootLayout() {
         <Stack.Screen name="EditProfile" options={{ headerShown: false }} />
         <Stack.Screen name="share-navigation" options={{ headerShown: false }} />
         <Stack.Screen name="share-with-friends" options={{ headerShown: false }} />
+        <Stack.Screen name="planner" options={{ headerShown: false }} />
+        <Stack.Screen name="reminders" options={{ headerShown: false }} />
         <Stack.Screen name="test" options={{ headerShown: false, presentation: "modal" }} />
         </Stack>
       </SessionProvider>
