@@ -15,7 +15,7 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
 
     const navItems = [
         { label: "Navigation", to: "/navigation" },
-        { label: "Shared Navigation", to: "/share-navigation" },
+        { label: "Find My Friends", to: "/share-navigation" },
         { label: "Add Route", to: "/addroute" },
         { label: "Friends", to: "/friends" },
         { label: "Reminders", to: "/reminders" },

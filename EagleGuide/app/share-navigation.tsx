@@ -62,6 +62,8 @@ export default function FindFriendsScreen() {
   const [profile, setProfile]                   = useState<Profile>("foot-walking");
   const [routeLoading, setRouteLoading]         = useState(false);
   const [loadingFriends, setLoadingFriends]     = useState(false);
+  const [friendsError, setFriendsError]         = useState<string | null>(null);
+  const broadcastingRef = useRef(false);
 
   const initialRegion: Region = useMemo(() => ({
     latitude: 33.2106, longitude: -97.1470,
@@ -90,8 +92,12 @@ export default function FindFriendsScreen() {
     try {
       const friends = await getFriendLocations();
       setFriendLocations(friends);
-    } catch { /* friends may not be broadcasting */ }
-    finally { setLoadingFriends(false); }
+      setFriendsError(null);
+    } catch (err: any) {
+      const msg = err?.message || "Could not fetch friend locations.";
+      setFriendsError(msg);
+      console.error("[FindFriends] refreshFriends error:", msg);
+    } finally { setLoadingFriends(false); }
   }, [token]);
 
   useEffect(() => {
@@ -106,14 +112,19 @@ export default function FindFriendsScreen() {
     setBroadcastLoading(true);
     try {
       await broadcastMyLocation(location.latitude, location.longitude);
+      broadcastingRef.current = true;
       setBroadcasting(true);
-    } catch { Alert.alert("Broadcast failed", "Could not share your location."); }
-    finally { setBroadcastLoading(false); }
-  }, [token]);
+      // Immediately poll so we see friends who are already live
+      refreshFriends();
+    } catch (err: any) {
+      Alert.alert("Broadcast failed", err?.message || "Could not share your location.");
+    } finally { setBroadcastLoading(false); }
+  }, [token, refreshFriends]);
 
   const endBroadcast = useCallback(async () => {
     setBroadcastLoading(true);
     try { await stopBroadcast(); } catch { /* ignore */ }
+    broadcastingRef.current = false;
     setBroadcasting(false);
     setBroadcastLoading(false);
   }, []);
@@ -132,8 +143,10 @@ export default function FindFriendsScreen() {
     return () => clearInterval(id);
   }, [broadcasting, myLocation]);
 
-  // Stop broadcast on unmount
-  useEffect(() => () => { stopBroadcast().catch(() => {}); }, []);
+  // Stop broadcast on unmount — only if actually live
+  useEffect(() => () => {
+    if (broadcastingRef.current) stopBroadcast().catch(() => {});
+  }, []);
 
   const selectFriend = (friend: FriendLocation) => {
     setSelectedFriend(friend);
@@ -170,7 +183,7 @@ export default function FindFriendsScreen() {
         setSteps(routeData.steps);
         setSummary(routeData.summary);
       }
-      const toFit = routeData?.coordinates?.length >= 2 ? routeData.coordinates : [myLocation, dest];
+      const toFit = (routeData?.coordinates?.length ?? 0) >= 2 ? routeData!.coordinates : [myLocation, dest];
       mapRef.current?.fitToCoordinates(toFit, {
         edgePadding: { top: 80, right: 50, bottom: 340, left: 50 },
         animated: true,
@@ -262,7 +275,12 @@ export default function FindFriendsScreen() {
         </View>
 
         {/* Friends list */}
-        {friendLocations.length === 0 ? (
+        {friendsError && (
+          <Text style={[styles.noFriendsText, { color: theme.red }]}>
+            ⚠️ {friendsError}
+          </Text>
+        )}
+        {!friendsError && friendLocations.length === 0 ? (
           <Text style={[styles.noFriendsText, { color: theme.lighttext }]}>
             {loadingFriends
               ? "Looking for friends nearby…"
