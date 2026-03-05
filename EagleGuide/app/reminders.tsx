@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
     ActivityIndicator,
     Alert,
@@ -53,6 +53,7 @@ export default function RemindersScreen() {
   const [loading, setLoading]       = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const hasLoadedOnce = useRef(false);
 
   // ── Modal state ───────────────────────────────────────────────────────────
   const [modalVisible, setModalVisible] = useState(false);
@@ -70,9 +71,14 @@ export default function RemindersScreen() {
   // ── Data ──────────────────────────────────────────────────────────────────
   const loadReminders = useCallback(async () => {
     if (!user) return;
+    // Only show the full-screen spinner on the very first load;
+    // subsequent reloads (e.g. triggered by session re-render) use the
+    // pull-to-refresh indicator so the list never disappears after a save.
+    const isFirstLoad = !hasLoadedOnce.current;
+    if (isFirstLoad) setLoading(true); else setRefreshing(true);
     try {
-      setLoading(true);
       setReminders(await getReminders());
+      hasLoadedOnce.current = true;
     } catch (err: any) {
       Alert.alert("Could not load reminders", (err?.message ?? "Please try again").slice(0, 200));
     } finally {
@@ -220,6 +226,26 @@ export default function RemindersScreen() {
               )}
 
               <Text style={styles.cardTime}>🕐 {formatTime(r.remindTime)}</Text>
+
+              {r.destinationGeom && (
+                <TouchableOpacity
+                  style={styles.navigateBtn}
+                  onPress={() => {
+                    // GeoJSON coordinates are [longitude, latitude]
+                    const [lon, lat] = r.destinationGeom!.coordinates;
+                    router.push({
+                      pathname: "/navigation",
+                      params: {
+                        destLat: lat.toString(),
+                        destLon: lon.toString(),
+                        destLabel: r.destinationLabel ?? "",
+                      },
+                    });
+                  }}
+                >
+                  <Text style={styles.navigateBtnText}>🗺️ Navigate</Text>
+                </TouchableOpacity>
+              )}
 
               <View style={styles.daysRow}>
                 {ALL_DAYS.map(({ key, label }) => (
@@ -409,6 +435,17 @@ const styles = StyleSheet.create({
   dayPillTextActive: { color: "#0d0d0d" },
   deleteBtn: { padding: 6 },
   deleteBtnText: { color: "#e24a4a", fontSize: 16, fontWeight: "700" },
+  navigateBtn: {
+    marginTop: 6,
+    alignSelf: "flex-start",
+    backgroundColor: "#2a3a2a",
+    borderWidth: 1,
+    borderColor: "#65d159",
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 10,
+  },
+  navigateBtnText: { color: "#65d159", fontWeight: "700", fontSize: 13 },
 
   // Modal
   modalOverlay: {
