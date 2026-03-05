@@ -1,8 +1,10 @@
+import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { deleteRoute, getRoutes, SavedRoute } from './lib/api/addroutev2';
 import { useTheme } from "./Theme";
+
 //props for functions
 type AddrouteProps = {
   onClose?: () => void;
@@ -33,9 +35,11 @@ const loadSavedR = async () => {
   }
 };
 
-useEffect(() => {
-  loadSavedR();
-}, []);
+useFocusEffect(
+  useCallback(() => {
+    loadSavedR();
+  }, [])
+);
 
  return (
   <View style={{ flex: 1, backgroundColor: theme.background }}>

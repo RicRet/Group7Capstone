@@ -1,8 +1,7 @@
-
 import { useEffect, useState } from 'react';
 import { Alert, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { Building, SavedRoute, updateRoute } from './lib/api/addroutev2';
+import { Building, getBuildings, SavedRoute, updateRoute } from './lib/api/addroutev2';
 import { useTheme } from "./Theme";
 
 
@@ -17,27 +16,17 @@ export default function Editroute({ route, onClose }: EditrouteProps) {
 const { theme } = useTheme();
   const routeId = route.saved_route_id;
 
-  const [buildings] = useState<Building[]>([
-    { name: "Student Union", lon: -97.1526, lat: 33.2108 },
-    { name: "Willis", lon: -97.1521, lat: 33.2099 },
-    { name: "Parking Garage", lon: -97.1532, lat: 33.2115 },
-    { name: "Discovery Park", lon: -97.1515, lat: 33.2150 },
-  ]);
+  // buildings from API
+  const [buildings, setBuildings] = useState<Building[]>([]);
 
-  const buildingItems = buildings.map((b) => ({
-    label: b.name,
-    value: b.name,
-  }));
-
- 
   const [open1, setOpen1] = useState(false);
  const [value1, setValue1] = useState<string | null>('Student Union');
-  const [items1, setItems1] = useState(buildingItems);
+  const [items1, setItems1] = useState<{label:string,value:string}[]>([]);
 
  
   const [open2, setOpen2] = useState(false);
   const [value2, setValue2] = useState<string | null>('Willis');
-  const [items2, setItems2] = useState(buildingItems);
+  const [items2, setItems2] = useState<{label:string,value:string}[]>([]);
 
   const [open4, setOpen4] = useState(false);
  const [value4, setValue4] = useState<number | null>(route.is_accessible ?? 1);
@@ -58,7 +47,33 @@ useEffect(() => {
 }, [value1, value2]);
 
 
-  //place holder coordinates
+  //loads buildings
+useEffect(() => {
+  const loadBuildings = async () => {
+    try {
+      const data = await getBuildings();
+
+      setBuildings(data);
+
+      const formatted = data.map((b) => ({
+        label: b.name,
+        value: b.name,
+      }));
+
+      setItems1(formatted);
+      setItems2(formatted);
+
+    } catch (err) {
+      console.error(err);
+      Alert.alert("Error", "Could not load buildings");
+    }
+  };
+
+  loadBuildings();
+}, []);
+
+
+  
   const saveRoute = async () => {
     if (!value1 || !value2 || value4 == null) {
       return Alert.alert('Error', 'Please select start, end, and accessibility');
