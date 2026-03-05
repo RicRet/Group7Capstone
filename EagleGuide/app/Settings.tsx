@@ -37,7 +37,7 @@ const Settings: React.FC = () => {
     Notifications.requestPermissionsAsync();
   }, []);
 
-  const handleBackPress = () => router.replace("/homepage");
+  const handleBackPress = () => router.replace("/map");
 
   const handleClearCache = () => {
     Alert.alert("Clear Cache", "Are you sure you want to clear app cache?", [
