@@ -1,18 +1,17 @@
 import Constants from "expo-constants";
 import * as Location from "expo-location";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
   FlatList,
+  KeyboardAvoidingView, Platform,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
-  KeyboardAvoidingView,
-  Platform
+  View
 } from "react-native";
 import MapView, { Marker, Polyline, PROVIDER_GOOGLE, Region } from "react-native-maps";
 import Addroute from "./addroute";
@@ -52,6 +51,7 @@ export default function NavigationScreen() {
   const router = useRouter();
   const { theme, isDark } = useTheme();
   const mapRef = useRef<MapView>(null);
+  const params = useLocalSearchParams<{ destLat?: string; destLon?: string; destLabel?: string }>();
 
   const [origin, setOrigin] = useState<Coordinates | null>(null);
   const [destination, setDestination] = useState<Coordinates | null>(null);
@@ -85,8 +85,48 @@ export default function NavigationScreen() {
       const userCoord = { latitude: loc.coords.latitude, longitude: loc.coords.longitude };
       setOrigin(userCoord);
       mapRef.current?.animateCamera({ center: userCoord, zoom: 16 });
+
+      // Auto-route when navigating here from a reminder
+      const rawLat = Array.isArray(params.destLat) ? params.destLat[0] : params.destLat;
+      const rawLon = Array.isArray(params.destLon) ? params.destLon[0] : params.destLon;
+      if (rawLat && rawLon) {
+        const destLat = parseFloat(rawLat);
+        const destLon = parseFloat(rawLon);
+        if (!isNaN(destLat) && !isNaN(destLon)) {
+          const destCoord = { latitude: destLat, longitude: destLon };
+          setDestination(destCoord);
+          const rawLabel = Array.isArray(params.destLabel) ? params.destLabel[0] : params.destLabel;
+          if (rawLabel) setSearchQuery(rawLabel);
+          setLoading(true);
+          try {
+            const snappedOrigin = await snapToRoad(userCoord, "foot-walking");
+            const snappedDest = await snapToRoad(destCoord, "foot-walking");
+            setSnappedPins({ origin: snappedOrigin, destination: snappedDest });
+            const routeData = await getRouteFromORS(snappedOrigin, snappedDest, "foot-walking");
+            if (routeData && routeData.coordinates.length >= 2) {
+              setRouteCoords(routeData.coordinates);
+              setSteps(routeData.steps);
+              setSummary(routeData.summary);
+              mapRef.current?.fitToCoordinates(routeData.coordinates, {
+                edgePadding: { top: 50, right: 50, bottom: 300, left: 50 },
+                animated: true,
+              });
+            } else {
+              setRouteCoords([userCoord, destCoord]);
+              mapRef.current?.fitToCoordinates([userCoord, destCoord], {
+                edgePadding: { top: 50, right: 50, bottom: 300, left: 50 },
+                animated: true,
+              });
+            }
+          } catch {
+            setRouteCoords([userCoord, destCoord]);
+          } finally {
+            setLoading(false);
+          }
+        }
+      }
     })();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const extra: any = Constants.expoConfig?.extra || {};

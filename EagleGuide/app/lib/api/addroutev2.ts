@@ -1,5 +1,11 @@
 import { http } from '../http';
 
+export type Building = {
+  name: string;
+  lon: number;
+  lat: number;
+};
+
 
 export type AddRouteResponse = {
   message: string;
@@ -55,6 +61,10 @@ export async function deleteRoute(id: string) {
   return res.data;
 }
 
+export async function getBuildings() {
+  const res = await http.get<Building[]>('/buildings');
+  return res.data;
+}
 
 export async function updateRoute(data: {
   id: string;

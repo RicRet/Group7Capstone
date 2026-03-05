@@ -11,7 +11,6 @@ export const keys = {
     parkingLotsBbox: (hash) => `gis:parking-lots:bbox:${hash}`,
     entrancesBbox: (hash) => `gis:entrances:bbox:${hash}`,
     bicycleParkingBbox: (hash) => `gis:bicycle-parking:bbox:${hash}`,
-    emergencyPhonesBbox: (hash) => `gis:emergency-phones:bbox:${hash}`,
     near: (t, lat, lon, r) => `gis:near:${t}:${lat.toFixed(5)}:${lon.toFixed(5)}:${r}`
   }
 };

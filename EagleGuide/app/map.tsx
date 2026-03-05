@@ -19,13 +19,11 @@ import Addroute from './addroute';
 import Homepage from './homepage';
 import { fetchBicycleParking } from "./lib/api/bicycleParking";
 import { BuildingFeature, fetchBuildings } from "./lib/api/buildings";
-import { fetchEmergencyPhones } from "./lib/api/emergencyPhones";
 import { fetchEntrances } from "./lib/api/entrances";
 import { fetchParkingLots, ParkingLotFeature } from './lib/api/parkingLots';
 const entranceIcon = require("../assets/images/Entrance_Icon.png");
 const accessibleEntranceIcon = require("../assets/images/Accessible_Entrance_Icon.png");
 const bicycleIcon = require("../assets/images/Bicycle_Icon.png");
-const emergencyPhoneIcon = require("../assets/images/Emergency_Phone_Icon.png");
 
 const MapScreen = () => {
     const [showMenu, setShowMenu] = useState(false);
@@ -34,12 +32,10 @@ const MapScreen = () => {
     const [entrances, setEntrances] = useState<Feature<Point>[]>([]);
     const [buildings, setBuildings] = useState<BuildingFeature[]>([]);
     const [bicycleParking, setBicycleParking] = useState<Feature<Point>[]>([]);
-    const [emergencyPhones, setEmergencyPhones] = useState<Feature<Point>[]>([]);
     const [showParkingLots, setShowParkingLots] = useState(true);
     const [showBuildings, setShowBuildings] = useState(true);
     const [showEntrances, setShowEntrances] = useState(true);
     const bicycleReqSeq = useRef(0);
-    const emergencyReqSeq = useRef(0);
     const parkingReqSeq = useRef(0);
     const buildingsReqSeq = useRef(0);
     const entrancesReqSeq = useRef(0);
@@ -157,25 +153,6 @@ const MapScreen = () => {
     }
 
     loadBicycleParking();
-    return () => { cancelled = true; };
-    }, [bbox]);
-
-    useEffect(() => {
-    const seq = ++emergencyReqSeq.current;
-    let cancelled = false;
-
-    async function loadEmergencyPhones() {
-        try {
-        const data = await fetchEmergencyPhones(bbox);
-        if (!cancelled && seq === emergencyReqSeq.current) {
-            setEmergencyPhones(data.features || []);
-        }
-        } catch {
-        // keep last successful render
-        }
-    }
-
-    loadEmergencyPhones();
     return () => { cancelled = true; };
     }, [bbox]);
 
@@ -328,20 +305,6 @@ const fillColor = (fill?: string | null) => {
                                             );
                                         })}
 
-                                        {emergencyPhones.map((p) => {
-                                            const [lon, lat] = p.geometry.coordinates;
-                                            return (
-                                            <Marker
-                                            key={`phone-${p.properties.objectid ?? p.properties.phone_pk}`}
-                                            coordinate={{ latitude: lat, longitude: lon }}
-                                            title="Emergency Phone"
-                                            tracksViewChanges={false}
-                                            anchor={{ x: 0.5, y: 0.5 }}
-                                            >
-                                            <Image source={emergencyPhoneIcon} style={{ width: 24, height: 24 }} />
-                                            </Marker>
-                                        );
-                                    })}
                     </MapView>
 
                     {/* Floating menu button */}

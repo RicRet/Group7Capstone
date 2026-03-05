@@ -19,6 +19,7 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
         { label: "Shared Navigation", to: "/share-navigation" },
         { label: "Add Route", to: "/addroute" },
         { label: "Friends", to: "/friends" },
+        { label: "Reminders", to: "/reminders" },
     ];
 
     const legendItems = useMemo(
