@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { requireSession } from '../../middleware/requireSession.js';
 import { validate } from '../../middleware/validate.js';
-import { bicycleParkingByBbox, buildingsByBbox, emergencyPhonesByBbox, entrancesByBbox, parkingLotsByBbox } from '../../services/gis.service.js';
+import { bicycleParkingByBbox, buildingsByBbox, entrancesByBbox, parkingLotsByBbox } from '../../services/gis.service.js';
 import { bboxQuery } from '../../validations/gis.schema.js';
 
 const r = Router();
@@ -30,9 +30,4 @@ r.get('/bicycle-parking', requireSession, validate(bboxQuery), async (req, res) 
   res.json(data);
 });
 
-r.get('/emergency-phones', requireSession, validate(bboxQuery), async (req, res) => {
-  const { minLon, minLat, maxLon, maxLat } = req.query;
-  const data = await emergencyPhonesByBbox([+minLon, +minLat, +maxLon, +maxLat]);
-  res.json(data);
-});
 export default r;
