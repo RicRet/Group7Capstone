@@ -3,12 +3,13 @@ CREATE SCHEMA IF NOT EXISTS gis;
 SET search_path TO gis,
     public;
 -- Buildings table
-CREATE TABLE buildings (
+CREATE TABLE gis.buildings (
     building_id SERIAL PRIMARY KEY,
-    name VARCHAR(60),
-    description VARCHAR(60),
-    type VARCHAR(30),
-    location GEOGRAPHY(POINT, 4326)
+    name VARCHAR(120),
+    description VARCHAR(255),
+    type VARCHAR(60),
+    fill VARCHAR(30),
+    location GEOGRAPHY(MULTIPOLYGON, 4326)
 );
 -- Paths table
 CREATE TABLE paths (
@@ -36,5 +37,17 @@ CREATE TABLE IF NOT EXISTS entrances (
     entrance_id VARCHAR(60) UNIQUE,
     entrance_name VARCHAR(120),
     entrance_accessible BOOLEAN DEFAULT false,
+    location GEOGRAPHY(POINT, 4326)
+);
+-- Bicycle parking table
+CREATE TABLE IF NOT EXISTS bicycle_parking (
+    bicycle_pk SERIAL PRIMARY KEY,
+    fid INTEGER UNIQUE,
+    location GEOGRAPHY(POINT, 4326)
+);
+-- Emergency phones table
+CREATE TABLE IF NOT EXISTS emergency_phones (
+    phone_pk SERIAL PRIMARY KEY,
+    objectid INTEGER UNIQUE,
     location GEOGRAPHY(POINT, 4326)
 );

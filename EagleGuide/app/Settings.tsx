@@ -10,10 +10,22 @@ import {
   View,
 } from "react-native";
 import { useTheme } from "../app/Theme";
+import { useSession } from "./lib/session";
+import * as Notifications from "expo-notifications";
+import { useEffect } from "react";
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
 const Settings: React.FC = () => {
   const router = useRouter();
   const { theme, isDark, toggleTheme } = useTheme();
+  const { user } = useSession();
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -45,6 +57,21 @@ const Settings: React.FC = () => {
     ]);
   };
 
+  const sendNotification = async () => {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Notification",
+        body: "This is a notification.",
+        sound: true,
+      },
+      trigger: null,
+    });
+  };
+
+  useEffect(() => {
+    Notifications.requestPermissionsAsync();
+  }, []);
+
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Header */}
@@ -61,6 +88,41 @@ const Settings: React.FC = () => {
       </View>
 
       <ScrollView contentContainerStyle={styles.contentContainer}>
+        {/* Profile */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: theme.green }]}>Profile</Text>
+          <TouchableOpacity
+            style={[styles.profileCard, { backgroundColor: theme.box, borderColor: theme.border }]}
+            onPress={() => router.push("/EditProfile" as any)}
+          >
+            <View style={styles.profileInfo}>
+              <View style={[styles.avatarCircle, { backgroundColor: theme.green }]}>
+                <Text style={styles.avatarInitial}>
+                  {(user?.firstName?.[0] ?? user?.username?.[0] ?? "?").toUpperCase()}
+                </Text>
+              </View>
+              <View style={styles.profileText}>
+                <Text style={[styles.profileName, { color: theme.text }]}>
+                  {user?.firstName && user?.lastName
+                    ? `${user.firstName} ${user.lastName}`
+                    : user?.firstName ?? user?.username ?? "Unknown"}
+                </Text>
+                {!!user?.username && (
+                  <Text style={[styles.profileUsername, { color: theme.lighttext }]}>
+                    @{user.username}
+                  </Text>
+                )}
+                {!!user?.email && (
+                  <Text style={[styles.profileEmail, { color: theme.lighttext }]}>
+                    {user.email}
+                  </Text>
+                )}
+              </View>
+            </View>
+            <Text style={[styles.arrow, { color: theme.green }]}>›</Text>
+          </TouchableOpacity>
+        </View>
+
         {/* Notifications */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: theme.green }]}>
@@ -107,6 +169,21 @@ const Settings: React.FC = () => {
               />
             </View>
           ))}
+
+          <TouchableOpacity
+            style={[styles.buttonItem, { backgroundColor: theme.box }]}
+            onPress={sendNotification}
+          >
+            <View>
+              <Text style={[styles.settingLabel, { color: theme.text }]}>
+                Send Test Notification
+              </Text>
+              <Text style={[styles.settingDescription, { color: theme.lighttext }]}>
+                Send a sample notification
+              </Text>
+            </View>
+            <Text style={[styles.arrow, { color: theme.green }]}>›</Text>
+          </TouchableOpacity>
 
           {/* 🌗 Dark Mode Toggle */}
           <View style={[styles.settingItem, { backgroundColor: theme.box }]}>
@@ -234,4 +311,27 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   logoutText: { fontSize: 16, fontWeight: "600" },
+  profileCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 16,
+    borderRadius: 10,
+    borderWidth: 1,
+    marginBottom: 8,
+  },
+  profileInfo: { flexDirection: "row", alignItems: "center", flex: 1 },
+  avatarCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 14,
+  },
+  avatarInitial: { color: "#fff", fontSize: 20, fontWeight: "700" },
+  profileText: { flex: 1 },
+  profileName: { fontSize: 16, fontWeight: "700" },
+  profileUsername: { fontSize: 13, marginTop: 2 },
+  profileEmail: { fontSize: 12, marginTop: 2 },
 });

@@ -14,21 +14,35 @@ function normalizeBbox(bbox, precision = 3) {
 }
 
 export async function buildingsByBbox([minLon, minLat, maxLon, maxLat]) {
-  const norm = normalizeBbox([minLon, minLat, maxLon, maxLat]);
-  const k = keys.gis.bbox(hashBbox(norm));
-  const cached = await jsonGet(k);
-  if (cached) return cached;
-
-  const rows = await query(//query taht gets the nearest buildings
-    `SELECT ST_AsGeoJSON(geom)::json AS geojson
-     FROM buildings
-     WHERE geom && ST_MakeEnvelope($1,$2,$3,$4, 4326)`,
-    norm
+  const rows = await query(
+    `SELECT
+        building_id,
+        name,
+        description,
+        type,
+        fill,
+        ST_AsGeoJSON(location::geometry)::json AS geometry
+     FROM gis.buildings
+     WHERE ST_Intersects(
+       location::geometry,
+       ST_MakeEnvelope($1,$2,$3,$4,4326)
+     )`,
+    [minLon, minLat, maxLon, maxLat]
   );
-  const features = rows.map(r => ({ type: 'Feature', geometry: r.geojson, properties: {} }));
-  const fc = { type: 'FeatureCollection', features };
-  await jsonSet(k, fc, TTL.gis);
-  return fc;
+  return {
+    type: 'FeatureCollection',
+    features: rows.map(r => ({
+      type: 'Feature',
+      geometry: r.geometry,
+      properties: {
+        building_id: r.building_id,
+        name: r.name,
+        description: r.description,
+        type: r.type,
+        fill: r.fill
+      }
+    }))
+  };
 }
 
 export async function parkingLotsByBbox([minLon, minLat, maxLon, maxLat]) {
@@ -53,6 +67,72 @@ export async function parkingLotsByBbox([minLon, minLat, maxLon, maxLat]) {
       description: r.description,
       zone: r.zone,
       fill: r.fill
+    }
+  }));
+
+  const fc = { type: 'FeatureCollection', features };
+  await jsonSet(k, fc, TTL.gis);
+  return fc;
+}
+export async function entrancesByBbox([minLon, minLat, maxLon, maxLat]) {
+  const norm = normalizeBbox([minLon, minLat, maxLon, maxLat]);
+  const k = keys.gis.entrancesBbox(hashBbox(norm));
+  const cached = await jsonGet(k);
+  if (cached) return cached;
+
+  const rows = await query(
+    `SELECT entrance_id,
+            entrance_name,
+            entrance_accessible,
+            ST_AsGeoJSON(location::geometry)::json AS geometry
+       FROM gis.entrances
+      WHERE ST_Intersects(
+        location::geometry,
+        ST_MakeEnvelope($1,$2,$3,$4,4326)
+      )`,
+    norm
+  );
+
+  const features = rows.map(r => ({
+    type: 'Feature',
+    geometry: r.geometry,
+    properties: {
+      entrance_id: r.entrance_id,
+      entrance_name: r.entrance_name,
+      entrance_accessible: r.entrance_accessible
+    }
+  }));
+
+  const fc = { type: 'FeatureCollection', features };
+  await jsonSet(k, fc, TTL.gis);
+  return fc;
+}
+
+export async function bicycleParkingByBbox([minLon, minLat, maxLon, maxLat]) {
+  const norm = normalizeBbox([minLon, minLat, maxLon, maxLat]);
+  const k = keys.gis.bicycleParkingBbox(hashBbox(norm));
+  const cached = await jsonGet(k);
+  if (cached) return cached;
+
+  const rows = await query(
+    `SELECT
+        bicycle_pk,
+        fid,
+        ST_AsGeoJSON(location::geometry)::json AS geometry
+     FROM gis.bicycle_parking
+     WHERE ST_Intersects(
+       location::geometry,
+       ST_MakeEnvelope($1,$2,$3,$4,4326)
+     )`,
+    norm
+  );
+
+  const features = rows.map(r => ({
+    type: 'Feature',
+    geometry: r.geometry,
+    properties: {
+      bicycle_pk: r.bicycle_pk,
+      fid: r.fid
     }
   }));
 

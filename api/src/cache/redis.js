@@ -55,8 +55,13 @@ export async function jsonSet(key, val, ttlSec) {
   try {
     if (!redis || !redis.isOpen) return null;
     const s = JSON.stringify(val);
-    return ttlSec ? redis.set(key, s, { EX: ttlSec }) : redis.set(key, s);
-  } catch {
+
+    // IMPORTANT: await so errors are caught (like Redis OOM)
+    return ttlSec
+      ? await redis.set(key, s, { EX: ttlSec })
+      : await redis.set(key, s);
+  } catch (e) {
+    console.error('Redis jsonSet failed (cache skipped):', e?.message || e);
     return null;
   }
 }
