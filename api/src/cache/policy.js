@@ -1,9 +1,10 @@
 //keep our time limits for caching here
 
 export const TTL = Object.freeze({
-  session: 60 * 30, // 30min
-  gis: 0,           // persistent GIS cache
-  prefs: 60 * 5,     // 5min
-  user: 60 * 10,     // 10min user profile cache
+  session: 60 * 30,    // 30min
+  gis: 0,              // persistent GIS cache
+  prefs: 60 * 5,       // 5min
+  user: 60 * 10,       // 10min user profile cache
+  reminders: 60 * 5,   // 5min reminder list per user
   shareLocation: 60 * 30 // 30min share token
 });
