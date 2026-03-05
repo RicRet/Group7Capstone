@@ -2,6 +2,7 @@ import { v4 as uuid } from 'uuid';
 import { keys } from '../cache/keys.js';
 import { TTL } from '../cache/policy.js';
 import { jsonGet, jsonSet, redis } from '../cache/redis.js';
+import { listFriendships } from './friends.service.js';
 
 const DEFAULT_TTL = TTL.shareLocation || 60 * 30;
 const MIN_TTL = 60;           // 1 minute
@@ -42,6 +43,13 @@ export async function createShareLocation({ userId, username, latitude, longitud
     throw err;
   }
 
+  // Store secondary index userId → shareId so friends can look up active location
+  if (userId) {
+    try {
+      await redis.set(keys.shareUser(userId), shareId, { EX: ttlSec });
+    } catch { /* non-fatal */ }
+  }
+
   return { shareId, expiresAt: payload.expiresAt };
 }
 
@@ -53,4 +61,36 @@ export async function getShareLocation(shareId) {
 export async function deleteShareLocation(shareId) {
   ensureRedis();
   return redis.del(keys.shareLocation(shareId));
+}
+
+/**
+ * Returns active share locations for all accepted friends of currentUserId.
+ * Each entry includes the share payload plus the friend's userId/username.
+ */
+export async function getFriendLocations(currentUserId) {
+  ensureRedis();
+  const { accepted } = await listFriendships(currentUserId);
+  if (!accepted.length) return [];
+
+  const results = await Promise.allSettled(
+    accepted.map(async (friend) => {
+      const shareId = await redis.get(keys.shareUser(friend.userId));
+      if (!shareId) return null;
+      const data = await jsonGet(keys.shareLocation(shareId));
+      if (!data) return null;
+      return {
+        userId: friend.userId,
+        username: friend.username || friend.firstName || friend.email || 'Friend',
+        shareId,
+        latitude: data.latitude,
+        longitude: data.longitude,
+        label: data.label,
+        expiresAt: data.expiresAt,
+      };
+    })
+  );
+
+  return results
+    .filter((r) => r.status === 'fulfilled' && r.value !== null)
+    .map((r) => r.value);
 }
