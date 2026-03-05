@@ -10,7 +10,17 @@ import {
   View,
 } from "react-native";
 import { useTheme } from "../app/Theme";
+import * as Notifications from "expo-notifications";
+import { useEffect } from "react";
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
 const Settings: React.FC = () => {
   const router = useRouter();
   const { theme, isDark, toggleTheme } = useTheme();
@@ -44,6 +54,21 @@ const Settings: React.FC = () => {
       },
     ]);
   };
+
+  const sendNotification = async () => {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Notification",
+        body: "This is a notification.",
+        sound: true,
+      },
+      trigger: null,
+    });
+  };
+
+  useEffect(() => {
+    Notifications.requestPermissionsAsync();
+  }, []);
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -107,6 +132,21 @@ const Settings: React.FC = () => {
               />
             </View>
           ))}
+
+          <TouchableOpacity
+            style={[styles.buttonItem, { backgroundColor: theme.box }]}
+            onPress={sendNotification}
+          >
+            <View>
+              <Text style={[styles.settingLabel, { color: theme.text }]}>
+                Send Test Notification
+              </Text>
+              <Text style={[styles.settingDescription, { color: theme.lighttext }]}>
+                Send a sample notification
+              </Text>
+            </View>
+            <Text style={[styles.arrow, { color: theme.green }]}>›</Text>
+          </TouchableOpacity>
 
           {/* 🌗 Dark Mode Toggle */}
           <View style={[styles.settingItem, { backgroundColor: theme.box }]}>
