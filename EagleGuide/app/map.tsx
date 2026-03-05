@@ -35,6 +35,9 @@ const MapScreen = () => {
     const [buildings, setBuildings] = useState<BuildingFeature[]>([]);
     const [bicycleParking, setBicycleParking] = useState<Feature<Point>[]>([]);
     const [emergencyPhones, setEmergencyPhones] = useState<Feature<Point>[]>([]);
+    const [showParkingLots, setShowParkingLots] = useState(true);
+    const [showBuildings, setShowBuildings] = useState(true);
+    const [showEntrances, setShowEntrances] = useState(true);
     const bicycleReqSeq = useRef(0);
     const emergencyReqSeq = useRef(0);
     const parkingReqSeq = useRef(0);
@@ -263,7 +266,7 @@ const fillColor = (fill?: string | null) => {
                         description="University of North Texas"
                     />
 
-                                        {parkingLots.map((lot) => {
+                                        {showParkingLots && parkingLots.map((lot) => {
                                             const coords = toPolygon(lot);
                                             if (!coords.length) return null;
                                             return (
@@ -277,7 +280,7 @@ const fillColor = (fill?: string | null) => {
                                                 />
                                             );
                                         })}
-                                        {buildings.map((b) => {
+                                        {showBuildings && buildings.map((b) => {
                                             const coords = toBuildingPolygon(b);
                                             if (!coords.length) return null;
                                             return (
@@ -291,7 +294,7 @@ const fillColor = (fill?: string | null) => {
                                                 />
                                             );
                                         })}
-                                        {entrances.map((e) => {
+                                        {showEntrances && entrances.map((e) => {
                                             const [lon, lat] = e.geometry.coordinates;
                                             const icon = e.properties.entrance_accessible
                                             ? accessibleEntranceIcon
@@ -371,6 +374,40 @@ const fillColor = (fill?: string | null) => {
                             </View>
                         )}
                     </View>
+                    {/*Toggle Button */}
+<View style={styles.layerToggleContainer}>
+  <Text style={styles.layerToggleTitle}>Layers</Text>
+
+  <TouchableOpacity
+    style={[
+      styles.layerToggleButton,
+      showParkingLots ? styles.layerToggleOn : styles.layerToggleOff,
+    ]}
+    onPress={() => setShowParkingLots((v) => !v)}
+  >
+    <Text style={styles.layerToggleText}>Parking</Text>
+  </TouchableOpacity>
+
+  <TouchableOpacity
+    style={[
+      styles.layerToggleButton,
+      showBuildings ? styles.layerToggleOn : styles.layerToggleOff,
+    ]}
+    onPress={() => setShowBuildings((v) => !v)}
+  >
+    <Text style={styles.layerToggleText}>Buildings</Text>
+  </TouchableOpacity>
+
+  <TouchableOpacity
+    style={[
+      styles.layerToggleButton,
+      showEntrances ? styles.layerToggleOn : styles.layerToggleOff,
+    ]}
+    onPress={() => setShowEntrances((v) => !v)}
+  >
+    <Text style={styles.layerToggleText}>Entrances</Text>
+  </TouchableOpacity>
+</View>
                 </View>
             </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
@@ -424,4 +461,46 @@ const styles = StyleSheet.create({
   bottomSheetBackground: {
     backgroundColor: '#3f3f3f',
   },
+  /** Layer Button toggles (Lines 465-505) **/
+layerToggleContainer: {
+  position: 'absolute',
+  top: 50,
+  right: 20,
+  backgroundColor: 'rgba(63,63,63,0.95)',
+  borderRadius: 10,
+  padding: 6, 
+  width: 80,      
+  elevation: 4,
+},
+layerToggleTitle: {
+  color: '#65d159',
+  fontWeight: '700',
+  marginBottom: 4,
+  fontSize: 11, 
+},
+layerToggleButton: {
+  paddingVertical: 4,
+  paddingHorizontal: 6,
+  borderRadius: 8,
+  marginBottom: 5,
+},
+layerToggleButtonLast: {
+  marginBottom: 0,
+},
+layerToggleOn: {
+  backgroundColor: '#1f1f1f',
+  borderWidth: 1,
+  borderColor: '#65d159',
+},
+layerToggleOff: {
+  backgroundColor: '#2a2a2a',
+  borderWidth: 1,
+  borderColor: '#555',
+  opacity: 0.7,
+},
+layerToggleText: {
+  color: '#fff',
+  fontWeight: '600',
+  fontSize: 11,
+},
 });

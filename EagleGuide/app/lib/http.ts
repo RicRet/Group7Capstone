@@ -31,4 +31,3 @@ http.interceptors.response.use(
     return Promise.reject(new Error(`HTTP ${status ?? 'ERR'}: ${message}`));
   }
 );
-console.log("API BASE URL:", apiBase); //remove after publish to main
