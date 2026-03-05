@@ -6,6 +6,7 @@ export const keys = {
   user: (userId) => `user:${userId}`,
   reminders: (userId) => `reminders:${userId}`,
   shareLocation: (shareId) => `share:loc:${shareId}`,
+  shareUser: (userId) => `share:user:${userId}`,  // secondary index: userId → active shareId
   gis: {
     bbox: (hash) => `gis:buildings:bbox:${hash}`,
     parkingLotsBbox: (hash) => `gis:parking-lots:bbox:${hash}`,
