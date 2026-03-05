@@ -1,8 +1,7 @@
-
 import { useEffect, useState } from 'react';
 import { Alert, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { SavedRoute, updateRoute } from './lib/api/addroutev2';
+import { Building, getBuildings, SavedRoute, updateRoute } from './lib/api/addroutev2';
 import { useTheme } from "./Theme";
 
 
@@ -17,25 +16,17 @@ export default function Editroute({ route, onClose }: EditrouteProps) {
 const { theme } = useTheme();
   const routeId = route.saved_route_id;
 
- 
+  // buildings from API
+  const [buildings, setBuildings] = useState<Building[]>([]);
+
   const [open1, setOpen1] = useState(false);
  const [value1, setValue1] = useState<string | null>('Student Union');
-  const [items1, setItems1] = useState([
-    { label: 'Student Union', value: 'Student Union' },
-    { label: 'Willis', value: 'Willis' },
-    { label: 'Parking Garage', value: 'Parking Garage' },
-     { label: 'Discovery Park', value: 'Discovery Park' },
-  ]);
+  const [items1, setItems1] = useState<{label:string,value:string}[]>([]);
 
  
   const [open2, setOpen2] = useState(false);
   const [value2, setValue2] = useState<string | null>('Willis');
-  const [items2, setItems2] = useState([
-    { label: 'Student Union', value: 'Student Union' },
-    { label: 'Willis', value: 'Willis' },
-    { label: 'Parking Garage', value: 'Parking Garage' },
-     { label: 'Discovery Park', value: 'Discovery Park' },
-  ]);
+  const [items2, setItems2] = useState<{label:string,value:string}[]>([]);
 
   const [open4, setOpen4] = useState(false);
  const [value4, setValue4] = useState<number | null>(route.is_accessible ?? 1);
@@ -56,14 +47,33 @@ useEffect(() => {
 }, [value1, value2]);
 
 
-  //place holder coordinates
-  const mockCoords = {
-    StudentUnion: { lon: -97.1477, lat: 33.2109 },
-    Willis: { lon:-97.152, lat: 33.2101 },
-   ParkingGarage: { lon: -97.14476651696336, lat: 33.210964362912854 },
-   DiscoveryPark: { lon: -97.1510, lat: 33.2540 },
-  } as const;
+  //loads buildings
+useEffect(() => {
+  const loadBuildings = async () => {
+    try {
+      const data = await getBuildings();
 
+      setBuildings(data);
+
+      const formatted = data.map((b) => ({
+        label: b.name,
+        value: b.name,
+      }));
+
+      setItems1(formatted);
+      setItems2(formatted);
+
+    } catch (err) {
+      console.error(err);
+      Alert.alert("Error", "Could not load buildings");
+    }
+  };
+
+  loadBuildings();
+}, []);
+
+
+  
   const saveRoute = async () => {
     if (!value1 || !value2 || value4 == null) {
       return Alert.alert('Error', 'Please select start, end, and accessibility');
@@ -75,10 +85,12 @@ useEffect(() => {
 
     try {
     //matches buildings to coordinates
-      const startKey = value1.replace(/\s/g, '') as keyof typeof mockCoords;
-      const endKey = value2.replace(/\s/g, '') as keyof typeof mockCoords;
-      const start = mockCoords[startKey];
-      const end = mockCoords[endKey];
+      const start = buildings.find(b => b.name === value1);
+      const end = buildings.find(b => b.name === value2);
+
+      if (!start || !end) {
+        return Alert.alert("Error", "Building coordinates not found");
+      }
 
       await updateRoute({
         id: routeId,
@@ -171,6 +183,12 @@ useEffect(() => {
           <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.green }]} onPress={saveRoute}>
             <Text style={styles.buttonText}>Save</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+  style={[styles.backButton, { backgroundColor: theme.button }]}
+  onPress={onClose}
+>
+  <Text style={[styles.buttonText, { color: theme.text }]}>Back</Text>
+</TouchableOpacity>
         </View>
       </TouchableWithoutFeedback>
   );
@@ -201,4 +219,10 @@ const styles = StyleSheet.create({
     color: '#fff', 
     fontWeight: 'bold' 
   },
+  backButton: {
+  paddingVertical: 12,
+  borderRadius: 8,
+  alignItems: 'center',
+  marginTop: 10
+},
 });

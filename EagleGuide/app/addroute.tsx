@@ -1,9 +1,10 @@
+import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
-import { addRoute, deleteRoute, getRoutes, SavedRoute } from './lib/api/addroutev2';
+import { deleteRoute, getRoutes, SavedRoute } from './lib/api/addroutev2';
 import { useTheme } from "./Theme";
+
 //props for functions
 type AddrouteProps = {
   onClose?: () => void;
@@ -19,7 +20,6 @@ type AddrouteProps = {
 
 
 export default function Addroute({ onClose, onEdit, onNavigate }: AddrouteProps) {
-
   const router = useRouter();
   const { theme } = useTheme();
 const [savedRoutes, setSavedRoutes] = useState<SavedRoute[]>([]);
@@ -35,115 +35,20 @@ const loadSavedR = async () => {
   }
 };
 
-useEffect(() => {
-  loadSavedR();
-}, []);
-
- //For dropdown 1
-  const [open1, setOpen1] = useState(false);
-  const [value1, setValue1] =useState<string | null>(null);
-  const [items1, setItems1] = useState([
-    { label: 'Student Union', value: 'Student Union' },
-    { label: 'Willis', value: 'Willis' },
-    { label: 'Parking Garage', value: 'Parking Garage' },
-    { label: 'Discovery Park', value: 'Discovery Park' },
-
-  ]);
-
-  //For dropdown 2
-  const [open2, setOpen2] = useState(false);
-  const [value2, setValue2] = useState<string | null>(null);
-  const [items2, setItems2] = useState([
-    { label: 'Student Union', value: 'Student Union' },
-    { label: 'Willis', value: 'Willis' },
-    { label: 'Parking Garage', value: 'Parking Garage' },
-    { label: 'Discovery Park', value: 'Discovery Park' },
-
-  ]);
- //For dropdown 3
- const [open3, setOpen3] = useState(false);
-const [value3, setValue3] = useState<string | null>(null);
-const [items3, setItems3] = useState([
-  { label: 'Pedestrian', value: 'Pedestrian' },
-  { label: 'Bus', value: 'Bus' },
-]);
-//For dropdown 4
-const [open4, setOpen4] = useState(false);
-const [value4, setValue4] =useState<number | null>(null);
-const [items4, setItems4] = useState([
-  { label: 'Yes', value: 1 },
-  { label: 'No', value: 0 },
-]);
-  
-
-//to track input for route delete
- const [num, setNum] = useState('');
-
-  //place holder Cordinates
-const mockCoords = {
-   StudentUnion: { lon: -97.1477, lat: 33.2109 },
-   Willis: { lon:-97.152, lat: 33.2101 },
-  ParkingGarage: { lon: -97.14476651696336, lat: 33.210964362912854 },
-   DiscoveryPark: { lon: -97.1510, lat: 33.2540 },
-} as const;
-
-type MockCoordKey = keyof typeof mockCoords;
-
-// add route function
-const addr = async (prevb: string | null,newb: string | null,type: string | null,accessibility: number | null,userid: string) => {
-  if (!prevb || !newb || !type || accessibility == null) {
-    return Alert.alert("Enter all options");
-  }
-
-   if (prevb === newb) {
-    return Alert.alert("Invalid Route", "Start and end buildings cannot be the same.");
-  }
-
-  try {
-    //matches buildings to coordinates
-    const startKey = prevb.replace(/\s/g, "") as MockCoordKey;
-    const endKey = newb.replace(/\s/g, "") as MockCoordKey;
-
-    const start = mockCoords[startKey];
-    const end = mockCoords[endKey];
-
-   
-
-   const res = await addRoute({
-  userid,
-  prevb,
-  newb,
-  prevblon: start.lon,
-  prevblat: start.lat,
-  newblon: end.lon,
-  newblat: end.lat,
-  accessible: accessibility,
-  length: null,
-  duration: null,
-});
-    Alert.alert("Success", res.message);
-    await loadSavedR();
-  } catch (err) {
-    console.error(err);
-    Alert.alert("Error", "Could not reach the server");
-  }
-};
-
-//Function to delete route
- const del = async () => {
-    if (!num) return Alert.alert("Enter a route ID to delete");
-
-    try {
-      const res = await deleteRoute(num);
-      Alert.alert("Deleted", res.message);
-      loadSavedR();
-    } catch {
-      Alert.alert("Error", "Could not delete route");
-    }
-  };
+useFocusEffect(
+  useCallback(() => {
+    loadSavedR();
+  }, [])
+);
 
  return (
   <View style={{ flex: 1, backgroundColor: theme.background }}>
+  <TouchableOpacity
+  style={[styles.addButton, { backgroundColor: theme.button }]}
+  onPress={() => router.push("/addrs")}
+>
+  <Text style={styles.buttonText}>Add New Route</Text>
+</TouchableOpacity>
     <FlatList
       data={savedRoutes}
       keyExtractor={(route) => route.saved_route_id}
@@ -151,86 +56,6 @@ const addr = async (prevb: string | null,newb: string | null,type: string | null
       contentContainerStyle={{ paddingBottom: 40 }}
       ListHeaderComponent={() => (
         <View style={styles.container}>
-          <Text style={[styles.title, { color: theme.text }]}>
-            Choose current building and then destination:
-          </Text>
-
-          <View style={styles.dropdownGrid}>
-            <View style={[styles.dropdownRow, { zIndex: 4000 }]}>
-              <View style={styles.dropdownBox}>
-                <Text style={[styles.dropdownLabel, { color: theme.text }]}>
-                Starting Building
-                </Text>
-                <DropDownPicker
-                  open={open1}
-                  value={value1}
-                  items={items1}
-                  setOpen={setOpen1}
-                  setValue={setValue1}
-                  style={{ backgroundColor: theme.inputBackground }}
-                  dropDownContainerStyle={{ backgroundColor: theme.box }}
-                  textStyle={{ color: theme.text }}
-                />
-              </View>
-
-              <View style={styles.dropdownBox}>
-                 <Text style={[styles.dropdownLabel, { color: theme.text }]}>
-                End Building
-                </Text>
-                <DropDownPicker
-                  open={open2}
-                  value={value2}
-                  items={items2}
-                  setOpen={setOpen2}
-                  setValue={setValue2}
-                  style={{ backgroundColor: theme.inputBackground }}
-                  dropDownContainerStyle={{ backgroundColor: theme.box }}
-                  textStyle={{ color: theme.text }}
-                />
-              </View>
-            </View>
-
-            <View style={[styles.dropdownRow, { zIndex: 2000 }]}>
-              <View style={styles.dropdownBox}>
-                 <Text style={[styles.dropdownLabel, { color: theme.text }]}>
-                Pedestrian or Bus?
-                </Text>
-                <DropDownPicker
-                  open={open3}
-                  value={value3}
-                  items={items3}
-                  setOpen={setOpen3}
-                  setValue={setValue3}
-                  style={{ backgroundColor: theme.inputBackground }}
-                  dropDownContainerStyle={{ backgroundColor: theme.box }}
-                  textStyle={{ color: theme.text }}
-                />
-              </View>
-
-              <View style={styles.dropdownBox}>
-                <Text style={[styles.dropdownLabel, { color: theme.text }]}>
-                Accessible Needed?
-                </Text>
-                <DropDownPicker
-                  open={open4}
-                  value={value4}
-                  items={items4}
-                  setOpen={setOpen4}
-                  setValue={setValue4}
-                  style={{ backgroundColor: theme.inputBackground }}
-                  dropDownContainerStyle={{ backgroundColor: theme.box }}
-                  textStyle={{ color: theme.text }}
-                />
-              </View>
-            </View>
-          </View>
-
-          <TouchableOpacity
-            style={[styles.submitButton, { backgroundColor: theme.green }]}
-            onPress={() => addr(value1, value2, value3, value4, userid)}
-          >
-            <Text style={styles.submitButtonText}>Submit Route</Text>
-          </TouchableOpacity>
 
           <Text style={[styles.SavedRoutesHeader, { color: theme.text }]}>
             Saved Routes
@@ -316,20 +141,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
   },
-  dropdownRow: { 
-    flexDirection: 'row', 
-    width: '90%', 
-    marginBottom: 15 
-  },
-  dropdownBox: { 
-    flex: 1, 
-    marginHorizontal: 5 
-  },
-  dropdownGrid: { 
-    width: '90%', 
-    marginBottom: 20, 
-    zIndex: 5000 
-  },
   Savedroutes: { 
     width: '90%', 
     borderRadius: 10, 
@@ -372,21 +183,12 @@ const styles = StyleSheet.create({
     color: '#fff', 
     fontWeight: 'bold' 
   },
-  submitButton: { 
-    paddingVertical: 10, 
-    paddingHorizontal: 20, 
-    borderRadius: 6, 
-    marginBottom: 20 
-  },
-  submitButtonText: { 
-    color: '#fff', 
-    fontWeight: 'bold', 
-    fontSize: 16 
-  },
-  dropdownLabel: {
-  marginBottom: 6,
-  fontSize: 14,
-  fontWeight: '600',
+  addButton: {
+  marginHorizontal: 20,
+  marginTop: 20,
+  marginBottom: 10,
+  paddingVertical: 12,
+  borderRadius: 10,
+  alignItems: "center",
 },
-
 });
