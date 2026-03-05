@@ -183,6 +183,12 @@ useEffect(() => {
           <TouchableOpacity style={[styles.saveButton, { backgroundColor: theme.green }]} onPress={saveRoute}>
             <Text style={styles.buttonText}>Save</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+  style={[styles.backButton, { backgroundColor: theme.button }]}
+  onPress={onClose}
+>
+  <Text style={[styles.buttonText, { color: theme.text }]}>Back</Text>
+</TouchableOpacity>
         </View>
       </TouchableWithoutFeedback>
   );
@@ -213,4 +219,10 @@ const styles = StyleSheet.create({
     color: '#fff', 
     fontWeight: 'bold' 
   },
+  backButton: {
+  paddingVertical: 12,
+  borderRadius: 8,
+  alignItems: 'center',
+  marginTop: 10
+},
 });

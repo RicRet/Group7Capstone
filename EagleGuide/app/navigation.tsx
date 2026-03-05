@@ -129,6 +129,12 @@ export default function NavigationScreen() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+  if (origin && destination) {
+    fetchRoute();
+  }
+}, [origin, destination]);
+
+  useEffect(() => {
     const extra: any = Constants.expoConfig?.extra || {};
     const fromExtra = extra?.orsApiKey;
     const fromEnv = process.env.EXPO_PUBLIC_ORS_API_KEY;
