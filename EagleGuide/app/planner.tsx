@@ -9,25 +9,25 @@
 import { useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
-  Modal,
-  RefreshControl,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Alert,
+    Modal,
+    RefreshControl,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { Building, searchBuildings } from "./lib/api/navbuildings";
 import {
-  createReminder,
-  DayOfWeek,
-  deleteReminder,
-  getReminders,
-  Reminder,
+    createReminder,
+    DayOfWeek,
+    deleteReminder,
+    getReminders,
+    Reminder,
 } from "./lib/api/reminders";
 import { useSession } from "./lib/session";
 
