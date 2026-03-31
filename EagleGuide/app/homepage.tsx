@@ -5,11 +5,14 @@ import { ActivityIndicator, Alert, Image, ScrollView, StyleSheet, Text, Touchabl
 import MapView, { Marker } from "react-native-maps";
 import { useSession } from "./lib/session";
 import { useAccessibility } from './Fontsize';
+import { useTheme } from "../app/Theme";
 
 export default function Home({ onNavigate }: { onNavigate?: (screen: string) => void }) {
     const router = useRouter();
     const { user, loading, refreshMe, logout } = useSession();
     const { scaleFont } = useAccessibility();
+    const { theme, isDark } = useTheme();
+
     const [locStatus, setLocStatus] = useState<"unknown" | "denied" | "granted" | "error">("unknown");
     const [coords, setCoords] = useState<Location.LocationObjectCoords | null>(null);
     const [checkingLoc, setCheckingLoc] = useState(false);
@@ -37,7 +40,7 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
     );
 
     const campusCenter = useMemo(() => ({ latitude: 33.2106, longitude: -97.1470 }), []);
-    const campusRadiusM = 1500; // 1.5 km radius
+    const campusRadiusM = 1500;
 
     useEffect(() => {
         if (!loading) {
@@ -109,37 +112,37 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
     };
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: theme.background }]}>
             <ScrollView contentContainerStyle={styles.scrollContent}>
-                <View style={styles.header}>
+                <View style={[styles.header, { backgroundColor: theme.header }]}>
                     <View style={styles.brandRow}>
                         <Image
                             source={require("../assets/images/UNT_logo.png")}
                             resizeMode="contain"
                             style={styles.logo}
                         />
-                        <Text style={[styles.title, { fontSize: scaleFont(22) }]}>Eagle Guide</Text>
+                        <Text style={[styles.title, { color: theme.text, fontSize: scaleFont(22) }]}>Eagle Guide</Text>
                     </View>
                     <View style={styles.headerActions}>
                         {loading ? (
-                            <ActivityIndicator color="#65d159" />
+                            <ActivityIndicator color={theme.green} />
                         ) : user ? (
-                            <View style={styles.userPill}>
-                                <Text style={[styles.userText, { fontSize: scaleFont(14) }]}>Hi, {user.username ?? user.id}</Text>
+                            <View style={[styles.userPill, { backgroundColor: theme.box }]}>
+                                <Text style={[styles.userText, { color: theme.text, fontSize: scaleFont(14) }]}>Hi, {user.username ?? user.id}</Text>
                                 <TouchableOpacity onPress={logout} style={styles.logoutBtn}>
-                                    <Text style={[styles.logoutText, { fontSize: scaleFont(12) }]}>Logout</Text>
+                                    <Text style={[styles.logoutText, { color: theme.red, fontSize: scaleFont(12) }]}>Logout</Text>
                                 </TouchableOpacity>
                             </View>
                         ) : (
                             <View style={styles.authRow}>
-                                <TouchableOpacity style={styles.authButton} onPress={() => router.push("/Login")}>
-                                    <Text style={[styles.authText, { fontSize: scaleFont(14) }]}>Login</Text>
+                                <TouchableOpacity style={[styles.authButton, { backgroundColor: theme.green }]} onPress={() => router.push("/Login")}>
+                                    <Text style={[styles.authText, { color: theme.text, fontSize: scaleFont(14) }]}>Login</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    style={[styles.authButton, styles.authSecondary]}
+                                    style={[styles.authButton, styles.authSecondary, { backgroundColor: theme.button }]}
                                     onPress={() => router.push("/Signup")}
                                 >
-                                    <Text style={[styles.authTextLight, { fontSize: scaleFont(14) }]}>Sign Up</Text>
+                                    <Text style={[styles.authTextLight, { color: theme.text, fontSize: scaleFont(14) }]}>Sign Up</Text>
                                 </TouchableOpacity>
                             </View>
                         )}
@@ -152,23 +155,23 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
                     style={styles.hero}
                 />
 
-                <View style={styles.locationCard}>
+                <View style={[styles.locationCard, { backgroundColor: theme.box }]}>
                     <View style={styles.locationHeader}>
-                        <Text style={[styles.sectionTitle, { fontSize: scaleFont(16) }]}>My Location</Text>
-                        {checkingLoc && <ActivityIndicator color="#65d159" size="small" />}
+                        <Text style={[styles.sectionTitle, { color: theme.green, fontSize: scaleFont(16) }]}>My Location</Text>
+                        {checkingLoc && <ActivityIndicator color={theme.green} size="small" />}
                     </View>
                     {locStatus === "denied" && (
-                        <Text style={[styles.locationText, { fontSize: scaleFont(14) }]}>Location permission is needed to show your position.</Text>
+                        <Text style={[styles.locationText, { color: theme.text, fontSize: scaleFont(14) }]}>Location permission is needed to show your position.</Text>
                     )}
                     {locStatus === "error" && (
-                        <Text style={[styles.locationText, { fontSize: scaleFont(14) }]}>Could not read location. Please try again.</Text>
+                        <Text style={[styles.locationText, { color: theme.text, fontSize: scaleFont(14) }]}>Could not read location. Please try again.</Text>
                     )}
                     {locStatus === "granted" && coords && (
                         <>
                             <Text style={[styles.locationBadge, onCampus ? styles.onCampus : styles.offCampus, { fontSize: scaleFont(14) }]}>
                                 {onCampus ? "On campus" : "Outside campus"}
                             </Text>
-                            {!onCampus && <Text style={[styles.locationText, { fontSize: scaleFont(14) }]}>You appear to be outside the campus area.</Text>}
+                            {!onCampus && <Text style={[styles.locationText, { color: theme.text, fontSize: scaleFont(14) }]}>You appear to be outside the campus area.</Text>}
                             <MapView
                                 style={styles.locationMap}
                                 pointerEvents="none"
@@ -179,53 +182,53 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
                                     longitudeDelta: 0.01,
                                 }}
                                 showsUserLocation
-                                customMapStyle={mapStyle as any}
+                                customMapStyle={isDark ? mapStyle as any : []}
                             >
                                 <Marker
                                     coordinate={{ latitude: coords.latitude, longitude: coords.longitude }}
                                     title="You"
-                                    pinColor="#65d159"
+                                    pinColor={theme.green}
                                 />
                             </MapView>
                             <TouchableOpacity
-                                style={styles.shareBtn}
+                                style={[styles.shareBtn, { backgroundColor: theme.green }]}
                                 onPress={shareMyLocation}
                             >
-                                <Text style={[styles.shareBtnText, { fontSize: scaleFont(14) }]}>Share My Location</Text>
+                                <Text style={[styles.shareBtnText, { color: "#000", fontSize: scaleFont(14) }]}>Share My Location</Text>
                             </TouchableOpacity>
                         </>
                     )}
                     {locStatus === "granted" && !coords && !checkingLoc && (
-                        <Text style={[styles.locationText, { fontSize: scaleFont(14) }]}>Locating you…</Text>
+                        <Text style={[styles.locationText, { color: theme.text, fontSize: scaleFont(14) }]}>Locating you…</Text>
                     )}
                 </View>
 
-                <Text style={[styles.sectionTitle, { fontSize: scaleFont(16) }]}>Quick Actions</Text>
+                <Text style={[styles.sectionTitle, { color: theme.green, fontSize: scaleFont(16) }]}>Quick Actions</Text>
                 <View style={styles.actionsGrid}>
                     {navItems.map((item) => (
                         <TouchableOpacity
                             key={item.to}
-                            style={styles.actionCard}
+                            style={[styles.actionCard, { backgroundColor: theme.box }]}
                             onPress={() => {
                                 router.push(item.to);
                                 onNavigate?.(item.to);
                             }}
                         >
-                            <Text style={[styles.cardLabel, { fontSize: scaleFont(16) }]}>{item.label}</Text>
+                            <Text style={[styles.cardLabel, { color: theme.text, fontSize: scaleFont(16) }]}>{item.label}</Text>
                         </TouchableOpacity>
                     ))}
                 </View>
 
-                <View style={styles.legendCard}>
+                <View style={[styles.legendCard, { backgroundColor: theme.box }]}>
                     <View style={styles.legendHeader}>
-                        <Text style={[styles.sectionTitle, styles.legendTitle, { fontSize: scaleFont(16) }]}>Parking Legend</Text>
-                        <Text style={[styles.legendNote, { fontSize: scaleFont(12) }]}>Colors match the lots shown on the map</Text>
+                        <Text style={[styles.sectionTitle, styles.legendTitle, { color: theme.green, fontSize: scaleFont(16) }]}>Parking Legend</Text>
+                        <Text style={[styles.legendNote, { color: theme.lighttext, fontSize: scaleFont(12) }]}>Colors match the lots shown on the map</Text>
                     </View>
                     <View style={styles.legendGrid}>
                         {legendItems.map((item) => (
-                            <View key={item.label} style={styles.legendItem}>
+                            <View key={item.label} style={[styles.legendItem, { backgroundColor: theme.box }]}>
                                 <View style={[styles.legendSwatch, { backgroundColor: item.color }]} />
-                                <Text style={[styles.legendLabel, { fontSize: scaleFont(14) }]}>{item.label}</Text>
+                                <Text style={[styles.legendLabel, { color: theme.text, fontSize: scaleFont(14) }]}>{item.label}</Text>
                             </View>
                         ))}
                     </View>

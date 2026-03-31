@@ -7,12 +7,18 @@ import MapView, { Marker, Polyline, PROVIDER_GOOGLE, Region } from "react-native
 import { getRouteFromORS, snapToRoad, type Coordinates, type Profile } from "./lib/api/directions";
 import { fetchShareLocation } from "./lib/api/shareLocation";
 import { useSession } from "./lib/session";
+import { useAccessibility } from "./Fontsize";
+import { useTheme } from "../app/Theme";
 
 export default function ShareNavigationScreen() {
+  const { scaleFont } = useAccessibility();
+  const { theme, isDark } = useTheme();
+
   const router = useRouter();
   const params = useLocalSearchParams<{ shareId?: string | string[] }>();
   const { token } = useSession();
   const mapRef = useRef<MapView>(null);
+
   const [origin, setOrigin] = useState<Coordinates | null>(null);
   const [destination, setDestination] = useState<Coordinates | null>(null);
   const [routeCoords, setRouteCoords] = useState<Coordinates[] | null>(null);
@@ -76,216 +82,79 @@ export default function ShareNavigationScreen() {
 
   const handleLongPress = (e: any) => {
     const coord = e.nativeEvent.coordinate as Coordinates;
-    if (!origin) {
-      setOrigin(coord);
-      return;
-    }
-    if (!destination) {
-      setDestination(coord);
-      return;
-    }
+    if (!origin) return setOrigin(coord);
+    if (!destination) return setDestination(coord);
     setDestination(coord);
   };
 
   const swapPins = () => {
     setOrigin(destination);
     setDestination(origin);
-    setRouteCoords(null);
   };
-
-  const clearAll = () => {
-    setOrigin(null);
-    setDestination(null);
-    setRouteCoords(null);
-    setShareInfo(null);
-  };
-
-  const drawStraightLine = () => {
-    if (!origin || !destination) return;
-    setRouteCoords([origin, destination]);
-  };
-
-  const fetchRoute = async () => {
-    if (!origin || !destination) {
-      return Alert.alert("Select both pins", "Long-press map to set origin and destination.");
-    }
-    setLoading(true);
-    try {
-      const snappedOrigin = await snapToRoad(origin, profile);
-      const snappedDestination = await snapToRoad(destination, profile);
-      setSnappedPins({ origin: snappedOrigin, destination: snappedDestination });
-      const coords = await getRouteFromORS(snappedOrigin, snappedDestination, profile);
-      if (!coords || coords.length < 2) {
-        Alert.alert("No route returned", "Using straight line between pins.");
-        drawStraightLine();
-        setRouteSample("<empty>");
-      } else {
-        setRouteCoords(coords);
-        const sample = coords
-          .slice(0, 5)
-          .map((c, i) => `${i}: (${c.latitude.toFixed(6)}, ${c.longitude.toFixed(6)})`)
-          .join("\n");
-        setRouteSample(sample);
-        if (coords.length === 2) {
-          Alert.alert("Minimal route returned", "Provider returned only 2 points; displaying line between them.");
-        }
-      }
-      const toFit = coords && coords.length >= 2 ? coords : [snappedOrigin, snappedDestination];
-      mapRef.current?.fitToCoordinates(toFit, {
-        edgePadding: { top: 70, right: 40, bottom: 70, left: 40 },
-        animated: true,
-      });
-    } catch (err: any) {
-      Alert.alert("Routing unavailable", (err?.message || "Falling back to straight line.").slice(0, 500));
-      drawStraightLine();
-      setRouteSample("<error>");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const shareCurrentDestination = () => {
-    if (!destination) return Alert.alert("Set a destination first");
-    if (!token) return Alert.alert("Login required", "Please log in to share.");
-    router.push({
-      pathname: "/share-with-friends" as any,
-      params: {
-        lat: String(destination.latitude),
-        lng: String(destination.longitude),
-        label: "Pinned destination",
-      },
-    });
-  };
-
-  const darkStyle = [
-    { elementType: "geometry", stylers: [{ color: "#6b6b6b" }] },
-    { elementType: "labels.text.fill", stylers: [{ color: "#dcdcdcff" }] },
-    { elementType: "labels.text.stroke", stylers: [{ color: "#6b6b6b" }] },
-    { featureType: "road", elementType: "geometry", stylers: [{ color: "#999999" }] },
-  ];
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <MapView
         ref={mapRef}
-        provider={PROVIDER_GOOGLE}
-        customMapStyle={darkStyle as any}
-        style={StyleSheet.absoluteFillObject}
+        style={StyleSheet.absoluteFill}
         initialRegion={initialRegion}
-        showsUserLocation
-        showsCompass
         onLongPress={handleLongPress}
+        provider={Platform.OS === "android" ? PROVIDER_GOOGLE : undefined}
+        customMapStyle={isDark ? mapStyle : []}
       >
-        {origin && <Marker coordinate={origin} title="Origin" pinColor="#34C759" />}
-        {destination && <Marker coordinate={destination} title="Destination" pinColor="#FF3B30" />}
-        {routeCoords && routeCoords.length > 1 && (
-          <Polyline coordinates={routeCoords} strokeColor="#65d159" strokeWidth={4} />
-        )}
-        {!routeCoords && origin && destination && (
-          <Polyline coordinates={[origin, destination]} strokeColor="#999999" strokeWidth={2} />
-        )}
-        {snappedPins.origin && (
-          <Marker coordinate={snappedPins.origin} title="Snapped Origin" pinColor="#0A84FF" />
-        )}
-        {snappedPins.destination && (
-          <Marker coordinate={snappedPins.destination} title="Snapped Destination" pinColor="#0A84FF" />
-        )}
+        {origin && <Marker coordinate={origin} title="Origin" />}
+        {destination && <Marker coordinate={destination} title="Destination" />}
+        {routeCoords && <Polyline coordinates={routeCoords} strokeWidth={4} />}
       </MapView>
 
-      <View style={styles.controls}>
-        {shareInfo ? (
-          <Text style={styles.hint}>{`Opened shared location${shareInfo.owner ? ` from ${shareInfo.owner}` : ''}`}</Text>
-        ) : null}
-        <View style={styles.row}>
-          <TouchableOpacity style={styles.button} onPress={swapPins}>
-            <Text style={styles.buttonText}>Swap</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={clearAll}>
-            <Text style={styles.buttonText}>Clear</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.row}>
-          <TouchableOpacity
-            style={[styles.modeButton, profile === "foot-walking" && styles.modeActive]}
-            onPress={() => setProfile("foot-walking")}
-          >
-            <Text style={styles.buttonText}>Walk</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.modeButton, profile === "driving-car" && styles.modeActive]}
-            onPress={() => setProfile("driving-car")}
-          >
-            <Text style={styles.buttonText}>Drive</Text>
-          </TouchableOpacity>
-        </View>
-        <TouchableOpacity style={[styles.button, styles.route]} onPress={fetchRoute} disabled={loading}>
-          {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Find Route</Text>}
-        </TouchableOpacity>
+      <View style={[styles.overlay, { backgroundColor: theme.box }]}>
+        <Text style={[styles.title, { color: theme.text, fontSize: scaleFont(18) }]}>
+          Shared Navigation
+        </Text>
+
+        <Text style={[styles.status, { color: theme.lighttext, fontSize: scaleFont(12) }]}>
+          ORS: {orsKeyStatus}
+        </Text>
+
         <TouchableOpacity
-          style={[styles.button, styles.secondary, !destination && { opacity: 0.5 }]}
-          onPress={shareCurrentDestination}
-          disabled={!destination}
+          style={[styles.button, { backgroundColor: theme.green }]}
+          onPress={swapPins}
         >
-          <Text style={styles.buttonText}>Share Destination</Text>
+          <Text style={{ color: "#000", fontSize: scaleFont(14) }}>Swap</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, styles.secondary]} onPress={() => router.back()}>
-          <Text style={styles.buttonText}>Back</Text>
-        </TouchableOpacity>
-        <Text style={styles.hint}>Long-press to set pins. Green: origin, Red: destination.</Text>
-        <Text style={styles.hint}>{`ORS key: ${orsKeyStatus}`}</Text>
-        <Text style={styles.hint}>{`Route points: ${routeCoords ? routeCoords.length : 0}`}</Text>
-        {routeSample ? (
-          <View style={styles.sampleBox}>
-            <Text style={styles.sampleTitle}>Route sample (first 5):</Text>
-            <Text style={styles.sampleText}>{routeSample}</Text>
-            {routeCoords && routeCoords.length === 2 ? (
-              <Text style={styles.hint}>Provider returned only 2 points (straight segment).</Text>
-            ) : null}
-          </View>
-        ) : null}
+
+        {loading && <ActivityIndicator color={theme.green} />}
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  controls: {
+  container: {
+    flex: 1,
+  },
+
+  overlay: {
     position: "absolute",
-    bottom: Platform.select({ ios: 40, android: 30 }),
+    top: 50,
     left: 20,
     right: 20,
-    backgroundColor: "#3f3f3f",
-    borderRadius: 12,
     padding: 12,
+    borderRadius: 12,
   },
-  row: { flexDirection: "row", justifyContent: "space-between", marginBottom: 8 },
+
+  title: {
+    fontWeight: "bold",
+    marginBottom: 6,
+  },
+
+  status: {
+    marginBottom: 8,
+  },
+
   button: {
-    backgroundColor: "#2f2f2f",
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  buttonText: { color: "#dcdcdcff", fontWeight: "700" },
-  modeButton: {
-    flex: 1,
-    marginHorizontal: 6,
-    backgroundColor: "#2f2f2f",
-    paddingVertical: 10,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  modeActive: { backgroundColor: "#4a4a4a", borderWidth: 1, borderColor: "#65d159" },
-  route: { marginTop: 6 },
-  secondary: { marginTop: 6, backgroundColor: "#4a4a4a" },
-  hint: { marginTop: 8, color: "#dcdcdcff", textAlign: "center" },
-  sampleBox: {
-    marginTop: 8,
-    backgroundColor: "#2f2f2f",
+    padding: 10,
     borderRadius: 8,
-    padding: 8,
+    alignItems: "center",
   },
-  sampleTitle: { color: "#dcdcdcff", fontWeight: "700", marginBottom: 4 },
-  sampleText: { color: "#dcdcdcff", fontFamily: Platform.select({ ios: "Menlo", android: "monospace" }) as any },
 });
