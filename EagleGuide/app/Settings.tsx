@@ -1,5 +1,6 @@
+import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   ScrollView,
@@ -9,10 +10,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import DropDownPicker from "react-native-dropdown-picker";
 import { useTheme } from "../app/Theme";
-import { useSession } from "./lib/session";
+import { ColorBlindMode, useColorBlindMode } from "./ColorBlindMode";
 import { useAccessibility } from "./Fontsize";
-import * as Notifications from "expo-notifications";
+import { useSession } from "./lib/session";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -26,6 +28,15 @@ Notifications.setNotificationHandler({
 const Settings: React.FC = () => {
   const router = useRouter();
   const { theme, isDark, toggleTheme } = useTheme();
+    const { colorBlindMode, setColorBlindMode } = useColorBlindMode();
+
+  const [colorBlindOpen, setColorBlindOpen] = useState(false);
+  const [colorBlindItems, setColorBlindItems] = useState([
+    { label: "Default", value: "default" as ColorBlindMode },
+    { label: "Tritanopia", value: "tritanopia" as ColorBlindMode },
+    { label: "Protanopia", value: "protanopia" as ColorBlindMode },
+    { label: "Deuteranopia", value: "deuteranopia" as ColorBlindMode },
+  ]);
   const { user } = useSession();
   const { largeTextEnabled, toggleLargeText, scaleFont } = useAccessibility();
 
@@ -215,6 +226,48 @@ const Settings: React.FC = () => {
               <Text style={[styles.settingDescription, { color: theme.lighttext, fontSize: scaleFont(12) }]}>
                 Increase font size for accessibility
               </Text>
+                        <View style={[styles.dropdownSection, { zIndex: 3000 }]}>
+            <Text
+              style={[
+                styles.settingLabel,
+                { color: theme.text, fontSize: scaleFont(16), marginBottom: 4 },
+              ]}
+            >
+              Map Color Mode
+            </Text>
+            <Text
+              style={[
+                styles.settingDescription,
+                { color: theme.lighttext, fontSize: scaleFont(12), marginBottom: 10 },
+              ]}
+            >
+              Change colors for color-blind accessibility
+            </Text>
+
+            <DropDownPicker
+              open={colorBlindOpen}
+              value={colorBlindMode}
+              items={colorBlindItems}
+              setOpen={setColorBlindOpen}
+              setItems={setColorBlindItems}
+              setValue={(callback) => {
+                const nextValue = callback(colorBlindMode) as ColorBlindMode;
+                setColorBlindMode(nextValue);
+              }}
+              listMode="SCROLLVIEW"
+              style={[
+                styles.dropdown,
+                { backgroundColor: theme.box, borderColor: theme.border },
+              ]}
+              dropDownContainerStyle={[
+                styles.dropdownContainer,
+                { backgroundColor: theme.box, borderColor: theme.border },
+              ]}
+              textStyle={{ color: theme.text, fontSize: scaleFont(14) }}
+              labelStyle={{ color: theme.text }}
+              listItemLabelStyle={{ color: theme.text }}
+            />
+          </View>
             </View>
             <Switch
               value={largeTextEnabled}
@@ -355,4 +408,15 @@ const styles = StyleSheet.create({
   profileName: { fontSize: 16, fontWeight: "700" },
   profileUsername: { fontSize: 13, marginTop: 2 },
   profileEmail: { fontSize: 12, marginTop: 2 },
+  dropdownSection: {
+    marginTop: 8,
+    marginBottom: 8,
+  },
+  dropdown: {
+    borderRadius: 8,
+    minHeight: 48,
+  },
+  dropdownContainer: {
+    borderRadius: 8,
+  },
 });

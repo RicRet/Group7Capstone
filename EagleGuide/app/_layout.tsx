@@ -1,5 +1,6 @@
 // app/_layout.tsx
 import { Stack } from "expo-router";
+import { ColorBlindModeProvider } from "./ColorBlindMode";
 import { AccessibilityProvider } from "./Fontsize";
 import { SessionProvider } from "./lib/session";
 import { Theme } from "./Theme";
@@ -7,6 +8,7 @@ import { Theme } from "./Theme";
 export default function RootLayout() {
   return (
     <Theme>
+      <ColorBlindModeProvider>
       <AccessibilityProvider>
         <SessionProvider>
         <Stack initialRouteName="index">
@@ -31,6 +33,7 @@ export default function RootLayout() {
       
         </SessionProvider>
       </AccessibilityProvider>
+      </ColorBlindModeProvider>
     </Theme>
   );
 }
