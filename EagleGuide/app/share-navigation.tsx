@@ -28,6 +28,7 @@ import {
 } from "./lib/api/shareLocation";
 import { useSession } from "./lib/session";
 import { useTheme } from "./Theme";
+import { useAccessibility } from "./Fontsize";
 
 const formatDuration = (seconds: number) => {
   const min = Math.floor(seconds / 60);
@@ -49,6 +50,7 @@ export default function FindFriendsScreen() {
   const router = useRouter();
   const { token } = useSession();
   const { theme, isDark } = useTheme();
+  const { scaleFont } = useAccessibility();
   const mapRef = useRef<MapView>(null);
 
   const [myLocation, setMyLocation] = useState<Coordinates | null>(null);
@@ -222,12 +224,17 @@ export default function FindFriendsScreen() {
           >
             <Callout>
               <View style={styles.callout}>
-                <Text style={styles.calloutName}>{f.username}</Text>
-                <Text style={styles.calloutSub}>Tap to get directions</Text>
+                <Text style={[styles.calloutName, { fontSize: scaleFont(14) }]}>
+                  {f.username}
+                </Text>
+                <Text style={[styles.calloutSub, { fontSize: scaleFont(12) }]}>
+                  Tap to get directions
+                </Text>
               </View>
             </Callout>
           </Marker>
         ))}
+
         {routeCoords && routeCoords.length > 1 && (
           <Polyline coordinates={routeCoords} strokeColor={theme.green} strokeWidth={4} />
         )}
@@ -238,7 +245,10 @@ export default function FindFriendsScreen() {
 
         {/* Header row */}
         <View style={styles.headerRow}>
-          <Text style={[styles.title, { color: theme.text }]}>Find Friends</Text>
+          <Text style={[styles.title, { color: theme.text, fontSize: scaleFont(18) }]}>
+            Find Friends
+          </Text>
+
           <View style={styles.headerActions}>
             <TouchableOpacity
               style={[styles.broadcastBtn, { backgroundColor: broadcasting ? theme.green : theme.button }]}
@@ -246,42 +256,51 @@ export default function FindFriendsScreen() {
                 if (!token) { Alert.alert("Login required"); return; }
                 broadcasting
                   ? endBroadcast()
-                  : myLocation ? startBroadcast(myLocation) : Alert.alert("Waiting for GPS…");
+                  : myLocation
+                    ? startBroadcast(myLocation)
+                    : Alert.alert("Waiting for GPS…");
               }}
               disabled={broadcastLoading}
             >
-              {broadcastLoading
-                ? <ActivityIndicator color="#fff" size="small" />
-                : <Text style={styles.broadcastBtnText}>{broadcasting ? "📡 Live" : "📡 Go Live"}</Text>
-              }
+              {broadcastLoading ? (
+                <ActivityIndicator color="#fff" size="small" />
+              ) : (
+                <Text style={[styles.broadcastBtnText, { fontSize: scaleFont(13) }]}>
+                  {broadcasting ? "📡 Live" : "📡 Go Live"}
+                </Text>
+              )}
             </TouchableOpacity>
+
             <TouchableOpacity
               style={[styles.iconBtn, { backgroundColor: theme.button }]}
               onPress={refreshFriends}
               disabled={loadingFriends}
             >
-              {loadingFriends
-                ? <ActivityIndicator color={theme.text} size="small" />
-                : <Text style={{ color: theme.text, fontSize: 16 }}>↻</Text>
-              }
+              {loadingFriends ? (
+                <ActivityIndicator color={theme.text} size="small" />
+              ) : (
+                <Text style={{ color: theme.text, fontSize: scaleFont(16) }}>↻</Text>
+              )}
             </TouchableOpacity>
+
             <TouchableOpacity
               style={[styles.iconBtn, { backgroundColor: theme.button }]}
               onPress={() => router.back()}
             >
-              <Text style={{ color: theme.text, fontSize: 16 }}>✕</Text>
+              <Text style={{ color: theme.text, fontSize: scaleFont(16) }}>✕</Text>
             </TouchableOpacity>
           </View>
         </View>
 
         {/* Friends list */}
         {friendsError && (
-          <Text style={[styles.noFriendsText, { color: theme.red }]}>
+          <Text style={[styles.noFriendsText, { color: theme.red, fontSize: scaleFont(13) }]}>
             ⚠️ {friendsError}
           </Text>
         )}
+
         {!friendsError && friendLocations.length === 0 ? (
-          <Text style={[styles.noFriendsText, { color: theme.lighttext }]}>
+          <Text style={[styles.noFriendsText, { color: theme.lighttext, fontSize: scaleFont(13) }]}>
             {loadingFriends
               ? "Looking for friends nearby…"
               : "No friends are sharing their location right now."}
@@ -295,6 +314,7 @@ export default function FindFriendsScreen() {
           >
             {friendLocations.map((f) => {
               const isSelected = selectedFriend?.userId === f.userId;
+
               return (
                 <TouchableOpacity
                   key={f.userId}
@@ -306,16 +326,32 @@ export default function FindFriendsScreen() {
                   onPress={() => isSelected ? clearSelection() : selectFriend(f)}
                 >
                   <View style={[styles.avatar, { backgroundColor: isSelected ? "#fff" : theme.button }]}>
-                    <Text style={[styles.avatarText, { color: isSelected ? theme.green : theme.text }]}>
+                    <Text
+                      style={[
+                        styles.avatarText,
+                        {
+                          color: isSelected ? theme.green : theme.text,
+                          fontSize: scaleFont(12),
+                        },
+                      ]}
+                    >
                       {avatarInitials(f.username)}
                     </Text>
                   </View>
+
                   <Text
-                    style={[styles.friendChipName, { color: isSelected ? "#fff" : theme.text }]}
+                    style={[
+                      styles.friendChipName,
+                      {
+                        color: isSelected ? "#fff" : theme.text,
+                        fontSize: scaleFont(13),
+                      },
+                    ]}
                     numberOfLines={1}
                   >
                     {f.username}
                   </Text>
+
                   <View style={styles.onlineDot} />
                 </TouchableOpacity>
               );
@@ -326,7 +362,7 @@ export default function FindFriendsScreen() {
         {/* Directions panel */}
         {selectedFriend && (
           <View style={[styles.directionsPanel, { borderTopColor: theme.border }]}>
-            <Text style={[styles.selectedName, { color: theme.text }]}>
+            <Text style={[styles.selectedName, { color: theme.text, fontSize: scaleFont(16) }]}>
               📍 {selectedFriend.username}
             </Text>
 
@@ -339,9 +375,14 @@ export default function FindFriendsScreen() {
                     { backgroundColor: theme.button },
                     profile === p && { borderWidth: 2, borderColor: theme.green },
                   ]}
-                  onPress={() => { setProfile(p); setRouteCoords(null); setSteps([]); setSummary(null); }}
+                  onPress={() => {
+                    setProfile(p);
+                    setRouteCoords(null);
+                    setSteps([]);
+                    setSummary(null);
+                  }}
                 >
-                  <Text style={[styles.modeBtnText, { color: theme.text }]}>
+                  <Text style={[styles.modeBtnText, { color: theme.text, fontSize: scaleFont(14) }]}>
                     {p === "foot-walking" ? "🚶 Walk" : "🚗 Drive"}
                   </Text>
                 </TouchableOpacity>
@@ -353,15 +394,18 @@ export default function FindFriendsScreen() {
               onPress={fetchRoute}
               disabled={routeLoading}
             >
-              {routeLoading
-                ? <ActivityIndicator color="#fff" />
-                : <Text style={styles.routeBtnText}>Get Directions</Text>
-              }
+              {routeLoading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={[styles.routeBtnText, { fontSize: scaleFont(15) }]}>
+                  Get Directions
+                </Text>
+              )}
             </TouchableOpacity>
 
             {summary && (
-              <Text style={[styles.summaryText, { color: theme.text }]}>
-                {formatDistance(summary.distance)}  ·  {formatDuration(summary.duration)}
+              <Text style={[styles.summaryText, { color: theme.text, fontSize: scaleFont(14) }]}>
+                {formatDistance(summary.distance)} · {formatDuration(summary.duration)}
               </Text>
             )}
 
@@ -372,10 +416,10 @@ export default function FindFriendsScreen() {
                 style={[styles.stepsList, { backgroundColor: theme.box }]}
                 renderItem={({ item, index }) => (
                   <View style={[styles.stepItem, { borderBottomColor: theme.border }]}>
-                    <Text style={[styles.stepText, { color: theme.text }]}>
+                    <Text style={[styles.stepText, { color: theme.text, fontSize: scaleFont(13) }]}>
                       {index + 1}. {item.instruction}
                     </Text>
-                    <Text style={[styles.stepSub, { color: theme.lighttext }]}>
+                    <Text style={[styles.stepSub, { color: theme.lighttext, fontSize: scaleFont(12) }]}>
                       {formatDistance(item.distance)}
                     </Text>
                   </View>

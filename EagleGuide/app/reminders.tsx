@@ -21,7 +21,7 @@ import {
   Reminder,
 } from "./lib/api/reminders";
 import { useSession } from "./lib/session";
-import { useTheme } from "./Theme";
+import { useTheme } from "../app/Theme";
 import { useAccessibility } from "./Fontsize";
 
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -115,8 +115,6 @@ export default function RemindersScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-
-      {/* Header */}
       <View style={[styles.header, { backgroundColor: theme.header }]}>
         <TouchableOpacity onPress={() => router.back()}>
           <Text style={[styles.backText, { color: theme.green, fontSize: scaleFont(15) }]}>
@@ -128,64 +126,42 @@ export default function RemindersScreen() {
           Reminders
         </Text>
 
-        <TouchableOpacity style={[styles.addBtn, { backgroundColor: theme.green }]}>
+        <TouchableOpacity
+          style={[styles.addBtn, { backgroundColor: theme.green }]}
+          onPress={() => setModalVisible(true)}
+        >
           <Text style={{ color: theme.background, fontSize: scaleFont(14), fontWeight: "700" }}>
             + New
           </Text>
         </TouchableOpacity>
       </View>
 
-      {/* List */}
       {loading ? (
         <ActivityIndicator color={theme.green} style={{ marginTop: 40 }} />
       ) : (
         <ScrollView
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.green} />}
+          contentContainerStyle={styles.listContent}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.green} />
+          }
         >
           {reminders.map((r) => (
             <View key={r.reminderId} style={[styles.card, { backgroundColor: theme.box }]}>
-
               <Text style={[styles.cardLabel, { color: theme.text, fontSize: scaleFont(16) }]}>
                 {r.label}
               </Text>
 
-              <Text style={[styles.cardTime, { color: theme.green, fontSize: scaleFont(14) }]}>
-                {formatTime(r.remindTime)}
+              <Text style={{ color: theme.green, fontSize: scaleFont(14) }}>
+                🕐 {formatTime(r.remindTime)}
               </Text>
 
               <TouchableOpacity onPress={() => handleDelete(r.reminderId)}>
                 <Text style={{ color: theme.red, fontSize: scaleFont(14) }}>Delete</Text>
               </TouchableOpacity>
-
             </View>
           ))}
         </ScrollView>
       )}
-
-      {/* Modal */}
-      <Modal visible={modalVisible} transparent>
-        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.6)" }}>
-          <View style={{ backgroundColor: theme.box, marginTop: "auto", padding: 16 }}>
-
-            <Text style={{ color: theme.text, fontSize: scaleFont(18) }}>
-              New Reminder
-            </Text>
-
-            <TextInput
-              style={[
-                styles.input,
-                {
-                  backgroundColor: theme.inputBackground,
-                  color: theme.text,
-                  borderColor: theme.border,
-                },
-              ]}
-            />
-
-          </View>
-        </View>
-      </Modal>
-
     </View>
   );
 }
@@ -202,7 +178,6 @@ const styles = StyleSheet.create({
   },
 
   backText: { fontWeight: "700" },
-
   headerTitle: { fontWeight: "700" },
 
   addBtn: {
@@ -211,23 +186,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 
+  listContent: { padding: 16, gap: 12 },
+
   card: {
     padding: 14,
-    margin: 10,
     borderRadius: 14,
   },
 
   cardLabel: {
     fontWeight: "700",
-  },
-
-  cardTime: {
-    fontWeight: "600",
-  },
-
-  input: {
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
   },
 });

@@ -1,9 +1,19 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Alert, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import {
+  Alert,
+  Keyboard,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Building, SavedRoute, updateRoute } from './lib/api/addroutev2';
 import { searchBuildings } from './lib/api/navbuildings';
 import { useTheme } from "./Theme";
+import { useAccessibility } from "./Fontsize";
 
 type EditrouteProps = {
   route: SavedRoute;
@@ -11,8 +21,9 @@ type EditrouteProps = {
 };
 
 export default function Editroute({ route, onClose }: EditrouteProps) {
-
   const { theme } = useTheme();
+  const { scaleFont } = useAccessibility();
+
   const routeId = route.saved_route_id;
 
   const [startQuery, setStartQuery] = useState("");
@@ -31,7 +42,8 @@ export default function Editroute({ route, onClose }: EditrouteProps) {
   ]);
 
   const [name, setName] = useState(route.name);
-  //start building search
+
+  // start building search
   const runStartSearch = useCallback(async (q: string) => {
     setStartQuery(q);
     setStartBuilding(null);
@@ -45,7 +57,8 @@ export default function Editroute({ route, onClose }: EditrouteProps) {
       setStartResults([]);
     }
   }, []);
-  //end building search
+
+  // end building search
   const runEndSearch = useCallback(async (q: string) => {
     setEndQuery(q);
     setEndBuilding(null);
@@ -67,7 +80,6 @@ export default function Editroute({ route, onClose }: EditrouteProps) {
   }, [startBuilding, endBuilding]);
 
   const saveRoute = async () => {
-
     if (!startBuilding || !endBuilding || value4 == null) {
       return Alert.alert('Error', 'Please select start, end, and accessibility');
     }
@@ -77,7 +89,6 @@ export default function Editroute({ route, onClose }: EditrouteProps) {
     }
 
     try {
-
       await updateRoute({
         id: routeId,
         name,
@@ -92,7 +103,6 @@ export default function Editroute({ route, onClose }: EditrouteProps) {
 
       Alert.alert('Success', 'Route updated!');
       onClose();
-
     } catch (err) {
       console.error(err);
       Alert.alert('Error', 'Could not update route');
@@ -103,26 +113,47 @@ export default function Editroute({ route, onClose }: EditrouteProps) {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={{ flex: 1, backgroundColor: theme.background }}>
 
-        <Text style={[styles.title, { color: theme.text }]}>Edit Route</Text>
+        {/* Title */}
+        <Text style={[styles.title, { color: theme.text, fontSize: scaleFont(20) }]}>
+          Edit Route
+        </Text>
 
+        {/* Route Name */}
         <TextInput
-          style={[styles.input, { backgroundColor: theme.inputBackground, color: theme.text }]}
+          style={[
+            styles.input,
+            {
+              backgroundColor: theme.inputBackground,
+              color: theme.text,
+              fontSize: scaleFont(14),
+            },
+          ]}
           placeholder="Route Name"
           placeholderTextColor={theme.lighttext}
           value={name}
           onChangeText={setName}
         />
 
-        <Text style={[styles.label, { color: theme.text }]}>Start Building</Text>
+        {/* Start Building */}
+        <Text style={[styles.label, { color: theme.text, fontSize: scaleFont(14) }]}>
+          Start Building
+        </Text>
 
         <TextInput
-          style={[styles.input, { backgroundColor: theme.inputBackground }]}
+          style={[
+            styles.input,
+            {
+              backgroundColor: theme.inputBackground,
+              color: theme.text,
+              fontSize: scaleFont(14),
+            },
+          ]}
           placeholder="Search building..."
           placeholderTextColor={theme.lighttext}
           value={startQuery}
           onChangeText={runStartSearch}
         />
-        {/* start building */}
+
         {startResults.slice(0, 5).map((b) => (
           <TouchableOpacity
             key={b.name}
@@ -133,21 +164,32 @@ export default function Editroute({ route, onClose }: EditrouteProps) {
               setStartResults([]);
             }}
           >
-            <Text style={{ color: theme.text }}>{b.name}</Text>
+            <Text style={{ color: theme.text, fontSize: scaleFont(14) }}>
+              {b.name}
+            </Text>
           </TouchableOpacity>
         ))}
 
-
-        <Text style={[styles.label, { color: theme.text }]}>End Building</Text>
+        {/* End Building */}
+        <Text style={[styles.label, { color: theme.text, fontSize: scaleFont(14) }]}>
+          End Building
+        </Text>
 
         <TextInput
-          style={[styles.input, { backgroundColor: theme.inputBackground }]}
+          style={[
+            styles.input,
+            {
+              backgroundColor: theme.inputBackground,
+              color: theme.text,
+              fontSize: scaleFont(14),
+            },
+          ]}
           placeholder="Search building..."
           placeholderTextColor={theme.lighttext}
           value={endQuery}
           onChangeText={runEndSearch}
         />
-        {/* end building */}
+
         {endResults.slice(0, 5).map((b) => (
           <TouchableOpacity
             key={b.name}
@@ -158,12 +200,16 @@ export default function Editroute({ route, onClose }: EditrouteProps) {
               setEndResults([]);
             }}
           >
-            <Text style={{ color: theme.text }}>{b.name}</Text>
+            <Text style={{ color: theme.text, fontSize: scaleFont(14) }}>
+              {b.name}
+            </Text>
           </TouchableOpacity>
         ))}
 
-
-        <Text style={[styles.label, { color: theme.text }]}>Accessibility Needed?</Text>
+        {/* Accessibility */}
+        <Text style={[styles.label, { color: theme.text, fontSize: scaleFont(14) }]}>
+          Accessibility Needed?
+        </Text>
 
         <DropDownPicker
           open={open4}
@@ -176,21 +222,27 @@ export default function Editroute({ route, onClose }: EditrouteProps) {
           containerStyle={{ marginBottom: 25 }}
           dropDownContainerStyle={{ backgroundColor: theme.box }}
           style={{ backgroundColor: theme.inputBackground }}
-          textStyle={{ color: theme.text }}
+          textStyle={{ color: theme.text, fontSize: scaleFont(14) }}
         />
 
+        {/* Save Button */}
         <TouchableOpacity
           style={[styles.saveButton, { backgroundColor: theme.green }]}
           onPress={saveRoute}
         >
-          <Text style={styles.buttonText}>Save</Text>
+          <Text style={[styles.buttonText, { fontSize: scaleFont(16) }]}>
+            Save
+          </Text>
         </TouchableOpacity>
 
+        {/* Back Button */}
         <TouchableOpacity
           style={[styles.backButton, { backgroundColor: theme.button }]}
           onPress={onClose}
         >
-          <Text style={[styles.buttonText, { color: theme.text }]}>Back</Text>
+          <Text style={[styles.buttonText, { color: theme.text, fontSize: scaleFont(16) }]}>
+            Back
+          </Text>
         </TouchableOpacity>
 
       </View>
@@ -200,44 +252,37 @@ export default function Editroute({ route, onClose }: EditrouteProps) {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 20
+    marginBottom: 20,
   },
-
   label: {
     marginBottom: 5,
-    fontWeight: '600'
+    fontWeight: '600',
   },
-
   input: {
     width: '100%',
     borderRadius: 8,
     padding: 10,
-    marginBottom: 10
+    marginBottom: 10,
   },
-
   result: {
-    padding: 10,
+    padding: 12,
     borderBottomWidth: 1,
-    borderColor: "#444"
+    borderColor: "#444",
   },
-
   saveButton: {
     paddingVertical: 12,
     borderRadius: 8,
-    alignItems: 'center'
+    alignItems: 'center',
   },
-
   backButton: {
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: 'center',
-    marginTop: 10
+    marginTop: 10,
   },
-
   buttonText: {
     color: '#fff',
-    fontWeight: 'bold'
-  }
+    fontWeight: 'bold',
+  },
 });
