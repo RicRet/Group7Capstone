@@ -16,9 +16,12 @@ import { FriendEdge, FriendsResponse, getFriends } from "./lib/api/friends";
 import { createShareLocation } from "./lib/api/shareLocation";
 import { useSession } from "./lib/session";
 import { useAccessibility } from "./Fontsize";
+import { useTheme } from "../app/Theme";
 
 export default function ShareWithFriendsScreen() {
   const { scaleFont } = useAccessibility();
+  const { theme } = useTheme();
+
   const router = useRouter();
   const params = useLocalSearchParams<{ lat?: string; lng?: string; label?: string }>();
   const { token, loading: sessionLoading } = useSession();
@@ -56,12 +59,12 @@ export default function ShareWithFriendsScreen() {
       return;
     }
     loadFriends();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionLoading, token]);
 
   const handleShareWithFriend = useCallback(
     async (friend: FriendEdge) => {
       if (latitude === null || longitude === null) return;
+
       const friendName =
         [friend.firstName, friend.lastName].filter(Boolean).join(" ") ||
         friend.username ||
@@ -69,15 +72,18 @@ export default function ShareWithFriendsScreen() {
         "your friend";
 
       setSharingId(friend.userId);
+
       try {
         const res = await createShareLocation({
           latitude,
           longitude,
           label,
         });
+
         const url = Linking.createURL("/share-navigation", {
           queryParams: { shareId: res.shareId },
         });
+
         await Share.share({
           title: `Meet me here — for ${friendName}`,
           message: `Hey ${friendName}, meet me here: ${url}`,
@@ -104,24 +110,28 @@ export default function ShareWithFriendsScreen() {
       friend.username ||
       friend.email ||
       friend.userId;
+
     const sub = friend.username ? `@${friend.username}` : friend.email || friend.userId;
     const isSharing = sharingId === friend.userId;
 
     return (
-      <View key={friend.userId} style={styles.friendRow}>
+      <View key={friend.userId} style={[styles.friendRow, { backgroundColor: theme.box }]}>
         <View style={styles.friendMeta}>
-          <Text style={[styles.friendName, { fontSize: scaleFont(16) }]}>{name}</Text>
-          <Text style={[styles.friendSub, { fontSize: scaleFont(12) }]}>{sub}</Text>
+          <Text style={[styles.friendName, { color: theme.text, fontSize: scaleFont(16) }]}>{name}</Text>
+          <Text style={[styles.friendSub, { color: theme.lighttext, fontSize: scaleFont(12) }]}>{sub}</Text>
         </View>
+
         <TouchableOpacity
-          style={[styles.shareButton, isSharing && styles.shareButtonDisabled]}
+          style={[styles.shareButton, isSharing && styles.shareButtonDisabled, { backgroundColor: theme.green }]}
           onPress={() => handleShareWithFriend(friend)}
           disabled={isSharing || sharingId !== null}
         >
           {isSharing ? (
             <ActivityIndicator color="#0d0d0d" />
           ) : (
-            <Text style={[styles.shareButtonText, { fontSize: scaleFont(14) }]}>Share</Text>
+            <Text style={[styles.shareButtonText, { color: "#0d0d0d", fontSize: scaleFont(14) }]}>
+              Share
+            </Text>
           )}
         </TouchableOpacity>
       </View>
@@ -129,51 +139,71 @@ export default function ShareWithFriendsScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: theme.header }]}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text style={[styles.backText, { fontSize: scaleFont(16) }]}>← Back</Text>
+          <Text style={[styles.backText, { color: theme.green, fontSize: scaleFont(16) }]}>
+            ← Back
+          </Text>
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { fontSize: scaleFont(20) }]}>Share with Friend</Text>
+
+        <Text style={[styles.headerTitle, { color: theme.text, fontSize: scaleFont(20) }]}>
+          Share with Friend
+        </Text>
+
         <View style={{ width: 60 }} />
       </View>
 
-      {/* Destination info banner */}
-      <View style={styles.banner}>
-        <Text style={[styles.bannerLabel, { fontSize: scaleFont(12) }]}>Destination</Text>
-        <Text style={[styles.bannerCoords, { fontSize: scaleFont(14) }]}>
+      {/* Destination info */}
+      <View style={[styles.banner, { backgroundColor: theme.box, borderBottomColor: theme.border }]}>
+        <Text style={[styles.bannerLabel, { color: theme.green, fontSize: scaleFont(12) }]}>
+          Destination
+        </Text>
+
+        <Text style={[styles.bannerCoords, { color: theme.text, fontSize: scaleFont(14) }]}>
           {latitude !== null && longitude !== null
             ? `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`
             : "—"}
         </Text>
+
         {params.label ? (
-          <Text style={[styles.bannerSub, { fontSize: scaleFont(12) }]}>{params.label}</Text>
+          <Text style={[styles.bannerSub, { color: theme.lighttext, fontSize: scaleFont(12) }]}>
+            {params.label}
+          </Text>
         ) : null}
       </View>
 
       <ScrollView
         contentContainerStyle={styles.content}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#65d159" />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.green} />
         }
       >
-        <View style={styles.sectionCard}>
-          <Text style={[styles.sectionTitle, { fontSize: scaleFont(15) }]}>Your Friends</Text>
-          <Text style={[styles.sectionHint, { fontSize: scaleFont(12) }]}>
-            {'Tap \'Share\' next to a friend to send them a link to this location.'}
+        <View style={[styles.sectionCard, { backgroundColor: theme.box }]}>
+          <Text style={[styles.sectionTitle, { color: theme.green, fontSize: scaleFont(15) }]}>
+            Your Friends
+          </Text>
+
+          <Text style={[styles.sectionHint, { color: theme.lighttext, fontSize: scaleFont(12) }]}>
+            Tap 'Share' next to a friend to send them a link to this location.
           </Text>
 
           {loading ? (
-            <ActivityIndicator color="#65d159" style={{ marginTop: 16 }} />
+            <ActivityIndicator color={theme.green} style={{ marginTop: 16 }} />
           ) : friends.length === 0 ? (
             <View style={styles.emptyContainer}>
-              <Text style={[styles.emptyText, { fontSize: scaleFont(14) }]}>You have no friends yet.</Text>
+              <Text style={[styles.emptyText, { color: theme.lighttext, fontSize: scaleFont(14) }]}>
+                You have no friends yet.
+              </Text>
+
               <TouchableOpacity
-                style={styles.addFriendsButton}
+                style={[styles.addFriendsButton, { backgroundColor: theme.green }]}
                 onPress={() => router.push("/friends")}
               >
-                <Text style={[styles.addFriendsButtonText, { fontSize: scaleFont(14) }]}>Add Friends</Text>
+                <Text style={[styles.addFriendsButtonText, { color: "#0d0d0d", fontSize: scaleFont(14) }]}>
+                  Add Friends
+                </Text>
               </TouchableOpacity>
             </View>
           ) : (
@@ -186,7 +216,7 @@ export default function ShareWithFriendsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#1f1f1f" },
+  container: { flex: 1 },
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -194,43 +224,37 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     paddingHorizontal: 16,
     paddingBottom: 12,
-    backgroundColor: "#2a2a2a",
   },
-  backText: { color: "#65d159", fontWeight: "700" },
-  headerTitle: { color: "#ffffff", fontWeight: "800" },
+  backText: { fontWeight: "700" },
+  headerTitle: { fontWeight: "800" },
   banner: {
-    backgroundColor: "#2f2f2f",
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#3a3a3a",
   },
-  bannerLabel: { color: "#65d159", fontWeight: "700", textTransform: "uppercase" },
-  bannerCoords: { color: "#ffffff", fontWeight: "600", marginTop: 2 },
-  bannerSub: { color: "#b5b5b5", marginTop: 2 },
+  bannerLabel: { fontWeight: "700", textTransform: "uppercase" },
+  bannerCoords: { fontWeight: "600", marginTop: 2 },
+  bannerSub: { marginTop: 2 },
   content: { padding: 16, paddingBottom: 40 },
   sectionCard: {
-    backgroundColor: "#2a2a2a",
     borderRadius: 12,
     padding: 12,
   },
-  sectionTitle: { color: "#65d159", fontWeight: "700", marginBottom: 4 },
-  sectionHint: { color: "#b5b5b5", marginBottom: 12 },
+  sectionTitle: { fontWeight: "700", marginBottom: 4 },
+  sectionHint: { marginBottom: 12 },
   friendRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#3a3a3a",
     borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical: 10,
     marginBottom: 8,
   },
   friendMeta: { flex: 1 },
-  friendName: { color: "#fff", fontWeight: "700" },
-  friendSub: { color: "#b5b5b5", marginTop: 2 },
+  friendName: { fontWeight: "700" },
+  friendSub: { marginTop: 2 },
   shareButton: {
-    backgroundColor: "#65d159",
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 8,
@@ -239,14 +263,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   shareButtonDisabled: { opacity: 0.6 },
-  shareButtonText: { color: "#0d0d0d", fontWeight: "700" },
+  shareButtonText: { fontWeight: "700" },
   emptyContainer: { alignItems: "center", paddingVertical: 20 },
-  emptyText: { color: "#b5b5b5", fontStyle: "italic", marginBottom: 12 },
+  emptyText: { fontStyle: "italic", marginBottom: 12 },
   addFriendsButton: {
-    backgroundColor: "#65d159",
     paddingVertical: 10,
     paddingHorizontal: 24,
     borderRadius: 10,
   },
-  addFriendsButtonText: { color: "#0d0d0d", fontWeight: "700" },
+  addFriendsButtonText: { fontWeight: "700" },
 });
