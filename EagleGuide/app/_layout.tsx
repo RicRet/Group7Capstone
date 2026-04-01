@@ -4,7 +4,6 @@ import { ColorBlindModeProvider } from "./ColorBlindMode";
 import { AccessibilityProvider } from "./Fontsize";
 import { SessionProvider } from "./lib/session";
 import { Theme } from "./Theme";
-
 export default function RootLayout() {
   return (
     <Theme>
