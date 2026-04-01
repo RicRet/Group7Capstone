@@ -28,18 +28,16 @@ Notifications.setNotificationHandler({
 const Settings: React.FC = () => {
   const router = useRouter();
   const { theme, isDark, toggleTheme } = useTheme();
-    const { colorBlindMode, setColorBlindMode } = useColorBlindMode();
-
-  const [colorBlindOpen, setColorBlindOpen] = useState(false);
-  const [colorBlindItems, setColorBlindItems] = useState([
-    { label: "Default", value: "default" as ColorBlindMode },
-    { label: "Tritanopia", value: "tritanopia" as ColorBlindMode },
-    { label: "Protanopia", value: "protanopia" as ColorBlindMode },
-    { label: "Deuteranopia", value: "deuteranopia" as ColorBlindMode },
-  ]);
   const { user } = useSession();
   const { largeTextEnabled, toggleLargeText, scaleFont } = useAccessibility();
-
+  const { colorBlindMode, setColorBlindMode } = useColorBlindMode();
+  const [colorBlindOpen, setColorBlindOpen] = useState(false);
+  const [colorBlindItems, setColorBlindItems] = useState([
+  { label: "Default", value: "default" as ColorBlindMode },
+  { label: "Tritanopia", value: "tritanopia" as ColorBlindMode },
+  { label: "Protanopia", value: "protanopia" as ColorBlindMode },
+  { label: "Deuteranopia", value: "deuteranopia" as ColorBlindMode },
+      ]);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [vibrationEnabled, setVibrationEnabled] = useState(true);
@@ -226,48 +224,6 @@ const Settings: React.FC = () => {
               <Text style={[styles.settingDescription, { color: theme.lighttext, fontSize: scaleFont(12) }]}>
                 Increase font size for accessibility
               </Text>
-                        <View style={[styles.dropdownSection, { zIndex: 3000 }]}>
-            <Text
-              style={[
-                styles.settingLabel,
-                { color: theme.text, fontSize: scaleFont(16), marginBottom: 4 },
-              ]}
-            >
-              Map Color Mode
-            </Text>
-            <Text
-              style={[
-                styles.settingDescription,
-                { color: theme.lighttext, fontSize: scaleFont(12), marginBottom: 10 },
-              ]}
-            >
-              Change colors for color-blind accessibility
-            </Text>
-
-            <DropDownPicker
-              open={colorBlindOpen}
-              value={colorBlindMode}
-              items={colorBlindItems}
-              setOpen={setColorBlindOpen}
-              setItems={setColorBlindItems}
-              setValue={(callback) => {
-                const nextValue = callback(colorBlindMode) as ColorBlindMode;
-                setColorBlindMode(nextValue);
-              }}
-              listMode="SCROLLVIEW"
-              style={[
-                styles.dropdown,
-                { backgroundColor: theme.box, borderColor: theme.border },
-              ]}
-              dropDownContainerStyle={[
-                styles.dropdownContainer,
-                { backgroundColor: theme.box, borderColor: theme.border },
-              ]}
-              textStyle={{ color: theme.text, fontSize: scaleFont(14) }}
-              labelStyle={{ color: theme.text }}
-              listItemLabelStyle={{ color: theme.text }}
-            />
-          </View>
             </View>
             <Switch
               value={largeTextEnabled}
@@ -276,6 +232,44 @@ const Settings: React.FC = () => {
               thumbColor="#fff"
             />
           </View>
+          {/* ColorBlind Mode */}
+          <View style={[styles.settingCard, { backgroundColor: theme.box, zIndex: 3000 }]}>
+            <Text style={[styles.settingLabel, { color: theme.text, fontSize: scaleFont(16) }]}>
+              Map Color Mode
+            </Text>
+            <Text
+              style={[
+              styles.settingDescription,
+              { color: theme.lighttext, fontSize: scaleFont(12), marginBottom: 10 },
+              ]}
+              >
+            Change colors for color-blind accessibility
+              </Text>
+
+                <DropDownPicker
+                  open={colorBlindOpen}
+                  value={colorBlindMode}
+                  items={colorBlindItems}
+                  setOpen={setColorBlindOpen}
+                  setItems={setColorBlindItems}
+                  setValue={(callback) => {
+                  const nextValue = callback(colorBlindMode) as ColorBlindMode;
+                    setColorBlindMode(nextValue);
+                  }}
+                listMode="SCROLLVIEW"
+                    style={[
+                  styles.dropdown,
+                { backgroundColor: theme.box, borderColor: theme.border },
+                  ]}
+                dropDownContainerStyle={[
+                styles.dropdownContainer,
+              { backgroundColor: theme.box, borderColor: theme.border },
+                ]}
+              textStyle={{ color: theme.text, fontSize: scaleFont(14) }}
+              labelStyle={{ color: theme.text }}
+              listItemLabelStyle={{ color: theme.text }}
+              />
+              </View>
         </View>
 
         {/* App */}
@@ -408,15 +402,19 @@ const styles = StyleSheet.create({
   profileName: { fontSize: 16, fontWeight: "700" },
   profileUsername: { fontSize: 13, marginTop: 2 },
   profileEmail: { fontSize: 12, marginTop: 2 },
-  dropdownSection: {
-    marginTop: 8,
-    marginBottom: 8,
-  },
-  dropdown: {
-    borderRadius: 8,
-    minHeight: 48,
-  },
-  dropdownContainer: {
-    borderRadius: 8,
-  },
+  settingCard: {
+  paddingVertical: 16,
+  paddingHorizontal: 16,
+  borderRadius: 8,
+  marginBottom: 8,
+},
+
+dropdown: {
+  borderRadius: 8,
+  minHeight: 48,
+},
+
+dropdownContainer: {
+  borderRadius: 8,
+},
 });
