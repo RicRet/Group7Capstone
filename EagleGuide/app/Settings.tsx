@@ -15,7 +15,7 @@ import { useTheme } from "../app/Theme";
 import { ColorBlindMode, useColorBlindMode } from "./ColorBlindMode";
 import { useAccessibility } from "./Fontsize";
 import { useSession } from "./lib/session";
-
+import { useTTS } from "./speech";
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldPlaySound: true,
@@ -41,6 +41,7 @@ const Settings: React.FC = () => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [vibrationEnabled, setVibrationEnabled] = useState(true);
+  const { ttsEnabled, setTTSEnabled } = useTTS();
 
   useEffect(() => {
     Notifications.requestPermissionsAsync();
@@ -271,6 +272,24 @@ const Settings: React.FC = () => {
               />
               </View>
         </View>
+        {/* Text-to-Speech */}
+<View style={[styles.settingItem, { backgroundColor: theme.box }]}>
+  <View>
+    <Text style={[styles.settingLabel, { color: theme.text, fontSize: scaleFont(16) }]}>
+      Text-to-Speech
+    </Text>
+    <Text style={[styles.settingDescription, { color: theme.lighttext, fontSize: scaleFont(12) }]}>
+      Speak routes and navigation aloud
+    </Text>
+  </View>
+
+  <Switch
+    value={ttsEnabled}
+    onValueChange={setTTSEnabled}
+    trackColor={{ false: "#ccc", true: theme.green }}
+    thumbColor="#fff"
+  />
+</View>
 
         {/* App */}
         <View style={styles.section}>

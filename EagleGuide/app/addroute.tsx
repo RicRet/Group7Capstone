@@ -1,10 +1,15 @@
 import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
+import * as Speech from "expo-speech";
 import { useCallback, useState } from 'react';
-import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { deleteRoute, getRoutes, SavedRoute } from './lib/api/addroutev2';
-import { useTheme } from "./Theme";
+import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, Vibration, View } from 'react-native';
 import { useAccessibility } from './Fontsize';
+import { deleteRoute, getRoutes, SavedRoute } from './lib/api/addroutev2';
+import { useTTS } from "./speech";
+import { useTheme } from "./Theme";
+
+
+
 
 //props for functions
 type AddrouteProps = {
@@ -23,7 +28,10 @@ export default function Addroute({ onClose, onEdit, onNavigate }: AddrouteProps)
   const router = useRouter();
   const { theme } = useTheme();
   const { scaleFont } = useAccessibility();
+const { ttsEnabled } = useTTS();
 
+const [lastSpoken, setLastSpoken] = useState<string | null>(null);
+const [highlighted, setHighlighted] = useState<string | null>(null);
   const [savedRoutes, setSavedRoutes] = useState<SavedRoute[]>([]);
   const userid: string = "2cf8f2eb-8adc-49de-a993-fe075ff4bdee";
 
@@ -42,11 +50,47 @@ export default function Addroute({ onClose, onEdit, onNavigate }: AddrouteProps)
     }, [])
   );
 
+  const handleAccessiblePress = (id: string, label: string, action: () => void) => {
+  if (!ttsEnabled) {
+    action();
+    return;
+  }
+
+  if (lastSpoken !== id) {
+    Speech.stop();
+    Speech.speak(label);
+
+    setLastSpoken(id);
+    setHighlighted(id);
+
+    Vibration.vibrate(50);
+
+    setTimeout(() => {
+      setHighlighted(null);
+      setLastSpoken(null);
+    }, 2000);
+
+    return;
+  }
+
+  setHighlighted(null);
+  setLastSpoken(null);
+  action();
+};
+
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
       <TouchableOpacity
-        style={[styles.addButton, { backgroundColor: theme.button }]}
-        onPress={() => router.push("/addrs")}
+       style={[styles.addButton,{backgroundColor:highlighted === "add-route" ? theme.green : theme.button,
+    transform: [{ scale: highlighted === "add-route" ? 1.05 : 1 }],
+  },
+]}
+  onPress={() =>handleAccessiblePress(
+    "add-route",
+    "Add new route",
+    () => router.push("/addrs")
+  )
+}
       >
         <Text style={[styles.buttonText, { fontSize: scaleFont(14) }]}>
           Add New Route
@@ -77,8 +121,19 @@ export default function Addroute({ onClose, onEdit, onNavigate }: AddrouteProps)
 
             <View style={styles.buttonr}>
               <TouchableOpacity
-                style={[styles.editButton, { backgroundColor: theme.button }]}
-                onPress={() => onEdit?.(item)}
+                style={[styles.editButton,{backgroundColor:highlighted === `edit-${item.saved_route_id}`
+                ? theme.green: theme.button,
+          transform: [{scale:highlighted === `edit-${item.saved_route_id}` ? 1.05 : 1,},
+                  ],
+                 },
+                ]}
+                onPress={() =>
+                handleAccessiblePress(
+                `edit-${item.saved_route_id}`,
+                 `Edit ${item.name}`,
+                () => onEdit?.(item)
+                )
+                }
               >
                 <Text style={[styles.buttonText, { fontSize: scaleFont(14) }]}>
                   Edit
@@ -86,16 +141,27 @@ export default function Addroute({ onClose, onEdit, onNavigate }: AddrouteProps)
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.editButton, { backgroundColor: theme.green }]}
+                style={[styles.editButton,{
+                backgroundColor:
+                highlighted === `nav-${item.saved_route_id}`
+               ? "#00cc66":theme.green,
+              transform: [
+              {scale:highlighted === `nav-${item.saved_route_id}` ? 1.05 : 1,},
+                ],
+                },
+              ]}
                 onPress={() =>
-                  onNavigate?.({
+                  handleAccessiblePress(
+                  `nav-${item.saved_route_id}`,
+                   `Navigate ${item.name}`,
+                    ()=>onNavigate?.({
                     originLat: item.start_lat,
-                    originLon: item.start_lon,
-                    destLat: item.end_lat,
-                    destLon: item.end_lon,
-                    accessible: item.is_accessible ? "Yes" : "No",
-                  })
-                }
+                     originLon: item.start_lon,
+                     destLat: item.end_lat,
+                     destLon: item.end_lon,
+                     accessible: item.is_accessible ? "Yes" : "No",
+                      })
+                      )}
               >
                 <Text style={[styles.buttonText, { fontSize: scaleFont(14) }]}>
                   Find Route
@@ -103,11 +169,31 @@ export default function Addroute({ onClose, onEdit, onNavigate }: AddrouteProps)
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.deleteButton, { backgroundColor: theme.red }]}
-                onPress={async () => {
+               style={[
+              styles.deleteButton,
+               {
+                backgroundColor:
+                 highlighted === `delete-${item.saved_route_id}`
+                 ? "#ff4444"
+              : theme.red,
+              transform: [
+              {
+             scale:
+          highlighted === `delete-${item.saved_route_id}` ? 1.05 : 1,
+             },
+            ],
+             },
+                ]}
+               onPress={() =>
+                    handleAccessiblePress(
+                   `delete-${item.saved_route_id}`,
+                     `Delete ${item.name}`,
+                    async () => {
                   await deleteRoute(item.saved_route_id);
                   loadSavedR();
-                }}
+                   }
+                     )   
+                    }
               >
                 <Text style={[styles.buttonText, { fontSize: scaleFont(14) }]}>
                   Delete
@@ -117,7 +203,12 @@ export default function Addroute({ onClose, onEdit, onNavigate }: AddrouteProps)
           </View>
         )}
         ListFooterComponent={() => (
-          <TouchableOpacity onPress={onClose} style={{ marginVertical: 20 }}>
+          <TouchableOpacity onPress={() =>
+          handleAccessiblePress("close", "Close", () => onClose?.())
+        } 
+          style={{marginVertical: 20,
+             transform: [{ scale: highlighted === "close" ? 1.05 : 1 }],
+            }}>
             <Text style={[styles.link, { color: theme.text, fontSize: scaleFont(14) }]}>
               Close
             </Text>

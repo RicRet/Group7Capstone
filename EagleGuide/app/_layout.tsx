@@ -3,9 +3,11 @@ import { Stack } from "expo-router";
 import { ColorBlindModeProvider } from "./ColorBlindMode";
 import { AccessibilityProvider } from "./Fontsize";
 import { SessionProvider } from "./lib/session";
+import { TTSProvider } from "./speech";
 import { Theme } from "./Theme";
 export default function RootLayout() {
   return (
+    <TTSProvider>
     <Theme>
       <ColorBlindModeProvider>
       <AccessibilityProvider>
@@ -34,5 +36,6 @@ export default function RootLayout() {
       </AccessibilityProvider>
       </ColorBlindModeProvider>
     </Theme>
+    </TTSProvider>
   );
 }
