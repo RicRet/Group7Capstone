@@ -11,16 +11,20 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  Vibration,
   View
 } from "react-native";
 import MapView, { Marker, Polyline, PROVIDER_GOOGLE, Region } from "react-native-maps";
 import Addroute from "./addroute";
 import Editroute from "./editroute";
+import { useAccessibility } from './Fontsize';
 import { SavedRoute } from "./lib/api/addroutev2";
 import { getRouteFromORS, snapToRoad, type Coordinates, type Profile, type RouteStep } from "./lib/api/directions";
 import { searchBuildings, type Building } from './lib/api/navbuildings';
+import { useTTS } from "./speech";
 import { useTheme } from "./Theme";
-import { useAccessibility } from './Fontsize';
+
+import * as Speech from "expo-speech";
 
 type BuildingSearchResult = {
   id: string;
@@ -66,7 +70,8 @@ export default function NavigationScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<BuildingSearchResult[]>([]);
   const [searching, setSearching] = useState(false);
-
+const [highlighted, setHighlighted] = useState<string | null>(null);
+const [lastSpoken, setLastSpoken] = useState<string | null>(null);
   const initialRegion: Region = useMemo(
     () => ({
       latitude: 33.2106,
@@ -76,6 +81,44 @@ export default function NavigationScreen() {
     }),
     []
   );
+
+  const { ttsEnabled } = useTTS();
+
+//handler for text to speech
+const handleAccessiblePress = (
+  id: string,
+  label: string,
+  action: () => void
+) => {
+  if (!ttsEnabled) {
+    action();
+    return;
+  }
+
+  
+  if (lastSpoken !== id) {
+    Speech.stop();
+    Speech.speak(label);
+
+    setLastSpoken(id);
+    setHighlighted(id);
+
+    Vibration.vibrate(50);
+
+   
+    setTimeout(() => {
+      setHighlighted(null);
+      setLastSpoken(null);
+    }, 2000);
+
+    return;
+  }
+
+ 
+  setHighlighted(null);
+  setLastSpoken(null);
+  action();
+};
 
   useEffect(() => {
     (async () => {
@@ -305,26 +348,49 @@ export default function NavigationScreen() {
           )}
 
           <View style={styles.row}>
-            <TouchableOpacity style={[styles.button, { backgroundColor: theme.button }]} onPress={swapPins}>
+            <TouchableOpacity
+            style={[styles.button,{
+            backgroundColor:highlighted === "swap" ? theme.green : theme.button,
+            transform: [{ scale: highlighted === "swap" ? 1.05 : 1 }],
+            },
+            ]}onPress={() => handleAccessiblePress("swap", "Swap origin and destination", swapPins)
+             }
+            >
               <Text style={{ color: theme.text, fontSize: scaleFont(14) }}>Swap</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, { backgroundColor: theme.button }]} onPress={clearAll}>
+            <TouchableOpacity
+             style={[styles.button,{backgroundColor:
+            highlighted === "clear" ? theme.green : theme.button,
+             transform: [{ scale: highlighted === "clear" ? 1.05 : 1 }],
+             },
+              ]}
+              onPress={() =>
+             handleAccessiblePress("clear", "Clear route", clearAll)
+             }    
+             >
               <Text style={{ color: theme.text, fontSize: scaleFont(14) }}>Clear</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.row}>
-            <TouchableOpacity
-              style={[styles.modeButton, { backgroundColor: theme.button }, profile === "foot-walking" && { borderWidth: 1, borderColor: theme.text }]}
-              onPress={() => setProfile("foot-walking")}
-            >
+            <TouchableOpacity style={[styles.modeButton,{
+            backgroundColor:highlighted === "walk" ? theme.green : theme.button,
+            transform: [{ scale: highlighted === "walk" ? 1.05 : 1 }],
+            },]}
+            onPress={() =>
+             handleAccessiblePress("walk", "Walking mode", () => setProfile("foot-walking"))
+             }
+              >
               <Text style={{ color: theme.text, fontSize: scaleFont(14) }}>Walk</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[styles.modeButton, { backgroundColor: theme.button }, profile === "driving-car" && { borderWidth: 1, borderColor: theme.text }]}
-              onPress={() => setProfile("driving-car")}
-            >
+           <TouchableOpacity style={[styles.modeButton,{
+            backgroundColor:highlighted === "drive" ? theme.green : theme.button,
+            transform: [{ scale: highlighted === "drive" ? 1.05 : 1 }],
+              },
+             ]}
+              onPress={()=> handleAccessiblePress("drive", "Driving mode", () => setProfile("driving-car"))}
+              >
               <Text style={{ color: theme.text, fontSize: scaleFont(14) }}>Drive</Text>
             </TouchableOpacity>
           </View>
@@ -334,12 +400,19 @@ export default function NavigationScreen() {
               {loading ? <ActivityIndicator color="#fff" /> : <Text style={{ color: "#fff", fontSize: scaleFont(14) }}>Find Route</Text>}
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.button, { backgroundColor: theme.button }]}
-              onPress={() => setShowAddRoute(true)}
-            >
+              style={[styles.button,{
+              backgroundColor:highlighted === "view" ? theme.green : theme.button,
+              transform: [{ scale: highlighted === "view" ? 1.05 : 1 }],
+               },]}onPress={() => handleAccessiblePress("view", "Viewing saved routes", () => setShowAddRoute(true))
+              }
+              >
               <Text style={{ color: theme.text, fontSize: scaleFont(14) }}>View Route</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, { backgroundColor: theme.button }]} onPress={() => router.back()}>
+            <TouchableOpacity style={[styles.button,{
+             backgroundColor:highlighted === "back" ? theme.green : theme.button,
+             transform: [{ scale: highlighted === "back" ? 1.05 : 1 }],
+              },]}
+              onPress={() => handleAccessiblePress("back", "Going back", () => router.back())}>
               <Text style={{ color: theme.text, fontSize: scaleFont(14) }}>Back</Text>
             </TouchableOpacity>
           </View>
