@@ -1,26 +1,25 @@
-import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Stack, useRouter } from "expo-router";
+import { useCallback, useState } from "react";
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
-import { addRoute, Building, getBuildings } from "./lib/api/addroutev2";
+import { addRoute, Building } from "./lib/api/addroutev2";
+import { searchBuildings } from "./lib/api/navbuildings";
 import { useTheme } from "./Theme";
 
 export default function AddRouteScreen() {
+
   const router = useRouter();
   const { theme } = useTheme();
 
   const userid = "2cf8f2eb-8adc-49de-a993-fe075ff4bdee";
 
-  // buildings from API
-  const [buildings, setBuildings] = useState<Building[]>([]);
+  const [startQuery, setStartQuery] = useState("");
+  const [startResults, setStartResults] = useState<Building[]>([]);
+  const [startBuilding, setStartBuilding] = useState<Building | null>(null);
 
-  const [open1, setOpen1] = useState(false);
-  const [value1, setValue1] = useState<string | null>(null);
-  const [items1, setItems1] = useState<{ label: string; value: string }[]>([]);
-
-  const [open2, setOpen2] = useState(false);
-  const [value2, setValue2] = useState<string | null>(null);
-  const [items2, setItems2] = useState<{ label: string; value: string }[]>([]);
+  const [endQuery, setEndQuery] = useState("");
+  const [endResults, setEndResults] = useState<Building[]>([]);
+  const [endBuilding, setEndBuilding] = useState<Building | null>(null);
 
   const [open3, setOpen3] = useState(false);
   const [value3, setValue3] = useState<string | null>(null);
@@ -35,58 +34,66 @@ export default function AddRouteScreen() {
     { label: "Yes", value: 1 },
     { label: "No", value: 0 },
   ]);
-useEffect(() => {
-  const loadBuildings = async () => {
-    try {
-      const data = await getBuildings();
 
-      setBuildings(data);
-
-      const formatted = data.map((b) => ({
-        label: b.name,
-        value: b.name,
-      }));
-
-      setItems1(formatted);
-      setItems2(formatted);
-    } catch (err: any) {
-  console.log("BUILDING ERROR:", err);
-  console.log("RESPONSE:", err?.response);
-  console.log("DATA:", err?.response?.data);
-  Alert.alert("Error", "Could not load buildings");
-}
+  const onOpen3 = () => {
+    setOpen3(true);
+    setOpen4(false);
   };
 
-  loadBuildings();
-}, []);
+  const onOpen4 = () => {
+    setOpen3(false);
+    setOpen4(true);
+  };
+//start building search
+  const runStartSearch = useCallback(async (q: string) => {
+    setStartQuery(q);
+    setStartBuilding(null);
+    if (!q.trim()) {
+      setStartResults([]);
+      return;
+    }
+    try {
+      setStartResults(await searchBuildings(q));
+    } catch {
+      setStartResults([]);
+    }
+  }, []);
+//end building search
+  const runEndSearch = useCallback(async (q: string) => {
+    setEndQuery(q);
+    setEndBuilding(null);
+    if (!q.trim()) {
+      setEndResults([]);
+      return;
+    }
+    try {
+      setEndResults(await searchBuildings(q));
+    } catch {
+      setEndResults([]);
+    }
+
+  }, []);
 
   const addr = async () => {
-    if (!value1 || !value2 || !value3 || value4 === null) {
+
+    if (!startBuilding || !endBuilding || !value3 || value4 === null) {
       return Alert.alert("Enter all options");
     }
 
-    if (value1 === value2) {
-      return Alert.alert(
-        "Invalid Route,.Start and end buildings cannot be the same."
-      );
-    }
-
-    const start = buildings.find((b) => b.name === value1);
-    const end = buildings.find((b) => b.name === value2);
-
-    if (!start || !end) {
-      return Alert.alert("Error", "Building coordinates not found");
+    if (startBuilding.name === endBuilding.name) {
+      return Alert.alert("Invalid Route, Start and end buildings cannot be the same.");
     }
 
     try {
+
       await addRoute({
         userid,
-        prevb: value1,
-        newb: value2,
-        prevblon: start.lon,
-        prevblat: start.lat,
-        newblon: end.lon,
-        newblat: end.lat,
+        prevb: startBuilding.name,
+        newb: endBuilding.name,
+        prevblon: startBuilding.lon,
+        prevblat: startBuilding.lat,
+        newblon: endBuilding.lon,
+        newblat: endBuilding.lat,
         accessible: value4,
         length: null,
         duration: null,
@@ -94,133 +101,172 @@ useEffect(() => {
 
       Alert.alert("Success", "Route Added");
       router.back();
+
     } catch (err) {
       console.log(err);
       Alert.alert("Error", String(err));
     }
+
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
 
-      <Text style={[styles.title, { color: theme.text }]}>
-        Add New Route
-      </Text>
+      <View style={[styles.container, { backgroundColor: theme.background }]}>
 
-      {/*destination buildings*/}
-      <View style={styles.row}>
-        <View style={{ width: "48%", zIndex: 4000 }}>
+        <Text style={[styles.title, { color: theme.text }]}>
+          Add New Route
+        </Text>
+
+        <Text style={[styles.label, { color: theme.text }]}>
+          Start Building
+        </Text>
+
+        <TextInput
+          style={[styles.input, { backgroundColor: theme.inputBackground }]}
+          placeholder="start building"
+          placeholderTextColor={theme.lighttext}
+          value={startQuery}
+          onChangeText={runStartSearch}
+        />
+        {/* start building search */}
+        {startResults.slice(0, 5).map((b) => (
+          <TouchableOpacity
+            key={b.name}
+            style={styles.result}
+            onPress={() => {
+              setStartBuilding(b);
+              setStartQuery(b.name);
+              setStartResults([]);
+            }}
+          >
+            <Text style={{ color: theme.text }}>{b.name}</Text>
+          </TouchableOpacity>
+        ))}
+
+        <Text style={[styles.label, { color: theme.text, marginTop: 20 }]}>
+          End Building
+        </Text>
+
+        <TextInput
+          style={[styles.input, { backgroundColor: theme.inputBackground }]}
+          placeholder="end building"
+          placeholderTextColor={theme.lighttext}
+          value={endQuery}
+          onChangeText={runEndSearch}
+        />
+        {/* end building search */}
+        {endResults.slice(0, 5).map((b) => (
+          <TouchableOpacity
+            key={b.name}
+            style={styles.result}
+            onPress={() => {
+              setEndBuilding(b);
+              setEndQuery(b.name);
+              setEndResults([]);
+            }}
+          >
+            <Text style={{ color: theme.text }}>{b.name}</Text>
+          </TouchableOpacity>
+        ))}
+
+        <View style={{ marginTop: 25, zIndex: 3000 }}>
           <Text style={[styles.label, { color: theme.text }]}>
-            Start Building
+            Pedestrian or Bus?
           </Text>
+
           <DropDownPicker
-            open={open1}
-            value={value1}
-            items={items1}
-            setOpen={setOpen1}
-            setValue={setValue1}
-            setItems={setItems1}
-            style={{ backgroundColor: theme.inputBackground }}
-            dropDownContainerStyle={{ backgroundColor: theme.box }}
-            textStyle={{ color: theme.text }}
+            open={open3}
+            value={value3}
+            items={items3}
+            setOpen={setOpen3}
+            setValue={setValue3}
+            setItems={setItems3}
+            onOpen={onOpen3}
+            zIndex={3000}
+            zIndexInverse={1000}
           />
         </View>
 
-        <View style={{ width: "48%", zIndex: 3000 }}>
+        <View style={{ marginTop: 25, zIndex: 2000 }}>
           <Text style={[styles.label, { color: theme.text }]}>
-            End Building
+            Accessibility Needed?
           </Text>
+
           <DropDownPicker
-            open={open2}
-            value={value2}
-            items={items2}
-            setOpen={setOpen2}
-            setValue={setValue2}
-            setItems={setItems2}
-            style={{ backgroundColor: theme.inputBackground }}
-            dropDownContainerStyle={{ backgroundColor: theme.box }}
-            textStyle={{ color: theme.text }}
+            open={open4}
+            value={value4}
+            items={items4}
+            setOpen={setOpen4}
+            setValue={setValue4}
+            setItems={setItems4}
+            onOpen={onOpen4}
+            zIndex={2000}
+            zIndexInverse={2000}
           />
         </View>
-      </View>
-      <View style={{ marginTop: 25, zIndex: 2000 }}>
-        <Text style={[styles.label, { color: theme.text }]}>
-          Pedestrian or Bus?
-        </Text>
-        <DropDownPicker
-          open={open3}
-          value={value3}
-          items={items3}
-          setOpen={setOpen3}
-          setValue={setValue3}
-          setItems={setItems3}
-          style={{ backgroundColor: theme.inputBackground }}
-          dropDownContainerStyle={{ backgroundColor: theme.box }}
-          textStyle={{ color: theme.text }}
-        />
-      </View>
-      <View style={{ marginTop: 25, zIndex: 1000 }}>
-        <Text style={[styles.label, { color: theme.text }]}>
-          Accessibility Needed?
-        </Text>
-        <DropDownPicker
-          open={open4}
-          value={value4}
-          items={items4}
-          setOpen={setOpen4}
-          setValue={setValue4}
-          setItems={setItems4}
-          style={{ backgroundColor: theme.inputBackground }}
-          dropDownContainerStyle={{ backgroundColor: theme.box }}
-          textStyle={{ color: theme.text }}
-        />
-      </View>
 
-      <TouchableOpacity
-        onPress={addr}
-        style={[styles.addButton, { backgroundColor: theme.green }]}
-      >
-        <Text style={styles.buttonText}>Add Route</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          onPress={addr}
+          style={[styles.addButton, { backgroundColor: theme.green }]}
+        >
+          <Text style={styles.buttonText}>Add Route</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        onPress={() => router.back()}
-        style={{ marginTop: 15, alignItems: "center" }}
-      >
-        <Text style={{ color: theme.text }}>Close</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={{ marginTop: 15, alignItems: "center" }}
+        >
+          <Text style={{ color: theme.text }}>Close</Text>
+        </TouchableOpacity>
 
-    </View>
+      </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
+
   container: {
     flex: 1,
     padding: 20,
   },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
+
   title: {
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 25,
     textAlign: "center",
   },
+
   label: {
     marginBottom: 6,
     fontWeight: "600",
   },
+
+  input: {
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 6,
+  },
+
+  result: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderColor: "#444",
+  },
+
   addButton: {
     marginTop: 40,
     paddingVertical: 12,
     borderRadius: 10,
     alignItems: "center",
   },
+
   buttonText: {
     color: "#fff",
     fontWeight: "bold",
-  },
+  }
+
 });
