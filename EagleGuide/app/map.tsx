@@ -3,7 +3,6 @@ import { useRouter } from 'expo-router';
 import type { Feature, Point } from "geojson";
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-    Image,
     Keyboard,
     KeyboardAvoidingView,
     Platform,
@@ -11,17 +10,18 @@ import {
     Text,
     TouchableOpacity,
     TouchableWithoutFeedback,
-    View,
+    View
 } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import MapView, { Marker, Polygon, Region } from 'react-native-maps';
+import { useTheme } from "../app/Theme";
 import Addroute from './addroute';
+import { useColorBlindMode } from "./ColorBlindMode";
 import Homepage from './homepage';
 import { fetchBicycleParking } from "./lib/api/bicycleParking";
 import { BuildingFeature, fetchBuildings } from "./lib/api/buildings";
 import { fetchEntrances } from "./lib/api/entrances";
 import { fetchParkingLots, ParkingLotFeature } from './lib/api/parkingLots';
-import { useTheme } from "../app/Theme";
 const entranceIcon = require("../assets/images/Entrance_Icon.png");
 const accessibleEntranceIcon = require("../assets/images/Accessible_Entrance_Icon.png");
 const bicycleIcon = require("../assets/images/Bicycle_Icon.png");
@@ -41,7 +41,7 @@ const MapScreen = () => {
     const parkingReqSeq = useRef(0);
     const buildingsReqSeq = useRef(0);
     const entrancesReqSeq = useRef(0);
-
+    const { getAccessibleColor, colorBlindMode } = useColorBlindMode();
     const router = useRouter();
 
     const handleMenuPress = (path: string) => {
@@ -167,38 +167,7 @@ const MapScreen = () => {
         return coords.map(([lon, lat]) => ({ latitude: lat, longitude: lon }));
     };
 
-    const fillColor = (fill?: string | null) => {
-        if (!fill) return "rgba(0, 122, 255, 0.25)";
-
-        const s = fill.trim();
-
-        // If it's already rgba(...) just return it (or normalize alpha if you want)
-        const rgbaMatch = /^rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([0-9.]+)\s*\)$/i.exec(s);
-        if (rgbaMatch) return s;
-
-        // rgb(r,g,b)
-        const rgbMatch = /^rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/i.exec(s);
-        if (rgbMatch) {
-            const [r, g, b] = rgbMatch.slice(1).map(Number);
-            return `rgba(${r}, ${g}, ${b}, 0.3)`;
-        }
-
-        // hex #RRGGBB or #RGB
-        const hexMatch = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(s);
-        if (hexMatch) {
-            let hex = hexMatch[1];
-            if (hex.length === 3) {
-                hex = hex.split("").map(ch => ch + ch).join("");
-            }
-            const r = parseInt(hex.slice(0, 2), 16);
-            const g = parseInt(hex.slice(2, 4), 16);
-            const b = parseInt(hex.slice(4, 6), 16);
-            return `rgba(${r}, ${g}, ${b}, 0.3)`;
-        }
-
-        // If they stored "blue" or something weird, fall back
-        return "rgba(0, 122, 255, 0.25)";
-    };
+    const fillColor = (fill?: string | null) => getAccessibleColor(fill, 0.3);
 
     // dark map style
     const darkStyle = [
@@ -227,6 +196,7 @@ const MapScreen = () => {
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     <View style={[styles.container, { backgroundColor: theme.background }]}>
                         <MapView
+                            key={`map-${colorBlindMode}`}
                             customMapStyle={isDark ? darkStyle : []}
                             style={styles.map}
                             initialRegion={initialRegion}
