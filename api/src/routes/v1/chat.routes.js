@@ -17,7 +17,14 @@ r.post('/', async (req, res, next) => {
     }
 
     const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+    const modelName = process.env.GEMINI_MODEL;
+    if (!modelName) {
+      console.error('GEMINI_MODEL is not set. Set GEMINI_MODEL to a supported model name.');
+      return res.status(500).json({ error: 'GEMINI_MODEL not configured on server. Run api/scripts/list_models.js to discover available models.' });
+    }
+
+    const model = genAI.getGenerativeModel({ model: modelName });
 
     const response = await model.generateContent({
       contents: messages.map((m) => ({

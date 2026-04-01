@@ -37,7 +37,7 @@ export default function ChatWidget() {
     setIsLoading(true);
 
     try {
-      const response = await http.post('/v1/chat', {
+      const response = await http.post('/chat', {
         messages: [
           ...currentMessages.map((m) => ({
             role: m.role,
