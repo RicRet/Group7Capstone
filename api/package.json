@@ -9,6 +9,7 @@
     "smoke:test": "node scripts/smoke-test.js"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@redis/time-series": "^5.8.3",
     "cors": "^2.8.5",
     "dotenv": "^16.6.1",

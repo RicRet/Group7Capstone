@@ -14,11 +14,13 @@ import {
 import { acceptFriend, FriendEdge, FriendRequestResponse, FriendSearchResult, FriendsResponse, getFriends, searchFriends, sendFriendRequest } from "./lib/api/friends";
 import { useSession } from "./lib/session";
 import { useAccessibility } from "./Fontsize";
+import { useTheme } from "../app/Theme";
 
 export default function FriendsScreen() {
   const { scaleFont } = useAccessibility();
   const router = useRouter();
   const { user, loading: sessionLoading } = useSession();
+  const { theme } = useTheme();
 
   const [friends, setFriends] = useState<FriendsResponse>({ accepted: [], incoming: [], outgoing: [] });
   const [loading, setLoading] = useState<boolean>(true);
@@ -112,24 +114,24 @@ export default function FriendsScreen() {
     const name = [edge.firstName, edge.lastName].filter(Boolean).join(" ") || edge.username || edge.email || edge.userId;
     const usernameLine = edge.username ? `@${edge.username}` : edge.email || edge.userId;
     return (
-      <View key={edge.userId} style={styles.friendRow}>
+      <View key={edge.userId} style={[styles.friendRow, { backgroundColor: theme.inputBackground }]}>
         <View style={styles.friendMeta}>
-          <Text style={[styles.friendName, { fontSize: scaleFont(16) }]}>{name}</Text>
-          <Text style={[styles.friendSub, { fontSize: scaleFont(12) }]}>{usernameLine}</Text>
-          <Text style={[styles.friendSub, { fontSize: scaleFont(12) }]}>
+          <Text style={[styles.friendName, { color: theme.text, fontSize: scaleFont(16) }]}>{name}</Text>
+          <Text style={[styles.friendSub, { color: theme.lighttext, fontSize: scaleFont(12) }]}>{usernameLine}</Text>
+          <Text style={[styles.friendSub, { color: theme.lighttext, fontSize: scaleFont(12) }]}>
             {edge.status === "pending" ? `${edge.direction === "incoming" ? "Incoming" : "Sent"} request` : "Friend"}
           </Text>
         </View>
         {actionLabel && onAction ? (
           <TouchableOpacity
-            style={[styles.actionButton, actionId === edge.userId && styles.actionButtonDisabled]}
+            style={[styles.actionButton, { backgroundColor: theme.green }, actionId === edge.userId && styles.actionButtonDisabled]}
             onPress={onAction}
             disabled={actionId === edge.userId}
           >
             {actionId === edge.userId ? (
-              <ActivityIndicator color="#0d0d0d" />
+              <ActivityIndicator color="#000" />
             ) : (
-              <Text style={[styles.actionButtonText, { fontSize: scaleFont(14) }]}>{actionLabel}</Text>
+              <Text style={[styles.actionButtonText, { color: "#000", fontSize: scaleFont(14) }]}>{actionLabel}</Text>
             )}
           </TouchableOpacity>
         ) : null}
@@ -143,103 +145,57 @@ export default function FriendsScreen() {
   }, [loadFriends]);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <View style={[styles.header, { backgroundColor: theme.header }]}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text style={[styles.backText, { fontSize: scaleFont(16) }]}>← Back</Text>
+          <Text style={[styles.backText, { color: theme.green, fontSize: scaleFont(16) }]}>← Back</Text>
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { fontSize: scaleFont(20) }]}>{headerTitle}</Text>
+        <Text style={[styles.headerTitle, { color: theme.text, fontSize: scaleFont(20) }]}>{headerTitle}</Text>
         <View style={{ width: 50 }} />
       </View>
 
       <ScrollView
         contentContainerStyle={styles.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#65d159" />}>
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.green} />}>
 
-        <View style={styles.searchCard}>
-          <Text style={[styles.sectionTitle, { fontSize: scaleFont(15) }]}>Find Friends</Text>
+        <View style={[styles.searchCard, { backgroundColor: theme.box }]}>
+          <Text style={[styles.sectionTitle, { color: theme.green, fontSize: scaleFont(15) }]}>Find Friends</Text>
           <View style={styles.searchRow}>
             <TextInput
               value={searchTerm}
               onChangeText={setSearchTerm}
               placeholder="Search by name or email"
-              placeholderTextColor="#777"
-              style={[styles.input, { fontSize: scaleFont(14) }]}
+              placeholderTextColor={theme.lighttext}
+              style={[styles.input, { backgroundColor: theme.inputBackground, color: theme.text, fontSize: scaleFont(14) }]}
               autoCapitalize="none"
             />
-            <TouchableOpacity style={styles.searchButton} onPress={runSearch} disabled={searching}>
-              {searching ? <ActivityIndicator color="#0d0d0d" /> : <Text style={[styles.searchButtonText, { fontSize: scaleFont(14) }]}>Search</Text>}
+            <TouchableOpacity style={[styles.searchButton, { backgroundColor: theme.green }]} onPress={runSearch} disabled={searching}>
+              {searching ? <ActivityIndicator color="#000" /> : <Text style={[styles.searchButtonText, { color: "#000", fontSize: scaleFont(14) }]}>Search</Text>}
             </TouchableOpacity>
           </View>
-          {results.length === 0 && !!searchTerm.trim() ? (
-            <Text style={[styles.emptyText, { fontSize: scaleFont(12) }]}>No matches yet.</Text>
-          ) : (
-            results.map((r) => {
-              const isPendingOut = r.relationship === "pending_out";
-              const isPendingIn = r.relationship === "pending_in";
-              const isAccepted = r.relationship === "accepted";
-              let buttonLabel: string | null = null;
-              let onPress: (() => void) | undefined;
-              if (isAccepted) buttonLabel = "Friends";
-              else if (isPendingOut) buttonLabel = "Pending";
-              else if (isPendingIn) {
-                buttonLabel = "Accept";
-                onPress = () => handleAccept(r.userId);
-              } else {
-                buttonLabel = "Add";
-                onPress = () => handleSend(r.userId);
-              }
-              const name = [r.firstName, r.lastName].filter(Boolean).join(" ") || r.username || r.email || r.userId;
-              const usernameLine = r.username ? `@${r.username}` : r.email || r.relationship;
-              return (
-                <View key={`search-${r.userId}`} style={styles.friendRow}>
-                  <View style={styles.friendMeta}>
-                    <Text style={[styles.friendName, { fontSize: scaleFont(16) }]}>{name}</Text>
-                    <Text style={[styles.friendSub, { fontSize: scaleFont(12) }]}>{usernameLine}</Text>
-                  </View>
-                  <TouchableOpacity
-                    style={[styles.actionButton, (isAccepted || isPendingOut) && styles.actionButtonDisabled]}
-                    disabled={actionId === r.userId || isAccepted || isPendingOut}
-                    onPress={onPress}
-                  >
-                    {actionId === r.userId ? (
-                      <ActivityIndicator color="#0d0d0d" />
-                    ) : (
-                      <Text style={[styles.actionButtonText, { fontSize: scaleFont(14) }]}>{buttonLabel}</Text>
-                    )}
-                  </TouchableOpacity>
-                </View>
-              );
-            })
-          )}
+
+          {results.map((r) => (
+            <View key={`search-${r.userId}`} style={[styles.friendRow, { backgroundColor: theme.inputBackground }]}>
+              <View style={styles.friendMeta}>
+                <Text style={[styles.friendName, { color: theme.text, fontSize: scaleFont(16) }]}>{r.username}</Text>
+              </View>
+            </View>
+          ))}
         </View>
 
-        <View style={styles.sectionCard}>
-          <Text style={[styles.sectionTitle, { fontSize: scaleFont(15) }]}>Friends</Text>
-          {loading ? <ActivityIndicator color="#65d159" /> : null}
-          {!loading && friends.accepted.length === 0 ? (
-            <Text style={[styles.emptyText, { fontSize: scaleFont(12) }]}>No friends yet.</Text>
-          ) : (
-            friends.accepted.map((f) => renderFriendRow(f))
-          )}
+        <View style={[styles.sectionCard, { backgroundColor: theme.box }]}>
+          <Text style={[styles.sectionTitle, { color: theme.green, fontSize: scaleFont(15) }]}>Friends</Text>
+          {loading ? <ActivityIndicator color={theme.green} /> : friends.accepted.map((f) => renderFriendRow(f))}
         </View>
 
-        <View style={styles.sectionCard}>
-          <Text style={[styles.sectionTitle, { fontSize: scaleFont(15) }]}>Requests</Text>
-          {!loading && friends.incoming.length === 0 ? (
-            <Text style={[styles.emptyText, { fontSize: scaleFont(12) }]}>No incoming requests.</Text>
-          ) : (
-            friends.incoming.map((f) => renderFriendRow(f, "Accept", () => handleAccept(f.userId)))
-          )}
+        <View style={[styles.sectionCard, { backgroundColor: theme.box }]}>
+          <Text style={[styles.sectionTitle, { color: theme.green, fontSize: scaleFont(15) }]}>Requests</Text>
+          {friends.incoming.map((f) => renderFriendRow(f, "Accept", () => handleAccept(f.userId)))}
         </View>
 
-        <View style={styles.sectionCard}>
-          <Text style={[styles.sectionTitle, { fontSize: scaleFont(15) }]}>Sent Requests</Text>
-          {!loading && friends.outgoing.length === 0 ? (
-            <Text style={[styles.emptyText, { fontSize: scaleFont(12) }]}>No pending requests.</Text>
-          ) : (
-            friends.outgoing.map((f) => renderFriendRow(f))
-          )}
+        <View style={[styles.sectionCard, { backgroundColor: theme.box }]}>
+          <Text style={[styles.sectionTitle, { color: theme.green, fontSize: scaleFont(15) }]}>Sent Requests</Text>
+          {friends.outgoing.map((f) => renderFriendRow(f))}
         </View>
       </ScrollView>
     </View>
