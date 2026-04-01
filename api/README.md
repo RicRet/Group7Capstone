@@ -55,12 +55,21 @@ npm run dev
 
 Create an `.env` file inside the `api/` folder (it's already being loaded by `src/server.js`) if you need to change defaults. Example:
 
-```
+```env
 PORT=4000
+GEMINI_API_KEY=your_google_gemini_api_key_here
 # other env vars used by your app (DB, REDIS, etc.)
 ```
 
 The server uses `process.env.PORT` or falls back to `3000`.
+
+## AI Chatbot Integration
+
+The API includes a `/v1/chat` endpoint that integrates with Google's Gemini AI using the official `@google/generative-ai` SDK.
+- **Route**: `POST /v1/chat`
+- **Payload**: `{ "messages": [{ "role": "user", "text": "Hello" }] }`
+- **Requirement**: The `GEMINI_API_KEY` environment variable must be set in your `.env` file.
+- **Frontend**: This endpoint is actively consumed by the `ChatWidget` in the React Native application.
 
 ## Sessions (Redis-backed)
 - Token: opaque session ID returned by `POST /v1/auth/login` as `token`.

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import addroute from '../../addrouteps.js';
 import auth from './auth.routes.js';
+import chat from './chat.routes.js';
 import friends from './friends.routes.js';
 import gis from './gis.routes.js';
 import health from './health.routes.js';
@@ -20,4 +21,5 @@ r.use('/share-location', share);
 r.use('/', health);
 r.use('/routes', addroute);
 r.use('/userroute', addroute);
+r.use('/chat', chat);
 export default r;

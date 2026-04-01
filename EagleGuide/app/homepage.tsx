@@ -3,9 +3,10 @@ import { useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
-import { useSession } from "./lib/session";
-import { useAccessibility } from './Fontsize';
 import { useTheme } from "../app/Theme";
+import ChatWidget from "./ChatWidget";
+import { useAccessibility } from './Fontsize';
+import { useSession } from "./lib/session";
 
 export default function Home({ onNavigate }: { onNavigate?: (screen: string) => void }) {
     const router = useRouter();
@@ -235,6 +236,7 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
                     </View>
                 </View>
             </ScrollView>
+                <ChatWidget />
         </View>
     );
 }
