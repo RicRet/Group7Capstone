@@ -114,7 +114,7 @@ export default function RemindersScreen() {
   }, []);
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
+    <View style={[styles.container, { backgroundColor: theme.background, paddingTop: 30 }]}>
       <View style={[styles.header, { backgroundColor: theme.header }]}>
         <TouchableOpacity onPress={() => router.back()}>
           <Text style={[styles.backText, { color: theme.green, fontSize: scaleFont(15) }]}>
