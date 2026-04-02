@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useRef, useState } from 'react';
 import {
     ActivityIndicator,
+    Keyboard,
     KeyboardAvoidingView,
     Platform,
     ScrollView,
@@ -26,6 +27,7 @@ export default function ChatWidget() {
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
+  const [keyboardOffset, setKeyboardOffset] = useState(0);
 
   const sendMessage = async () => {
     if (!inputText.trim()) return;
@@ -76,6 +78,22 @@ export default function ChatWidget() {
     }
   }, [messages, isOpen]);
 
+  useEffect(() => {
+    const show = (e: any) => {
+      const h = e?.endCoordinates?.height || 0;
+      setKeyboardOffset(h);
+      setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 50);
+    };
+    const hide = () => setKeyboardOffset(0);
+
+    const showSub = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow', show);
+    const hideSub = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide', hide);
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
+
   if (!isOpen) {
     return (
       <TouchableOpacity
@@ -88,9 +106,10 @@ export default function ChatWidget() {
   }
 
   return (
-    <KeyboardAvoidingView 
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={styles.chatContainer}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 80}
+      style={[styles.chatContainer, { bottom: keyboardOffset || 20 }]}
     >
       <View style={styles.header}>
         <Text style={styles.headerTitle}>AI Assistant</Text>
@@ -99,10 +118,11 @@ export default function ChatWidget() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView 
-        ref={scrollViewRef} 
+      <ScrollView
+        ref={scrollViewRef}
         style={styles.messagesContainer}
         contentContainerStyle={{ paddingBottom: 10 }}
+        keyboardShouldPersistTaps="handled"
       >
         {messages.map((msg, idx) => (
           <View
@@ -144,7 +164,7 @@ export default function ChatWidget() {
 const styles = StyleSheet.create({
   floatingButton: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 120,
     right: 20,
     width: 60,
     height: 60,
@@ -161,7 +181,7 @@ const styles = StyleSheet.create({
   },
   chatContainer: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 120,
     right: 20,
     width: 320,
     height: 450,
