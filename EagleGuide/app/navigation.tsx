@@ -378,7 +378,7 @@ const handleAccessiblePress = (
             transform: [{ scale: highlighted === "walk" ? 1.05 : 1 }],
             },]}
             onPress={() =>
-             handleAccessiblePress("walk", "Walking mode", () => setProfile("foot-walking"))
+             handleAccessiblePress("walk", "Walking", () => setProfile("foot-walking"))
              }
               >
               <Text style={{ color: theme.text, fontSize: scaleFont(14) }}>Walk</Text>
@@ -389,7 +389,7 @@ const handleAccessiblePress = (
             transform: [{ scale: highlighted === "drive" ? 1.05 : 1 }],
               },
              ]}
-              onPress={()=> handleAccessiblePress("drive", "Driving mode", () => setProfile("driving-car"))}
+              onPress={()=> handleAccessiblePress("drive", "Driving ", () => setProfile("driving-car"))}
               >
               <Text style={{ color: theme.text, fontSize: scaleFont(14) }}>Drive</Text>
             </TouchableOpacity>
@@ -412,7 +412,7 @@ const handleAccessiblePress = (
              backgroundColor:highlighted === "back" ? theme.green : theme.button,
              transform: [{ scale: highlighted === "back" ? 1.05 : 1 }],
               },]}
-              onPress={() => handleAccessiblePress("back", "Going back", () => router.back())}>
+              onPress={() => handleAccessiblePress("back", "Back", () => router.back())}>
               <Text style={{ color: theme.text, fontSize: scaleFont(14) }}>Back</Text>
             </TouchableOpacity>
           </View>

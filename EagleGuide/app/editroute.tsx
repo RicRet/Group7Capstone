@@ -52,6 +52,17 @@ const { ttsEnabled } = useTTS();
 const [lastSpoken, setLastSpoken] = useState<string | null>(null);
 const [highlighted, setHighlighted] = useState<string | null>(null);
 
+useEffect(() => {
+  if (!ttsEnabled || value4 === null) return;
+
+  const label = value4 === 1 ? "Accessibility yes" : "Accessibility no";
+
+  Speech.stop();
+  Speech.speak(label);
+
+  Vibration.vibrate(50);
+}, [value4]);
+
 const handleAccessiblePress = (
   id: string,
   label: string,
@@ -269,6 +280,12 @@ const handleAccessiblePress = (
         </Text>
 
         <DropDownPicker
+        onOpen={() => {
+        if (ttsEnabled) {
+        Speech.speak("Select accessibility option");
+        Vibration.vibrate(50);
+        }
+        }}
           open={open4}
           value={value4}
           items={items4}
