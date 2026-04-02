@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import type { Feature, Point } from "geojson";
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
+    Image,
     Keyboard,
     KeyboardAvoidingView,
     Platform,
@@ -26,6 +27,7 @@ const entranceIcon = require("../assets/images/Entrance_Icon.png");
 const accessibleEntranceIcon = require("../assets/images/Accessible_Entrance_Icon.png");
 const bicycleIcon = require("../assets/images/Bicycle_Icon.png");
 
+
 const MapScreen = () => {
     const { theme, isDark } = useTheme();
     const [showMenu, setShowMenu] = useState(false);
@@ -37,6 +39,8 @@ const MapScreen = () => {
     const [showParkingLots, setShowParkingLots] = useState(true);
     const [showBuildings, setShowBuildings] = useState(true);
     const [showEntrances, setShowEntrances] = useState(true);
+    const [showBuildingLabels, setShowBuildingLabels] = useState(true);
+    const [showLayersPanel, setShowLayersPanel] = useState(false);
     const bicycleReqSeq = useRef(0);
     const parkingReqSeq = useRef(0);
     const buildingsReqSeq = useRef(0);
@@ -165,6 +169,35 @@ const MapScreen = () => {
     const toBuildingPolygon = (feature: BuildingFeature) => {
         const coords = feature.geometry?.coordinates?.[0] || [];
         return coords.map(([lon, lat]) => ({ latitude: lat, longitude: lon }));
+        };
+    const getBuildingCenter = (feature: BuildingFeature) => {
+        const coords = feature.geometry?.coordinates?.[0] || [];
+        if (!coords.length) {
+            return null;
+        }
+
+        let sumLat = 0;
+        let sumLon = 0;
+
+        coords.forEach(([lon, lat]) => {
+            sumLat += lat;
+            sumLon += lon;
+        });
+
+        return {
+            latitude: sumLat / coords.length,
+            longitude: sumLon / coords.length,
+        };
+    };
+
+    const getEntranceCoordinate = (feature: Feature<Point>) => {
+        const coords = feature.geometry?.coordinates;
+        if (!coords || coords.length < 2) return null;
+
+        return {
+            latitude: coords[1],
+            longitude: coords[0],
+        };
     };
 
     const fillColor = (fill?: string | null) => getAccessibleColor(fill, 0.3);
@@ -224,6 +257,7 @@ const MapScreen = () => {
                             {showBuildings && buildings.map((b) => {
                                 const coords = toBuildingPolygon(b);
                                 if (!coords.length) return null;
+
                                 return (
                                     <Polygon
                                         key={`bldg-${b.properties.building_id}`}
@@ -234,7 +268,74 @@ const MapScreen = () => {
                                     />
                                 );
                             })}
-                        </MapView>
+                            {showBuildingLabels && buildings.map((b) => {
+                                const center = getBuildingCenter(b);
+                                if (!center) return null;
+
+                                return (
+                                    <Marker
+                                        key={`bldg-label-${b.properties.building_id}`}
+                                        coordinate={center}
+                                        anchor={{ x: 0.5, y: 0.5 }}
+                                        tracksViewChanges={false}
+                                    >
+                                        <View
+                                        pointerEvents="none"
+                                        style={{
+                                backgroundColor: 'transparent',
+                                paddingHorizontal: 1,
+                                paddingVertical: 0,
+                                maxWidth: 55,
+                                }}
+                                        >
+                                            <Text
+                                style={{
+                                color: '#100101',
+                                fontWeight: '700',
+                                fontSize: 10,
+                                textAlign: 'center',
+                                textShadowOffset: { width: 1, height: 1 },
+                                textShadowRadius: 4,
+                                }}
+                                                numberOfLines={2}
+                                                ellipsizeMode="tail"
+                                            >
+                                                {b.properties.name || "Building"}
+                                            </Text>
+                                        </View>
+                                    </Marker>
+                                );
+                            })}
+                                        {showEntrances && entrances.map((entrance, index) => {
+                                        const coordinate = getEntranceCoordinate(entrance);
+                                            if (!coordinate) return null;
+
+                                        const isAccessible = !!entrance.properties?.entrance_accessible;
+
+                                            return (
+                                        <Marker
+                                            key={`entrance-${entrance.properties?.entrance_id ?? index}`}
+                                            coordinate={coordinate}
+                                            tracksViewChanges={false}
+                                            anchor={{ x: 0.5, y: 0.5 }}
+                                    >
+                                                <View
+                                                    style={{
+                                                    width: 22,
+                                                    height: 22,
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    }}
+                                                        >
+                                                        <Image
+                                                        source={isAccessible ? accessibleEntranceIcon : entranceIcon}
+                                                        style={{ width: 22, height: 22 }}
+                                                        />
+                                                    </View>
+                                                    </Marker>
+                                                        );
+                                                    })}
+                                                    </MapView>
 
                         <View style={styles.topRightContainer}>
                             <TouchableOpacity
@@ -262,45 +363,70 @@ const MapScreen = () => {
                             )}
                         </View>
 
+                        <View style={styles.layerPanelWrapper}>
+                            <TouchableOpacity
+                                style={[styles.layerCollapseButton, { backgroundColor: theme.box }]}
+                                onPress={() => setShowLayersPanel((v) => !v)}
+                            >
+                             <Text style={[styles.layerCollapseButtonText, { color: theme.green }]}>
+                            {showLayersPanel ? 'Hide Layers' : 'Layers'}
+                            </Text>
+                            </TouchableOpacity>
+
+                            {showLayersPanel && (
                         <View style={[styles.layerToggleContainer, { backgroundColor: theme.box }]}>
                             <Text style={[styles.layerToggleTitle, { color: theme.green }]}>Layers</Text>
 
                             <TouchableOpacity
-                                style={[
-                                    styles.layerToggleButton,
-                                    showParkingLots
-                                        ? { backgroundColor: theme.background, borderColor: theme.green }
-                                        : { backgroundColor: theme.box, borderColor: theme.border }
-                                ]}
+                            style={[
+                            styles.layerToggleButton,
+                            showParkingLots
+                        ? { backgroundColor: theme.background, borderColor: theme.green }
+                        : { backgroundColor: theme.box, borderColor: theme.border }
+                            ]}
                                 onPress={() => setShowParkingLots((v) => !v)}
-                            >
-                                <Text style={[styles.layerToggleText, { color: theme.text }]}>Parking</Text>
+                                >
+                            <Text style={[styles.layerToggleText, { color: theme.text }]}>Parking</Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity
-                                style={[
-                                    styles.layerToggleButton,
-                                    showBuildings
-                                        ? { backgroundColor: theme.background, borderColor: theme.green }
-                                        : { backgroundColor: theme.box, borderColor: theme.border }
+                            style={[
+                                styles.layerToggleButton,
+                            showBuildings
+                        ? { backgroundColor: theme.background, borderColor: theme.green }
+                        : { backgroundColor: theme.box, borderColor: theme.border }
                                 ]}
-                                onPress={() => setShowBuildings((v) => !v)}
-                            >
-                                <Text style={[styles.layerToggleText, { color: theme.text }]}>Buildings</Text>
-                            </TouchableOpacity>
+                                    onPress={() => setShowBuildings((v) => !v)}
+                                    >
+                        <Text style={[styles.layerToggleText, { color: theme.text }]}>Buildings</Text>
+                        </TouchableOpacity>
 
-                            <TouchableOpacity
-                                style={[
-                                    styles.layerToggleButton,
-                                    showEntrances
-                                        ? { backgroundColor: theme.background, borderColor: theme.green }
-                                        : { backgroundColor: theme.box, borderColor: theme.border }
-                                ]}
-                                onPress={() => setShowEntrances((v) => !v)}
+                        <TouchableOpacity
+                        style={[
+                        styles.layerToggleButton,
+                        showBuildingLabels
+                        ? { backgroundColor: theme.background, borderColor: theme.green }
+                        : { backgroundColor: theme.box, borderColor: theme.border }
+                        ]}
+                        onPress={() => setShowBuildingLabels((v) => !v)}
                             >
+                        <Text style={[styles.layerToggleText, { color: theme.text }]}>Labels</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={[
+                            styles.layerToggleButton,
+                            showEntrances
+                            ? { backgroundColor: theme.background, borderColor: theme.green }
+                            : { backgroundColor: theme.box, borderColor: theme.border }
+                            ]}
+                            onPress={() => setShowEntrances((v) => !v)}
+                                >
                                 <Text style={[styles.layerToggleText, { color: theme.text }]}>Entrances</Text>
                             </TouchableOpacity>
                         </View>
+                        )}
+                    </View>
                     </View>
                 </TouchableWithoutFeedback>
             </KeyboardAvoidingView>
@@ -354,11 +480,7 @@ const styles = StyleSheet.create({
     bottomSheetBackground: {
         backgroundColor: '#3f3f3f',
     },
-    /** Layer Button toggles (Lines 465-505) **/
     layerToggleContainer: {
-        position: 'absolute',
-        top: 50,
-        right: 20,
         backgroundColor: 'rgba(63,63,63,0.95)',
         borderRadius: 10,
         padding: 6,
@@ -395,5 +517,25 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontWeight: '600',
         fontSize: 11,
+    },
+    layerPanelWrapper: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    alignItems: 'flex-end',
+    },
+
+    layerCollapseButton: {
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    elevation: 4,
+    minWidth: 80,
+    },
+
+    layerCollapseButtonText: {
+    fontWeight: '700',
+    fontSize: 11,
+    textAlign: 'center',
     },
 });
