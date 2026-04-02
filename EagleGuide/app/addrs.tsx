@@ -1,13 +1,51 @@
 import { Stack, useRouter } from "expo-router";
+import * as Speech from "expo-speech";
 import { useCallback, useState } from "react";
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, Vibration, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { addRoute, Building } from "./lib/api/addroutev2";
 import { searchBuildings } from "./lib/api/navbuildings";
+import { useTTS } from "./speech";
 import { useTheme } from "./Theme";
 
-export default function AddRouteScreen() {
 
+export default function AddRouteScreen() {
+  const { ttsEnabled } = useTTS();
+
+const [lastSpoken, setLastSpoken] = useState<string | null>(null);
+const [highlighted, setHighlighted] = useState<string | null>(null);
+
+  const handleAccessiblePress = (
+  id: string,
+  label: string,
+  action: () => void
+) => {
+  if (!ttsEnabled) {
+    action();
+    return;
+  }
+
+  if (lastSpoken !== id) {
+    Speech.stop();
+    Speech.speak(label);
+
+    setLastSpoken(id);
+    setHighlighted(id);
+
+    Vibration.vibrate(50);
+
+    setTimeout(() => {
+      setHighlighted(null);
+      setLastSpoken(null);
+    }, 2000);
+
+    return;
+  }
+
+  setHighlighted(null);
+  setLastSpoken(null);
+  action();
+};
   const router = useRouter();
   const { theme } = useTheme();
 
@@ -135,11 +173,16 @@ export default function AddRouteScreen() {
           <TouchableOpacity
             key={b.name}
             style={styles.result}
-            onPress={() => {
-              setStartBuilding(b);
-              setStartQuery(b.name);
-              setStartResults([]);
-            }}
+            onPress={() =>
+            handleAccessiblePress(
+            `start-${b.name}`,
+            `Start building ${b.name}`,
+            () => {setStartBuilding(b);
+            setStartQuery(b.name);
+            setStartResults([]);
+            }
+              )
+            }
           >
             <Text style={{ color: theme.text }}>{b.name}</Text>
           </TouchableOpacity>
@@ -161,11 +204,16 @@ export default function AddRouteScreen() {
           <TouchableOpacity
             key={b.name}
             style={styles.result}
-            onPress={() => {
-              setEndBuilding(b);
+            onPress={() =>
+            handleAccessiblePress(
+            `end-${b.name}`,
+            `End building ${b.name}`,
+            () => {setEndBuilding(b);
               setEndQuery(b.name);
               setEndResults([]);
-            }}
+             }
+              )
+            }
           >
             <Text style={{ color: theme.text }}>{b.name}</Text>
           </TouchableOpacity>
@@ -208,15 +256,23 @@ export default function AddRouteScreen() {
         </View>
 
         <TouchableOpacity
-          onPress={addr}
-          style={[styles.addButton, { backgroundColor: theme.green }]}
+         onPress={() =>handleAccessiblePress("add", "Add route", addr)}
+          style={[styles.addButton,{
+          backgroundColor:highlighted === "add" ? "#27ae60" : theme.green,
+          transform: [{ scale: highlighted === "add" ? 1.05 : 1 }],
+          },
+          ]}
         >
           <Text style={styles.buttonText}>Add Route</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => router.back()}
-          style={{ marginTop: 15, alignItems: "center" }}
+          onPress={()=>handleAccessiblePress("close", "Close", () => router.back())}
+          style={{
+              marginTop: 15,
+              alignItems: "center",
+              transform: [{ scale: highlighted === "close" ? 1.05 : 1 }],
+          }}
         >
           <Text style={{ color: theme.text }}>Close</Text>
         </TouchableOpacity>
