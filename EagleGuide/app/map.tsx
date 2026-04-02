@@ -18,6 +18,7 @@ import MapView, { Marker, Polygon, Region } from 'react-native-maps';
 import { useTheme } from "../app/Theme";
 import Addroute from './addroute';
 import { useColorBlindMode } from "./ColorBlindMode";
+import { useAccessibility } from "./Fontsize";
 import Homepage from './homepage';
 import { fetchBicycleParking } from "./lib/api/bicycleParking";
 import { BuildingFeature, fetchBuildings } from "./lib/api/buildings";
@@ -46,6 +47,7 @@ const MapScreen = () => {
     const buildingsReqSeq = useRef(0);
     const entrancesReqSeq = useRef(0);
     const { getAccessibleColor, colorBlindMode } = useColorBlindMode();
+    const { largeTextEnabled, scaleFont } = useAccessibility();
     const router = useRouter();
 
     const handleMenuPress = (path: string) => {
@@ -279,30 +281,31 @@ const MapScreen = () => {
                                         anchor={{ x: 0.5, y: 0.5 }}
                                         tracksViewChanges={false}
                                     >
-                                        <View
-                                        pointerEvents="none"
+                                    <View
+                                    pointerEvents="none"
+                                    style={{
+                                        backgroundColor: 'transparent',
+                                        paddingHorizontal: largeTextEnabled ? 2 : 1,
+                                        paddingVertical: 0,
+                                        maxWidth: largeTextEnabled ? 75 : 55,
+                                    }}
+                                    >
+                                    <Text
                                         style={{
-                                backgroundColor: 'transparent',
-                                paddingHorizontal: 1,
-                                paddingVertical: 0,
-                                maxWidth: 55,
-                                }}
-                                        >
-                                            <Text
-                                style={{
-                                color: '#100101',
-                                fontWeight: '700',
-                                fontSize: 10,
-                                textAlign: 'center',
-                                textShadowOffset: { width: 1, height: 1 },
-                                textShadowRadius: 4,
-                                }}
-                                                numberOfLines={2}
-                                                ellipsizeMode="tail"
-                                            >
-                                                {b.properties.name || "Building"}
-                                            </Text>
-                                        </View>
+                                        color: '#100101',
+                                        fontWeight: '700',
+                                        fontSize: scaleFont(10),
+                                        textAlign: 'center',
+                                        textShadowOffset: { width: 1, height: 1 },
+                                        textShadowRadius: 4,
+                                        lineHeight: scaleFont(11),
+                                        }}
+                                        numberOfLines={2}
+                                        ellipsizeMode="tail"
+                                    >
+                                        {b.properties.name || "Building"}
+                                    </Text>
+                                    </View>
                                     </Marker>
                                 );
                             })}
@@ -365,64 +368,86 @@ const MapScreen = () => {
 
                         <View style={styles.layerPanelWrapper}>
                             <TouchableOpacity
-                                style={[styles.layerCollapseButton, { backgroundColor: theme.box }]}
+                                style={[styles.layerCollapseButton,
+                                {
+                                backgroundColor: theme.box,
+                                minWidth: largeTextEnabled ? 105 : 80,
+                                paddingVertical: largeTextEnabled ? 10 : 8,
+                                paddingHorizontal: largeTextEnabled ? 14 : 10,
+                                },]}
                                 onPress={() => setShowLayersPanel((v) => !v)}
                             >
-                             <Text style={[styles.layerCollapseButtonText, { color: theme.green }]}>
+                             <Text style={[styles.layerCollapseButtonText, { color: theme.green, fontSize: scaleFont(11),}]}>
                             {showLayersPanel ? 'Hide Layers' : 'Layers'}
                             </Text>
                             </TouchableOpacity>
 
                             {showLayersPanel && (
-                        <View style={[styles.layerToggleContainer, { backgroundColor: theme.box }]}>
-                            <Text style={[styles.layerToggleTitle, { color: theme.green }]}>Layers</Text>
+                        <View style={[styles.layerToggleContainer, { backgroundColor: theme.box, width: largeTextEnabled ? 110 : 80,padding: largeTextEnabled ? 10 : 6, }]}>
+                            <Text style={[styles.layerToggleTitle, { color: theme.green, fontSize: scaleFont(11)  }]}>Layers</Text>
 
                             <TouchableOpacity
                             style={[
                             styles.layerToggleButton,
+                              {
+                                paddingVertical: largeTextEnabled ? 7 : 4,
+                                paddingHorizontal: largeTextEnabled ? 8 : 6,
+                                },
                             showParkingLots
                         ? { backgroundColor: theme.background, borderColor: theme.green }
                         : { backgroundColor: theme.box, borderColor: theme.border }
                             ]}
                                 onPress={() => setShowParkingLots((v) => !v)}
                                 >
-                            <Text style={[styles.layerToggleText, { color: theme.text }]}>Parking</Text>
+                            <Text style={[styles.layerToggleText, { color: theme.text, fontSize: scaleFont(11) }]}>Parking</Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity
                             style={[
                                 styles.layerToggleButton,
+                                  {
+                                paddingVertical: largeTextEnabled ? 7 : 4,
+                                paddingHorizontal: largeTextEnabled ? 8 : 6,
+                                },
                             showBuildings
                         ? { backgroundColor: theme.background, borderColor: theme.green }
                         : { backgroundColor: theme.box, borderColor: theme.border }
                                 ]}
                                     onPress={() => setShowBuildings((v) => !v)}
                                     >
-                        <Text style={[styles.layerToggleText, { color: theme.text }]}>Buildings</Text>
+                        <Text style={[styles.layerToggleText, { color: theme.text,fontSize: scaleFont(11) }]}>Buildings</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
                         style={[
                         styles.layerToggleButton,
+                          {
+                         paddingVertical: largeTextEnabled ? 7 : 4,
+                        paddingHorizontal: largeTextEnabled ? 8 : 6,
+                            },
                         showBuildingLabels
                         ? { backgroundColor: theme.background, borderColor: theme.green }
                         : { backgroundColor: theme.box, borderColor: theme.border }
                         ]}
                         onPress={() => setShowBuildingLabels((v) => !v)}
                             >
-                        <Text style={[styles.layerToggleText, { color: theme.text }]}>Labels</Text>
+                        <Text style={[styles.layerToggleText, { color: theme.text, fontSize: scaleFont(11) }]}>Labels</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
                             style={[
                             styles.layerToggleButton,
+                              {
+                                paddingVertical: largeTextEnabled ? 7 : 4,
+                                paddingHorizontal: largeTextEnabled ? 8 : 6,
+                                },
                             showEntrances
                             ? { backgroundColor: theme.background, borderColor: theme.green }
                             : { backgroundColor: theme.box, borderColor: theme.border }
                             ]}
                             onPress={() => setShowEntrances((v) => !v)}
                                 >
-                                <Text style={[styles.layerToggleText, { color: theme.text }]}>Entrances</Text>
+                                <Text style={[styles.layerToggleText, { color: theme.text, fontSize: scaleFont(11) }]}>Entrances</Text>
                             </TouchableOpacity>
                         </View>
                         )}
