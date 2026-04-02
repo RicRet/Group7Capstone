@@ -1,3 +1,4 @@
+import * as Speech from "expo-speech";
 import { useCallback, useEffect, useState } from 'react';
 import {
   Alert,
@@ -7,13 +8,18 @@ import {
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  View,
+  Vibration,
+  View
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { useAccessibility } from "./Fontsize";
 import { Building, SavedRoute, updateRoute } from './lib/api/addroutev2';
 import { searchBuildings } from './lib/api/navbuildings';
+import { useTTS } from "./speech";
 import { useTheme } from "./Theme";
-import { useAccessibility } from "./Fontsize";
+
+
+
 
 type EditrouteProps = {
   route: SavedRoute;
@@ -40,6 +46,45 @@ export default function Editroute({ route, onClose }: EditrouteProps) {
     { label: 'Yes', value: 1 },
     { label: 'No', value: 0 },
   ]);
+
+const { ttsEnabled } = useTTS();
+
+const [lastSpoken, setLastSpoken] = useState<string | null>(null);
+const [highlighted, setHighlighted] = useState<string | null>(null);
+
+const handleAccessiblePress = (
+  id: string,
+  label: string,
+  action: () => void
+) => {
+  if (!ttsEnabled) {
+    action();
+    return;
+  }
+
+  if (lastSpoken !== id) {
+    Speech.stop();
+    Speech.speak(label);
+
+    setLastSpoken(id);
+    setHighlighted(id);
+
+    Vibration.vibrate(50);
+
+    setTimeout(() => {
+      setHighlighted(null);
+      setLastSpoken(null);
+    }, 2000);
+
+    return;
+  }
+
+  setHighlighted(null);
+  setLastSpoken(null);
+  action();
+};
+
+
 
   const [name, setName] = useState(route.name);
 
@@ -158,11 +203,17 @@ export default function Editroute({ route, onClose }: EditrouteProps) {
           <TouchableOpacity
             key={b.name}
             style={styles.result}
-            onPress={() => {
-              setStartBuilding(b);
-              setStartQuery(b.name);
-              setStartResults([]);
-            }}
+            onPress={() =>
+            handleAccessiblePress(
+            `start-${b.name}`,
+            `Start building ${b.name}`,
+            () => {
+            setStartBuilding(b);
+            setStartQuery(b.name);
+            setStartResults([]);
+             }
+            )
+            }
           >
             <Text style={{ color: theme.text, fontSize: scaleFont(14) }}>
               {b.name}
@@ -194,11 +245,17 @@ export default function Editroute({ route, onClose }: EditrouteProps) {
           <TouchableOpacity
             key={b.name}
             style={styles.result}
-            onPress={() => {
-              setEndBuilding(b);
+            onPress={() =>
+            handleAccessiblePress(
+            `end-${b.name}`,
+            `End building ${b.name}`,
+             () => {
+             setEndBuilding(b);
               setEndQuery(b.name);
-              setEndResults([]);
-            }}
+             setEndResults([]);
+             }
+              )
+              }
           >
             <Text style={{ color: theme.text, fontSize: scaleFont(14) }}>
               {b.name}
@@ -227,9 +284,13 @@ export default function Editroute({ route, onClose }: EditrouteProps) {
 
         {/* Save Button */}
         <TouchableOpacity
-          style={[styles.saveButton, { backgroundColor: theme.green }]}
-          onPress={saveRoute}
-        >
+          style={[styles.saveButton,{
+         backgroundColor:highlighted === "save" ? "#27ae60" : theme.green,
+         transform: [{ scale: highlighted === "save" ? 1.05 : 1 }],
+          },
+        ]}
+          onPress={()=>handleAccessiblePress("save", "Save route", saveRoute)
+          }>
           <Text style={[styles.buttonText, { fontSize: scaleFont(16) }]}>
             Save
           </Text>
@@ -238,7 +299,7 @@ export default function Editroute({ route, onClose }: EditrouteProps) {
         {/* Back Button */}
         <TouchableOpacity
           style={[styles.backButton, { backgroundColor: theme.button }]}
-          onPress={onClose}
+          onPress={()=>handleAccessiblePress("back", "Go back", onClose)}
         >
           <Text style={[styles.buttonText, { color: theme.text, fontSize: scaleFont(16) }]}>
             Back
