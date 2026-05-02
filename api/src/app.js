@@ -10,6 +10,15 @@ import v1 from './routes/v1/index.js';
 export function createApp() {
   const app = express();
   connectRedis()
+
+  // Compatibility shim for stale clients that accidentally send /v1/v1/*.
+  app.use((req, _res, next) => {
+    if (/^\/v1(?:\/v1)+\//.test(req.url)) {
+      req.url = req.url.replace(/^\/v1(?:\/v1)+\//, '/v1/');
+    }
+    next();
+  });
+
   app.use(express.json());
   app.use(requestId);
   app.use(security());

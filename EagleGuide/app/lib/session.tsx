@@ -64,7 +64,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         setToken(t);
         setAuthToken(t);
         try {
-          const res = await http.get<{ userId: string; username?: string; firstName?: string | null; lastName?: string | null; avatarUrl?: string | null; email?: string | null; roles: string[] }>("/v1/users/me");
+          const res = await http.get<{ userId: string; username?: string; firstName?: string | null; lastName?: string | null; avatarUrl?: string | null; email?: string | null; roles: string[] }>("/users/me");
           setUser({ id: String(res.data.userId), username: res.data.username, firstName: res.data.firstName, lastName: res.data.lastName, avatarUrl: res.data.avatarUrl, email: res.data.email, roles: res.data.roles || [] });
         } catch {
           // token invalid; clear
@@ -87,7 +87,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
   const refreshMe = useCallback(async () => {
     if (!token) return;
-    const res = await http.get<{ userId: string; username?: string; firstName?: string | null; lastName?: string | null; avatarUrl?: string | null; email?: string | null; roles: string[] }>("/v1/users/me");
+    const res = await http.get<{ userId: string; username?: string; firstName?: string | null; lastName?: string | null; avatarUrl?: string | null; email?: string | null; roles: string[] }>("/users/me");
     setUser({ id: String(res.data.userId), username: res.data.username, firstName: res.data.firstName, lastName: res.data.lastName, avatarUrl: res.data.avatarUrl, email: res.data.email, roles: res.data.roles || [] });
   }, [token]);
 
@@ -105,7 +105,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
   const logout = useCallback(async () => {
     try {
-      await http.post("/v1/auth/logout");
+      await http.post("/auth/logout");
     } catch {}
     await Storage.removeItem(TOKEN_KEY);
     setToken(undefined);
