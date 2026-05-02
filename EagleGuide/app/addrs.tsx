@@ -62,8 +62,8 @@ const [highlighted, setHighlighted] = useState<string | null>(null);
   const [open3, setOpen3] = useState(false);
   const [value3, setValue3] = useState<string | null>(null);
   const [items3, setItems3] = useState([
-    { label: "Pedestrian", value: "Pedestrian" },
-    { label: "Bus", value: "Bus" },
+    { label: "Walking", value: "Walking" },
+    { label: "Driving", value: "Driving" },
   ]);
 
   const [open4, setOpen4] = useState(false);
@@ -221,7 +221,7 @@ const [highlighted, setHighlighted] = useState<string | null>(null);
 
         <View style={{ marginTop: 25, zIndex: 3000 }}>
           <Text style={[styles.label, { color: theme.text }]}>
-            Pedestrian or Bus?
+            Walking or Driving?
           </Text>
 
           <DropDownPicker
