@@ -1,12 +1,15 @@
 import * as Location from "expo-location";
 import { useFocusEffect, useRouter } from "expo-router";
+import * as Speech from "expo-speech";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, Vibration, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { useTheme } from "../app/Theme";
 import ChatWidget from "./ChatWidget";
 import { useAccessibility } from './Fontsize';
 import { useSession } from "./lib/session";
+
+import { useTTS } from "./speech";
 
 export default function Home({ onNavigate }: { onNavigate?: (screen: string) => void }) {
     const router = useRouter();
@@ -17,6 +20,10 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
     const [locStatus, setLocStatus] = useState<"unknown" | "denied" | "granted" | "error">("unknown");
     const [coords, setCoords] = useState<Location.LocationObjectCoords | null>(null);
     const [checkingLoc, setCheckingLoc] = useState(false);
+    const { ttsEnabled } = useTTS();
+
+const [lastSpoken, setLastSpoken] = useState<string | null>(null);
+const [highlighted, setHighlighted] = useState<string | null>(null);
 
     const navItems = [
         { label: "Navigation", to: "/navigation" },
@@ -43,7 +50,37 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
 
     const campusCenter = useMemo(() => ({ latitude: 33.2106, longitude: -97.1470 }), []);
     const campusRadiusM = 1500;
+const handleAccessiblePress = (
+  id: string,
+  label: string,
+  action: () => void
+) => {
+  if (!ttsEnabled) {
+    action();
+    return;
+  }
 
+  if (lastSpoken !== id) {
+    Speech.stop();
+    Speech.speak(label);
+
+    setLastSpoken(id);
+    setHighlighted(id);
+
+    Vibration.vibrate(50);
+
+    setTimeout(() => {
+      setHighlighted(null);
+      setLastSpoken(null);
+    }, 2000);
+
+    return;
+  }
+
+  setHighlighted(null);
+  setLastSpoken(null);
+  action();
+};
     useEffect(() => {
         if (!loading) {
             refreshMe().catch(() => { });
@@ -131,18 +168,18 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
                         ) : user ? (
                             <View style={[styles.userPill, { backgroundColor: theme.box }]}>
                                 <Text style={[styles.userText, { color: theme.text, fontSize: scaleFont(14) }]}>Hi, {user.username ?? user.id}</Text>
-                                <TouchableOpacity onPress={logout} style={styles.logoutBtn}>
+                                <TouchableOpacity onPress={() =>handleAccessiblePress("logout","Logout",logout)} style={styles.logoutBtn}>
                                     <Text style={[styles.logoutText, { color: theme.red, fontSize: scaleFont(12) }]}>Logout</Text>
                                 </TouchableOpacity>
                             </View>
                         ) : (
                             <View style={styles.authRow}>
-                                <TouchableOpacity style={[styles.authButton, { backgroundColor: theme.green }]} onPress={() => router.push("/Login")}>
+                                <TouchableOpacity style={[styles.authButton, { backgroundColor: theme.green }]} onPress={() =>handleAccessiblePress("login","Login",() => router.push("/Login"))}>
                                     <Text style={[styles.authText, { color: theme.text, fontSize: scaleFont(14) }]}>Login</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.authButton, styles.authSecondary, { backgroundColor: theme.button }]}
-                                    onPress={() => router.push("/Signup")}
+                                   onPress={() =>handleAccessiblePress("signup","Sign up",() => router.push("/Signup"))}
                                 >
                                     <Text style={[styles.authTextLight, { color: theme.text, fontSize: scaleFont(14) }]}>Sign Up</Text>
                                 </TouchableOpacity>
@@ -194,7 +231,13 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
                             </MapView>
                             <TouchableOpacity
                                 style={[styles.shareBtn, { backgroundColor: theme.green }]}
-                                onPress={shareMyLocation}
+                                onPress={() =>
+                                handleAccessiblePress(
+                                "share-location",
+                                 "Share my location",
+                                    shareMyLocation
+                                )
+                                }
                             >
                                 <Text style={[styles.shareBtnText, { color: "#000", fontSize: scaleFont(14) }]}>Share My Location</Text>
                             </TouchableOpacity>
@@ -209,14 +252,26 @@ export default function Home({ onNavigate }: { onNavigate?: (screen: string) => 
                 <View style={styles.actionsGrid}>
                     {navItems.map((item) => (
                         <TouchableOpacity
-                            key={item.to}
-                            style={[styles.actionCard, { backgroundColor: theme.box }]}
-                            onPress={() => {
-                                router.push(item.to);
-                                onNavigate?.(item.to);
-                            }}
+                     key={item.to}
+                    style={[
+                    styles.actionCard,
+                    {
+                     backgroundColor: highlighted === item.to ? "#27ae60" : theme.box,
+                        transform: [{ scale: highlighted === item.to ? 1.05 : 1 }],
+                     },
+                     ]}
+                    onPress={() =>
+                    handleAccessiblePress(
+                    item.to,
+                     item.label,
+                    () => {
+                     router.push(item.to as any);
+                     onNavigate?.(item.to);
+                        })}
                         >
-                            <Text style={[styles.cardLabel, { color: theme.text, fontSize: scaleFont(16) }]}>{item.label}</Text>
+                        <Text style={[styles.cardLabel, { color: theme.text, fontSize: scaleFont(16) }]}>
+                        {item.label}
+                        </Text>
                         </TouchableOpacity>
                     ))}
                 </View>
