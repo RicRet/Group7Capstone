@@ -1,18 +1,22 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useRef, useState } from 'react';
 import {
-    ActivityIndicator,
-    Keyboard,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Vibration,
+  View
 } from 'react-native';
 import { http } from './lib/http';
+
+import * as Speech from "expo-speech";
+import { useTTS } from "./speech";
 
 type Message = {
   role: 'user' | 'model';
@@ -29,6 +33,28 @@ export default function ChatWidget() {
   const scrollViewRef = useRef<ScrollView>(null);
   const [keyboardOffset, setKeyboardOffset] = useState(0);
 
+  useEffect(() => {
+  if (isOpen && ttsEnabled) {
+    Speech.speak("Chat opened. How can I help you?");
+  }
+}, [isOpen]);
+
+const handleAccessiblePress = (id: string, label: string, action: () => void) => {
+  if (!ttsEnabled) return action();
+
+  if (lastSpoken !== id) {
+    Speech.stop();
+    Speech.speak(label);
+    setLastSpoken(id);
+    Vibration.vibrate(50);
+
+    setTimeout(() => setLastSpoken(null), 2000);
+    return;
+  }
+
+  setLastSpoken(null);
+  action();
+};
   const sendMessage = async () => {
     if (!inputText.trim()) return;
 
@@ -50,25 +76,43 @@ export default function ChatWidget() {
       });
 
       if (response.data && response.data.reply) {
-        setMessages((prev) => [
-          ...prev,
-          { role: 'model', text: response.data.reply },
-        ]);
-      } else {
+      const reply = response.data.reply;
+
+      setMessages((prev) => [
+      ...prev,
+      { role: 'model', text: reply },
+      ]);
+
+      if (ttsEnabled) {
+        Speech.stop();
+        Speech.speak(reply);
+      Vibration.vibrate(50);
+        }
+        } else {
         setMessages((prev) => [
           ...prev,
           { role: 'model', text: 'Sorry, I got an unexpected response.' },
         ]);
       }
-    } catch (error) {
+      } catch (error) {
+      const errorMsg = 'Error connecting to the chatbot backend.';
+
       setMessages((prev) => [
-        ...prev,
-        { role: 'model', text: 'Error connecting to the chatbot backend.' },
+      ...prev,
+      { role: 'model', text: errorMsg },
       ]);
+
+    if (ttsEnabled) {
+    Speech.stop();
+    Speech.speak(errorMsg);
+    }
     } finally {
       setIsLoading(false);
     }
-  };
+    };
+  const { ttsEnabled } = useTTS();
+
+    const [lastSpoken, setLastSpoken] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -98,7 +142,13 @@ export default function ChatWidget() {
     return (
       <TouchableOpacity
         style={styles.floatingButton}
-        onPress={() => setIsOpen(true)}
+        onPress={() => {
+        if (ttsEnabled) {
+        Speech.speak("Open chatbot");
+        Vibration.vibrate(50);
+        }
+        setIsOpen(true);
+        }}
       >
         <Ionicons name="chatbubbles" size={28} color="#0d0d0d" />
       </TouchableOpacity>
@@ -113,7 +163,13 @@ export default function ChatWidget() {
     >
       <View style={styles.header}>
         <Text style={styles.headerTitle}>AI Assistant</Text>
-        <TouchableOpacity onPress={() => setIsOpen(false)} style={styles.closeBtn}>
+        <TouchableOpacity onPress={() => {
+          if (ttsEnabled) {
+          Speech.speak("Close chatbot");
+          Vibration.vibrate(50);
+          }
+          setIsOpen(false);
+          }} style={styles.closeBtn}>
           <Ionicons name="close" size={24} color="#dcdcdc" />
         </TouchableOpacity>
       </View>
@@ -151,7 +207,7 @@ export default function ChatWidget() {
         />
         <TouchableOpacity 
             style={[styles.sendButton, !inputText.trim() && { opacity: 0.5 }]} 
-            onPress={sendMessage}
+            onPress={() =>handleAccessiblePress("send", "Send message", sendMessage)}
             disabled={!inputText.trim()}
         >
           <Ionicons name="send" size={20} color="#0d0d0d" />
