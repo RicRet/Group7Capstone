@@ -191,6 +191,23 @@ const MapScreen = () => {
             longitude: sumLon / coords.length,
         };
     };
+    const getParkingLotCenter = (feature: ParkingLotFeature) => {
+        const coords = feature.geometry?.coordinates?.[0] || [];
+        if (!coords.length) return null;
+
+        let sumLat = 0;
+        let sumLon = 0;
+
+        coords.forEach(([lon, lat]) => {
+            sumLat += lat;
+            sumLon += lon;
+        });
+
+        return {
+            latitude: sumLat / coords.length,
+            longitude: sumLon / coords.length,
+        };
+    };
 
     const getEntranceCoordinate = (feature: Feature<Point>) => {
         const coords = feature.geometry?.coordinates;
@@ -255,7 +272,45 @@ const MapScreen = () => {
                                     />
                                 );
                             })}
+                            {showBuildingLabels && parkingLots.map((lot) => {
+                                const center = getParkingLotCenter(lot);
+                                if (!center) return null;
 
+                                return (
+                                    <Marker
+                                        key={`lot-label-${lot.properties.lot_id}`}
+                                        coordinate={center}
+                                        anchor={{ x: 0.5, y: 0.5 }}
+                                        tracksViewChanges={false}
+                                    >
+                                        <View
+                                            pointerEvents="none"
+                                            style={{
+                                                backgroundColor: 'transparent',
+                                                paddingHorizontal: largeTextEnabled ? 2 : 1,
+                                                paddingVertical: 0,
+                                                maxWidth: largeTextEnabled ? 75 : 55,
+                                            }}
+                                        >
+                                            <Text
+                                                style={{
+                                                    color: '#100101',
+                                                    fontWeight: '700',
+                                                    fontSize: scaleFont(10),
+                                                    textAlign: 'center',
+                                                    textShadowOffset: { width: 1, height: 1 },
+                                                    textShadowRadius: 4,
+                                                    lineHeight: scaleFont(11),
+                                                }}
+                                                numberOfLines={2}
+                                                ellipsizeMode="tail"
+                                            >
+                                                {lot.properties.description || "Parking Lot"}
+                                            </Text>
+                                        </View>
+                                    </Marker>
+                                );
+                            })}
                             {showBuildings && buildings.map((b) => {
                                 const coords = toBuildingPolygon(b);
                                 if (!coords.length) return null;
