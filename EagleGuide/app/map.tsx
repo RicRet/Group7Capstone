@@ -14,7 +14,7 @@ import {
     View
 } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import MapView, { Marker, Polygon, Region } from 'react-native-maps';
+import MapView, { Callout, Marker, Polygon, Region } from 'react-native-maps';
 import { useTheme } from "../app/Theme";
 import Addroute from './addroute';
 import { useColorBlindMode } from "./ColorBlindMode";
@@ -390,6 +390,32 @@ const MapScreen = () => {
                                                         style={{ width: 22, height: 22 }}
                                                         />
                                                     </View>
+                                                    <Callout>
+                                                            <View
+                                                                style={{
+                                                                    padding: 8,
+                                                                    minWidth: 140,
+                                                                    maxWidth: 200,
+                                                                }}>
+                                                                <Text
+                                                                    style={{
+                                                                        fontWeight: '700',
+                                                                        fontSize: scaleFont(13),
+                                                                        textAlign: 'left',
+                                                                    }}>
+                                                                    {isAccessible ? 'Accessible Entrance' : 'Normal Entrance'}
+                                                                </Text>
+                                                                <Text
+                                                                    style={{
+                                                                        fontSize: scaleFont(11),
+                                                                        textAlign: 'left',
+                                                                        marginTop: 2,
+                                                                    }}
+                                                                    numberOfLines={2}>
+                                                                    {entrance.properties?.entrance_name || 'Entrance'}
+                                                                </Text>
+                                                            </View>
+                                                </Callout>
                                                     </Marker>
                                                         );
                                                     })}
